@@ -1,0 +1,4088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECO₂Track</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Leaflet Map CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Firebase SDK v10 (Compat for Universal Browser & Local File Compatibility) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <style>
+        :root {
+            --primary: #52a32d;
+            --primary-dark: #3b7d1d;
+            --primary-light: #e6f6df;
+            --primary-glow: rgba(82, 163, 45, 0.35);
+            --strava-orange: #fc5200;
+            --danger-red: #ef4444;
+            --danger-dark: #b91c1c;
+            --accent-cyan: #52a32d;
+            --dark: #0f172a;
+            --dark-card: #1e293b;
+            --gray-light: #f8fafc;
+            --gray-border: #e2e8f0;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius-xl: 20px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: #f1f5f9;
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding: 20px 15px 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 980px;
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-logo {
+            background: white;
+            border: 1.5px solid rgba(82, 163, 45, 0.25);
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(82, 163, 45, 0.25);
+            overflow: hidden;
+            padding: 3px;
+        }
+
+        .brand-img-logo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--dark);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .brand-title span {
+            color: var(--strava-orange);
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .header-right-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* User Profile Widget */
+        .user-account-widget {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            padding: 6px 14px 6px 8px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-account-widget:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+
+        .user-avatar-wrap {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-size: 1rem;
+            border: 1.5px solid #52a32d;
+        }
+
+        .user-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-info-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            max-width: 140px;
+        }
+
+        .user-name {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .user-role-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 1px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            width: fit-content;
+        }
+
+        .user-role-badge.guest {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .user-role-badge.registered {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .user-chevron {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            transition: all 0.2s ease;
+        }
+
+        .nav-back:hover {
+            background: #e2e8f0;
+            color: var(--dark);
+        }
+
+        /* Profile Spec Quick Bar */
+        .profile-specs-bar {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: white;
+            border-radius: var(--radius-md);
+            padding: 12px 18px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .spec-items-wrap {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            font-size: 0.8rem;
+        }
+
+        .spec-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #cbd5e1;
+        }
+
+        .spec-item strong {
+            color: #52a32d;
+            font-weight: 700;
+        }
+
+        .btn-edit-specs {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-edit-specs:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        /* GPS Status Banner */
+        .gps-status-bar {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 12px 18px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+            border-left: 5px solid #52a32d;
+            font-size: 0.85rem;
+        }
+
+        .gps-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .gps-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #52a32d;
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(82, 163, 45, 0.7); }
+            70% { transform: scale(1.15); box-shadow: 0 0 0 8px rgba(82, 163, 45, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(82, 163, 45, 0); }
+        }
+
+        .sim-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--dark);
+        }
+
+        .sim-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .sim-btn.active {
+            background: #0ea5e9;
+            color: white;
+            border-color: #0284c7;
+        }
+
+        /* Environmental & Environmental Factor Controls (Weather & Passengers) */
+        .environmental-controls-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 18px 22px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--gray-border);
+        }
+
+        .env-section-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .env-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .env-grid {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        .env-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .env-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .env-label .sub-note {
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: var(--text-muted);
+        }
+
+        /* Weather Selector Buttons */
+        .weather-options-wrap {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .weather-btn {
+            background: #f8fafc;
+            border: 1.5px solid var(--gray-border);
+            border-radius: 10px;
+            padding: 10px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+        }
+
+        .weather-btn:hover {
+            border-color: #94a3b8;
+            background: #f1f5f9;
+        }
+
+        .weather-btn.active {
+            background: #eff6ff;
+            border-color: #3b82f6;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.15);
+        }
+
+        .weather-btn.active.sunny {
+            background: #fffbeb;
+            border-color: #f59e0b;
+            box-shadow: 0 3px 10px rgba(245, 158, 11, 0.2);
+        }
+
+        .weather-btn.active.rainy {
+            background: #f0fdfa;
+            border-color: #0ea5e9;
+            box-shadow: 0 3px 10px rgba(14, 165, 233, 0.2);
+        }
+
+        .weather-btn .icon {
+            font-size: 1.3rem;
+        }
+
+        .weather-btn .name {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .weather-btn .desc {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Passenger Capacity Selector (For Motor & Car) */
+        .passenger-wrap {
+            background: #f8fafc;
+            border: 1.5px solid var(--gray-border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .passenger-input-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .passenger-stepper {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            padding: 4px;
+        }
+
+        .btn-step {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            border: none;
+            background: #f1f5f9;
+            color: var(--dark);
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .btn-step:hover:not(:disabled) {
+            background: #e2e8f0;
+        }
+
+        .btn-step:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .passenger-count-display {
+            font-size: 1.1rem;
+            font-weight: 800;
+            min-width: 32px;
+            text-align: center;
+            color: var(--dark);
+        }
+
+        .passenger-info-pill {
+            font-size: 0.72rem;
+            color: #0369a1;
+            background: #e0f2fe;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Activity Mode Cards */
+        .activity-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .activity-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .category-legend {
+            display: flex;
+            gap: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.eco { background: #52a32d; }
+        .legend-dot.motor { background: #ef4444; }
+
+        .activity-selector {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .activity-selector {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 500px) {
+            .activity-selector {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .activity-card {
+            background: white;
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .activity-card.eco-type .activity-badge {
+            background: #eaf7e6;
+            color: #3b7d1d;
+            border: 1px solid #c2e8b6;
+        }
+
+        .activity-card.motor-type .activity-badge {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .activity-badge {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .activity-card.active.eco-type {
+            border-color: #52a32d;
+            background: #f2faf0;
+            box-shadow: 0 8px 18px rgba(82, 163, 45, 0.2);
+        }
+
+        .activity-card.active.motor-type {
+            border-color: #ef4444;
+            background: #fef2f2;
+            box-shadow: 0 8px 18px rgba(239, 68, 68, 0.2);
+        }
+
+        .activity-icon {
+            font-size: 2rem;
+            margin: 4px 0 6px;
+            display: block;
+            transition: transform 0.2s;
+        }
+
+        .activity-card:hover .activity-icon {
+            transform: scale(1.1);
+        }
+
+        .activity-name {
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: var(--dark);
+            margin-bottom: 2px;
+        }
+
+        .activity-tag {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .activity-card.active.eco-type .activity-tag {
+            color: #3b7d1d;
+            font-weight: 700;
+        }
+
+        .activity-card.active.motor-type .activity-tag {
+            color: #dc2626;
+            font-weight: 700;
+        }
+
+        /* Main Dashboard Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 800px) {
+            .main-grid {
+                grid-template-columns: 1.15fr 1fr;
+            }
+        }
+
+        /* Left Side: Timer & Live Stats */
+        .stats-panel {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .timer-hero {
+            background: linear-gradient(145deg, #0f172a, #1e293b);
+            color: white;
+            border-radius: var(--radius-xl);
+            padding: 24px 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .timer-hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(82, 163, 45, 0.2) 0%, transparent 70%);
+            pointer-events: none;
+            transition: background 0.3s ease;
+        }
+
+        .timer-hero.motorized-mode::before {
+            background: radial-gradient(circle, rgba(239, 68, 68, 0.2) 0%, transparent 70%);
+        }
+
+        .timer-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .timer-display {
+            font-size: 3.2rem;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+            color: #ffffff;
+            line-height: 1;
+            margin: 6px 0 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .timer-ms {
+            font-size: 1.7rem;
+            color: #6ec83e;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        .timer-hero.motorized-mode .timer-ms {
+            color: #f97316;
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .live-badge.running {
+            background: rgba(82, 163, 45, 0.2);
+            border-color: rgba(82, 163, 45, 0.4);
+            color: #7ad646;
+        }
+
+        .live-badge.paused {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #fcd34d;
+        }
+
+        /* Metrics Matrix */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .metric-box {
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            border-radius: var(--radius-md);
+            padding: 14px 12px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .metric-title {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .metric-value {
+            font-size: 1.45rem;
+            font-weight: 800;
+            color: var(--dark);
+            font-variant-numeric: tabular-nums;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .metric-unit {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-left: 2px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* Live Carbon Box (Dynamic Eco / Motorized) */
+        .carbon-box {
+            color: white;
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .carbon-box.eco-mode {
+            background: linear-gradient(135deg, #58a834 0%, #2e6215 100%);
+            box-shadow: 0 8px 18px rgba(82, 163, 45, 0.3);
+        }
+
+        .carbon-box.motor-mode {
+            background: linear-gradient(135deg, #f97316 0%, #dc2626 100%);
+            box-shadow: 0 8px 18px rgba(220, 38, 38, 0.3);
+        }
+
+        .carbon-info h4 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .carbon-info p {
+            font-size: 0.75rem;
+            opacity: 0.92;
+            font-weight: 500;
+        }
+
+        .carbon-stat {
+            text-align: right;
+        }
+
+        .carbon-num-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: flex-end;
+            gap: 2px;
+        }
+
+        .carbon-sign {
+            font-size: 1.5rem;
+            font-weight: 800;
+        }
+
+        .carbon-num {
+            font-size: 1.85rem;
+            font-weight: 900;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .carbon-unit {
+            font-size: 0.75rem;
+            opacity: 0.92;
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .carbon-per-capita-tag {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.22);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            display: inline-block;
+            font-weight: 600;
+        }
+
+        /* Action Buttons */
+        .controls-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 15px 12px;
+            border-radius: 30px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, #6ec83e 0%, #52a32d 50%, #3a7a1b 100%);
+            color: white;
+            box-shadow: 0 6px 16px rgba(82, 163, 45, 0.4);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(82, 163, 45, 0.5);
+        }
+
+        .btn-pause {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-pause:hover {
+            background: #d97706;
+        }
+
+        .btn-finish {
+            background: var(--strava-orange);
+            color: white;
+            box-shadow: 0 6px 16px rgba(252, 82, 0, 0.35);
+        }
+
+        .btn-finish:hover {
+            background: #e04900;
+        }
+
+        /* Right Side: Map & Route Panel */
+        .map-panel {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .map-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #map {
+            width: 100%;
+            height: 380px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-border);
+            z-index: 1;
+        }
+
+        .route-info-card {
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.78rem;
+        }
+
+        .route-point {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .point-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .point-dot.start { background: #52a32d; }
+        .point-dot.end { background: #ef4444; }
+
+        .point-label {
+            font-weight: 700;
+            color: var(--text-muted);
+            min-width: 75px;
+        }
+
+        .point-val {
+            font-weight: 600;
+            color: var(--dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ===================================================
+           TRACK RECORD & HISTORY SECTION
+           =================================================== */
+        .history-section {
+            margin-top: 28px;
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .history-section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .history-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--dark);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .history-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .history-actions-top {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-history-tool {
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--dark);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-history-tool:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-tool-danger {
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .btn-tool-danger:hover {
+            background: #fee2e2;
+        }
+
+        /* Filter Pills */
+        .history-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+        }
+
+        .filter-label-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex-shrink: 0;
+        }
+
+        .filter-pills-wrap {
+            display: flex;
+            gap: 8px;
+            flex-wrap: nowrap;
+        }
+
+        .filter-pill {
+            background: #f1f5f9;
+            border: 1px solid var(--gray-border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .filter-pill:hover {
+            background: #e2e8f0;
+            color: var(--dark);
+        }
+
+        .filter-pill.active {
+            background: var(--dark);
+            color: white;
+            border-color: var(--dark);
+        }
+
+        /* Cards Grid */
+        .history-cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 16px;
+        }
+
+        .history-card {
+            background: white;
+            border: 1.5px solid var(--gray-border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .history-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .history-card.eco-type {
+            border-left: 5px solid #10b981;
+        }
+
+        .history-card.motor-type {
+            border-left: 5px solid #ef4444;
+        }
+
+        .card-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .card-activity-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-act-icon {
+            font-size: 1.6rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .card-title-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-act-name {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .card-date-time {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .card-type-chip {
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .card-type-chip.eco {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #a7f3d0;
+        }
+
+        .card-type-chip.motor {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .card-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .card-metric-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-metric-label {
+            font-size: 0.62rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .card-metric-val {
+            font-size: 0.92rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .card-metric-val .sub {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .card-carbon-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 700;
+        }
+
+        .card-carbon-badge.eco {
+            background: #ecfdf5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .card-carbon-badge.motor {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .card-env-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            background: #f1f5f9;
+            padding: 5px 10px;
+            border-radius: 6px;
+        }
+
+        .card-footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .btn-card-action {
+            background: transparent;
+            border: 1px solid var(--gray-border);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-card-action:hover {
+            background: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .btn-card-action.danger:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        /* Modals & Popups */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(6px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .modal-card {
+            background: white;
+            border-radius: var(--radius-xl);
+            max-width: 540px;
+            width: 100%;
+            padding: 28px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 6px;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .modal-subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid var(--gray-border);
+            border-radius: 10px;
+            font-size: 0.88rem;
+            outline: none;
+            transition: border-color 0.2s;
+            background: #ffffff;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: #52a32d;
+            box-shadow: 0 0 0 3px rgba(82, 163, 45, 0.15);
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-modal-primary {
+            background: linear-gradient(135deg, #6ec83e, #4c9927);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(82, 163, 45, 0.35);
+        }
+
+        .btn-modal-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(82, 163, 45, 0.45);
+        }
+
+        .btn-modal-secondary {
+            background: #f1f5f9;
+            color: var(--dark);
+            border: 1px solid var(--gray-border);
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .modal-actions-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        /* Toast notifications */
+        .toast-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10000;
+        }
+
+        .toast-item {
+            background: #0f172a;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            animation: slideUpToast 0.3s ease;
+        }
+
+        .toast-item.success { border-left: 4px solid #52a32d; }
+        .toast-item.info { border-left: 4px solid #0ea5e9; }
+        .toast-item.danger { border-left: 4px solid #ef4444; }
+
+        @keyframes slideUpToast {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Auth Tabs in Account Modal */
+        .auth-tabs-nav {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid var(--gray-border);
+            padding-bottom: 10px;
+            overflow-x: auto;
+        }
+
+        .auth-tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .auth-tab-btn:hover {
+            background: #f1f5f9;
+            color: var(--dark);
+        }
+
+        .auth-tab-btn.active {
+            background: #52a32d;
+            color: white;
+        }
+
+        .auth-tab-content {
+            display: none;
+        }
+
+        .auth-tab-content.active {
+            display: block;
+        }
+
+        /* Account Specs Card & Actions (Logged In View) */
+        .account-specs-card {
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .account-specs-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .account-specs-title {
+            font-size: 0.88rem;
+            font-weight: 800;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .account-specs-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .account-spec-cell {
+            background: white;
+            border: 1px solid var(--gray-border);
+            border-radius: 8px;
+            padding: 9px 12px;
+        }
+
+        .account-spec-cell .cell-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .account-spec-cell .cell-val {
+            font-size: 0.84rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-top: 3px;
+            line-height: 1.3;
+        }
+
+        .btn-account-action {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        .btn-account-logout {
+            background: #f1f5f9;
+            color: var(--dark);
+            border: 1.5px solid var(--gray-border);
+        }
+
+        .btn-account-logout:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+
+        .btn-account-delete {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1.5px solid #fecaca;
+        }
+
+        .btn-account-delete:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+        }
+
+        /* Empty state */
+        .empty-history-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            border: 2px dashed #cbd5e1;
+        }
+
+        .empty-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .empty-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .empty-desc {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            max-width: 440px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top Header -->
+        <header class="header">
+            <div class="brand-group">
+                <div class="brand-logo">
+                    <img src="logo.png" alt="EcoTrack Logo" class="brand-img-logo">
+                </div>
+                <div>
+                    <div class="brand-title">ECO₂<span>Track</span> LIVE</div>
+                    <div class="brand-subtitle">Health in habits.</div>
+                </div>
+            </div>
+            
+            <div class="header-right-group">
+                <!-- User Account Profile Button -->
+                <div class="user-account-widget" id="userAccountWidget" onclick="openAuthModal()" title="Manage Profile & Account">
+                    <div class="user-avatar-wrap" id="userAvatarWrap">
+                        <span id="userAvatarIcon">👤</span>
+                    </div>
+                    <div class="user-info-text">
+                        <div class="user-name" id="userDisplayName">Guest</div>
+                        <div class="user-role-badge guest" id="userRoleBadge">Guest Mode</div>
+                    </div>
+                    <div class="user-chevron">▼</div>
+                </div>
+
+                <a href="index.html" class="nav-back">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                    Home
+                </a>
+            </div>
+        </header>
+
+        <!-- User Physical Specs Banner Bar -->
+        <div class="profile-specs-bar" id="profileSpecsBar">
+            <div class="spec-items-wrap">
+                <div class="spec-item">
+                    <span>👤 User:</span>
+                    <strong id="specNameDisplay">Guest</strong>
+                </div>
+                <div class="spec-item">
+                    <span>📍 Location:</span>
+                    <strong id="specCityDisplay">DKI Jakarta (Metropolitan Urban & Stop-and-Go)</strong>
+                </div>
+                <div class="spec-item">
+                    <span>⚖️ Physique:</span>
+                    <strong id="specBodyDisplay">Height 170 cm • Weight 65 kg (22 yrs)</strong>
+                </div>
+                <div class="spec-item">
+                    <span>👓 Vision:</span>
+                    <strong id="specVisionDisplay">Normal</strong>
+                </div>
+            </div>
+            <button class="btn-edit-specs" onclick="openProfileSpecsModal()">⚙️ Edit Specs</button>
+        </div>
+
+        <!-- GPS Status Bar -->
+        <div class="gps-status-bar">
+            <div class="gps-pill">
+                <span class="gps-dot" id="gpsDot"></span>
+                <span id="gpsStatusText">GPS Ready: Waiting to start activity...</span>
+            </div>
+            <div>
+                <button class="sim-btn" id="simToggleBtn" onclick="toggleSimulationMode()">⚡ GPS Simulation: OFF</button>
+            </div>
+        </div>
+
+        <!-- Environmental Controls: Weather & Passengers -->
+        <div class="environmental-controls-card">
+            <div class="env-section-title">
+                <span>🌦️ Environmental Parameters & Vehicle Load (Precision Calculation)</span>
+            </div>
+
+            <div class="env-grid">
+                <!-- 1. Weather Selector -->
+                <div class="env-block">
+                    <div class="env-label">
+                        <span>Today's Weather Condition:</span>
+                        <span class="sub-note" id="weatherImpactNote">Optimal (1.0x drag)</span>
+                    </div>
+                    <div class="weather-options-wrap">
+                        <button type="button" class="weather-btn active" id="wbtn-clear" onclick="setWeather('clear')">
+                            <span class="icon">⛅</span>
+                            <span class="name">Clear / Normal</span>
+                            <span class="desc">Comfortable Temp 25°C</span>
+                        </button>
+                        <button type="button" class="weather-btn sunny" id="wbtn-sunny" onclick="setWeather('sunny')">
+                            <span class="icon">☀️</span>
+                            <span class="name">Hot / Sunny</span>
+                            <span class="desc">AC Load & Thermoregulation</span>
+                        </button>
+                        <button type="button" class="weather-btn rainy" id="wbtn-rainy" onclick="setWeather('rainy')">
+                            <span class="icon">🌧️</span>
+                            <span class="name">Rainy / Wet</span>
+                            <span class="desc">Road Surface Friction Drag</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Passenger Selector (Dynamic for Motorcycle & Car) -->
+                <div class="env-block" id="passengerBlockWrap">
+                    <div class="env-label">
+                        <span id="passengerLabelText">Passengers (Car / Motorcycle):</span>
+                        <span class="sub-note" id="passengerLoadNote">Base load</span>
+                    </div>
+                    <div class="passenger-wrap">
+                        <div class="passenger-input-row">
+                            <span style="font-size: 0.82rem; font-weight: 700; color: var(--dark);" id="passengerTitleSub">Total Vehicle Passengers:</span>
+                            <div class="passenger-stepper">
+                                <button type="button" class="btn-step" id="btnPassDec" onclick="adjustPassengers(-1)">−</button>
+                                <span class="passenger-count-display" id="passengerCountDisplay">1</span>
+                                <button type="button" class="btn-step" id="btnPassInc" onclick="adjustPassengers(1)">+</button>
+                            </div>
+                        </div>
+                        <div class="passenger-info-pill" id="passengerInfoPill">
+                            <span>👥</span>
+                            <span id="passengerEfficiencyText">1 Person (Driver Only) • 100% emission allocated per person</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Mode Selector -->
+        <div class="activity-section-header">
+            <div class="activity-section-title">Select Travel Mode & Activity</div>
+            <div class="category-legend">
+                <span class="legend-item"><span class="legend-dot eco"></span> Eco-Friendly (-)</span>
+                <span class="legend-item"><span class="legend-dot motor"></span> Motorized Vehicle (+)</span>
+            </div>
+        </div>
+
+        <div class="activity-selector">
+            <!-- 1. Running -->
+            <div class="activity-card eco-type active" id="act-run" onclick="selectActivity('run')">
+                <div class="activity-badge">🌱 Carbon Saved</div>
+                <span class="activity-icon">🏃‍♂️</span>
+                <div class="activity-name">Running</div>
+                <div class="activity-tag">Active Metabolism</div>
+            </div>
+
+            <!-- 2. Walking -->
+            <div class="activity-card eco-type" id="act-walk" onclick="selectActivity('walk')">
+                <div class="activity-badge">🌱 Carbon Saved</div>
+                <span class="activity-icon">🚶</span>
+                <div class="activity-name">Walking</div>
+                <div class="activity-tag">Base Metabolism</div>
+            </div>
+
+            <!-- 3. Cycling -->
+            <div class="activity-card eco-type" id="act-bike" onclick="selectActivity('bike')">
+                <div class="activity-badge">🌱 Carbon Saved</div>
+                <span class="activity-icon">🚴</span>
+                <div class="activity-name">Cycling</div>
+                <div class="activity-tag">High Efficiency</div>
+            </div>
+
+            <!-- 4. Motorcycle -->
+            <div class="activity-card motor-type" id="act-motorcycle" onclick="selectActivity('motorcycle')">
+                <div class="activity-badge">⛽ Fossil Emission</div>
+                <span class="activity-icon">🛵</span>
+                <div class="activity-name">Motorcycle</div>
+                <div class="activity-tag">Passenger Correction</div>
+            </div>
+
+            <!-- 5. Car -->
+            <div class="activity-card motor-type" id="act-car" onclick="selectActivity('car')">
+                <div class="activity-badge">⛽ Fossil Emission</div>
+                <span class="activity-icon">🚗</span>
+                <div class="activity-name">Car</div>
+                <div class="activity-tag">AC & Load Correction</div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="main-grid">
+            <!-- Left: Timer & Metrics -->
+            <div class="stats-panel">
+                <div class="timer-hero" id="timerHero">
+                    <div class="timer-label" id="timerHeroLabel">Activity Duration</div>
+                    <div class="timer-display">
+                        <span id="timerHours">00</span>:<span id="timerMinutes">00</span>:<span id="timerSeconds">00</span>.<span class="timer-ms" id="timerMilliseconds">0</span>
+                    </div>
+                    <div class="live-badge" id="statusBadge">
+                        <span>●</span> <span id="statusText">STANDBY</span>
+                    </div>
+                </div>
+
+                <!-- Matrix Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-title">Distance</div>
+                        <div class="metric-value"><span id="metricDistance">0.00</span><span class="metric-unit">km</span></div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-title">Average Speed</div>
+                        <div class="metric-value"><span id="metricSpeed">0.0</span><span class="metric-unit">km/h</span></div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-title" id="metricLabel3">Pace</div>
+                        <div class="metric-value"><span id="metricValue3">0:00</span><span class="metric-unit" id="metricUnit3">/km</span></div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-title" id="metricLabel4">Calories Burned (Precision)</div>
+                        <div class="metric-value"><span id="metricValue4">0</span><span class="metric-unit" id="metricUnit4">kcal</span></div>
+                    </div>
+                </div>
+
+                <!-- Live Carbon Box (Dynamic Green vs Red-Orange) -->
+                <div class="carbon-box eco-mode" id="carbonBox">
+                    <div class="carbon-info">
+                        <h4 id="carbonBoxTitle">🌱 Carbon Saved</h4>
+                        <p id="carbonBoxSub">Accurately computed based on physical & environmental specs</p>
+                        <div class="carbon-per-capita-tag" id="carbonPerCapitaTag" style="display: none;">Emission per Passenger: 0.000 kg</div>
+                    </div>
+                    <div class="carbon-stat">
+                        <div class="carbon-num-container">
+                            <span class="carbon-sign" id="carbonSign">-</span>
+                            <span class="carbon-num" id="metricCarbon">0.000</span>
+                        </div>
+                        <div class="carbon-unit" id="carbonUnitLabel">kg CO₂e</div>
+                    </div>
+                </div>
+
+                <!-- Action Controls -->
+                <div class="controls-group" id="controlsContainer">
+                    <button class="btn-action btn-start" id="btnStart" onclick="startActivity()">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Start Activity
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right: Map & Route Tracker -->
+            <div class="map-panel">
+                <div class="map-header">
+                    <div class="map-title">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
+                        GPS Route Map (Live)
+                    </div>
+                    <span style="font-size: 0.75rem; color: #64748b; font-weight: 600;" id="gpsCoordText">Searching for GPS Signal...</span>
+                </div>
+
+                <div id="map"></div>
+
+                <div class="route-info-card">
+                    <div class="route-point">
+                        <span class="point-dot start"></span>
+                        <div>
+                            <div class="point-label">Start Point:</div>
+                            <div class="point-val" id="startLocationText">Not started</div>
+                        </div>
+                    </div>
+                    <div class="route-point">
+                        <span class="point-dot end"></span>
+                        <div>
+                            <div class="point-label">Current Position:</div>
+                            <div class="point-val" id="currentLocationText">Waiting for movement...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Track Record & History Section -->
+        <section class="history-section" id="historySection">
+            <div class="history-section-header">
+                <div>
+                    <div class="history-title-group">
+                        <span style="font-size: 1.4rem;">📊</span>
+                        <h2 class="history-title">Activity History & Precision Carbon Footprint</h2>
+                    </div>
+                    <p class="history-subtitle">Saved records for: <strong id="historyAccountNotice">Guest Mode</strong></p>
+                </div>
+                <div class="history-actions-top">
+                    <button class="btn-history-tool" onclick="exportData('csv')" title="Download data in CSV format">
+                        📥 Export CSV
+                    </button>
+                    <button class="btn-history-tool" onclick="exportData('json')" title="Download backup in JSON format">
+                        💾 Export JSON
+                    </button>
+                    <button class="btn-history-tool btn-tool-danger" onclick="confirmClearHistory()" title="Clear all active account history">
+                        🗑️ Clear History
+                    </button>
+                </div>
+            </div>
+
+            <!-- Filter Toolbar -->
+            <div class="history-filter-bar">
+                <div class="filter-label-tag">Filter:</div>
+                <div class="filter-pills-wrap" id="filterPillsContainer">
+                    <button class="filter-pill active" data-filter="all" onclick="setHistoryFilter('all')">🌟 All (<span id="countAll">0</span>)</button>
+                    <button class="filter-pill" data-filter="eco" onclick="setHistoryFilter('eco')">🌱 Eco-Friendly (<span id="countEco">0</span>)</button>
+                    <button class="filter-pill" data-filter="motorized" onclick="setHistoryFilter('motorized')">⛽ Motorized (<span id="countMotor">0</span>)</button>
+                    <button class="filter-pill" data-filter="run" onclick="setHistoryFilter('run')">🏃‍♂️ Running</button>
+                    <button class="filter-pill" data-filter="walk" onclick="setHistoryFilter('walk')">🚶 Walking</button>
+                    <button class="filter-pill" data-filter="bike" onclick="setHistoryFilter('bike')">🚴 Cycling</button>
+                    <button class="filter-pill" data-filter="motorcycle" onclick="setHistoryFilter('motorcycle')">🛵 Motorcycle</button>
+                    <button class="filter-pill" data-filter="car" onclick="setHistoryFilter('car')">🚗 Car</button>
+                </div>
+            </div>
+
+            <!-- Activity Cards Container -->
+            <div class="history-cards-container" id="historyCardsList">
+                <!-- Injected dynamically via JS -->
+            </div>
+        </section>
+    </div>
+
+    <!-- ===================================================
+         MODAL 1: FIRST-TIME USER ONBOARDING & PROFILE FORM
+         =================================================== -->
+    <div class="modal-overlay" id="onboardingModal">
+        <div class="modal-card">
+            <div style="font-size: 2.2rem; text-align: center; margin-bottom: 8px;">📋</div>
+            <h3 class="modal-title" style="text-align: center;" id="onboardingTitle">Complete User Profile</h3>
+            <p class="modal-subtitle" style="text-align: center;" id="onboardingSubtitle">
+                For your calorie, carbon footprint, and vehicle emission calculations to be <strong>scientifically accurate</strong>, enter your physical profile and location.
+            </p>
+
+            <form id="formOnboarding" onsubmit="handleSaveOnboardingProfile(event)">
+                <!-- Nama Lengkap -->
+                <div class="form-group">
+                    <label class="form-label">Full Name / Nickname</label>
+                    <input type="text" id="onboardName" class="form-input" placeholder="Enter your name..." required>
+                </div>
+
+                <!-- Age & Province of Origin (38 Provinces) -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Age (Years)</label>
+                        <input type="number" id="onboardAge" class="form-input" placeholder="e.g. 21" min="10" max="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Province of Origin (38 Provinces)</label>
+                        <select id="onboardCity" class="form-select" required>
+                            <optgroup label="Java Island (6 Provinces)">
+                                <option value="jakarta">DKI Jakarta</option>
+                                <option value="jabar">West Java</option>
+                                <option value="jateng">Central Java</option>
+                                <option value="diy">Yogyakarta (DIY)</option>
+                                <option value="jatim">East Java</option>
+                                <option value="banten">Banten</option>
+                            </optgroup>
+                            <optgroup label="Sumatra Island (10 Provinces)">
+                                <option value="aceh">Aceh</option>
+                                <option value="sumut">North Sumatra</option>
+                                <option value="sumbar">West Sumatra</option>
+                                <option value="riau">Riau</option>
+                                <option value="kepri">Riau Islands</option>
+                                <option value="jambi">Jambi</option>
+                                <option value="sumsel">South Sumatra</option>
+                                <option value="bengkulu">Bengkulu</option>
+                                <option value="lampung">Lampung</option>
+                                <option value="babel">Bangka Belitung Islands</option>
+                            </optgroup>
+                            <optgroup label="Bali & Nusa Tenggara (3 Provinces)">
+                                <option value="bali">Bali</option>
+                                <option value="ntb">West Nusa Tenggara (NTB)</option>
+                                <option value="ntt">East Nusa Tenggara (NTT)</option>
+                            </optgroup>
+                            <optgroup label="Kalimantan Island (5 Provinces)">
+                                <option value="kalbar">West Kalimantan</option>
+                                <option value="kalteng">Central Kalimantan</option>
+                                <option value="kalsel">South Kalimantan</option>
+                                <option value="kaltim">East Kalimantan (IKN)</option>
+                                <option value="kalut">North Kalimantan</option>
+                            </optgroup>
+                            <optgroup label="Sulawesi Island (6 Provinces)">
+                                <option value="sulut">North Sulawesi</option>
+                                <option value="sulteng">Central Sulawesi</option>
+                                <option value="sulsel">South Sulawesi</option>
+                                <option value="sultra">Southeast Sulawesi</option>
+                                <option value="gorontalo">Gorontalo</option>
+                                <option value="sulbar">West Sulawesi</option>
+                            </optgroup>
+                            <optgroup label="Maluku Islands (2 Provinces)">
+                                <option value="maluku">Maluku</option>
+                                <option value="malut">North Maluku</option>
+                            </optgroup>
+                            <optgroup label="Papua Island (6 Provinces)">
+                                <option value="papua">Papua (Mainland)</option>
+                                <option value="papuabarat">West Papua</option>
+                                <option value="papuaselatan">South Papua</option>
+                                <option value="papuatengah">Central Papua</option>
+                                <option value="papuapegunungan">Highland Papua</option>
+                                <option value="papuabaratdaya">Southwest Papua</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Height & Weight (Decimals Supported) -->
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label class="form-label">Height (cm)</label>
+                        <input type="number" id="onboardHeight" class="form-input" placeholder="e.g. 170.5" min="50" max="250" step="any" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Weight (kg)</label>
+                        <input type="number" id="onboardWeight" class="form-input" placeholder="e.g. 65.5" min="20" max="300" step="any" required>
+                    </div>
+                </div>
+
+                <!-- Vision Condition -->
+                <div class="form-group">
+                    <label class="form-label">Vision Condition</label>
+                    <select id="onboardVision" class="form-select" required>
+                        <option value="normal">Normal (No Glasses / Normal Vision)</option>
+                        <option value="minus">Nearsighted (Myopia)</option>
+                        <option value="plus">Farsighted (Hyperopia)</option>
+                        <option value="silinder">Astigmatism (Cylinder)</option>
+                        <option value="minus_silinder">Combined (Myopia & Astigmatism)</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions-row">
+                    <button type="button" class="btn-modal-secondary" id="btnCancelOnboard" onclick="closeOnboardingModal()" style="display: none;">Cancel</button>
+                    <button type="submit" class="btn-modal-primary" id="btnSubmitOnboard">Save & Enable Precision Calculations</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL 2: SUMMARY WORKOUT / TRIP MODAL
+         =================================================== -->
+    <div class="modal-overlay" id="summaryModal">
+        <div class="modal-card">
+            <div style="font-size: 2.2rem; text-align: center; margin-bottom: 6px;" id="modalBadgeIcon">🏅</div>
+            <h3 class="modal-title" style="text-align: center;" id="modalTitle">Activity Completed!</h3>
+            <p class="modal-subtitle" style="text-align: center;" id="modalSubtitle">Detailed precision activity summary and carbon footprint.</p>
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 0.8rem; color: #166534;" id="modalSavePill">
+                ✅ Catatan otomatis tersimpan ke akun <strong>Tamu</strong>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="modalTripTitleInput" class="form-input" placeholder="Trip title (optional, e.g. Morning Commute via Downtown)">
+            </div>
+
+            <div id="modalHighlightBox" style="padding: 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.85rem; line-height: 1.5;">
+                <!-- Injected via JS -->
+            </div>
+
+            <!-- Summary Table Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+                <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Activity Type</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" id="modalActivityType">Running 🏃‍♂️</div>
+                </div>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Total Time</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" id="modalTotalTime">00:00:00</div>
+                </div>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Total Distance</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" id="modalTotalDistance">0.00 km</div>
+                </div>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;">Average Speed</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" id="modalAvgSpeed">0.0 km/h</div>
+                </div>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;" id="modalItem5Label">Calories Burned</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" id="modalItem5Val">0 kcal</div>
+                </div>
+                <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 600;" id="modalItem6Label">Carbon Impact</div>
+                    <div style="font-size: 0.95rem; font-weight: 800; color: #0f172a;" id="modalItem6Val">0.000 kg</div>
+                </div>
+            </div>
+
+            <div class="modal-actions-row">
+                <button type="button" class="btn-modal-secondary" onclick="viewInHistoryFromModal()">View in History</button>
+                <button type="button" class="btn-modal-primary" onclick="resetWorkout()">Finish & Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL 3: AUTHENTICATION & ACCOUNT SWITCHER
+         =================================================== -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-card">
+            <div style="text-align: center; margin-bottom: 14px;">
+                <div style="margin-bottom: 8px;">
+                    <img src="logo.png" alt="EcoTrack Logo" style="width: 58px; height: 58px; object-fit: contain; filter: drop-shadow(0 4px 10px rgba(82, 163, 45, 0.35));">
+                </div>
+                <h3 class="modal-title" id="authModalTitle">EcoTrack Account & Portal</h3>
+                <p class="modal-subtitle" id="authModalSubtitle">Manage your profile, physical specs, and carbon footprint history.</p>
+            </div>
+
+            <!-- Current Active User Bar -->
+            <div style="background: #f8fafc; border: 1.5px solid var(--gray-border); border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div id="authActiveAvatar" style="font-size: 1.5rem;">👤</div>
+                    <div>
+                        <div id="authActiveName" style="font-weight: 800; font-size: 0.9rem; color: var(--dark);">Guest</div>
+                        <div id="authActiveSub" style="font-size: 0.72rem; color: var(--text-muted);">Guest Mode (Local)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW 1: LOGGED IN USER VIEW (Personal Specs, Logout, Delete Account) -->
+            <div id="authLoggedInView" style="display: none;">
+                <!-- Kartu Spesifikasi Diri -->
+                <div class="account-specs-card">
+                    <div class="account-specs-header">
+                        <div class="account-specs-title">
+                            <span>📋</span>
+                            <span>Your Physical Specifications</span>
+                        </div>
+                        <button type="button" class="btn-edit-specs" onclick="openProfileSpecsModal()">✏️ Edit Specs</button>
+                    </div>
+
+                    <div class="account-specs-grid">
+                        <div class="account-spec-cell" style="grid-column: 1 / -1;">
+                            <div class="cell-label">📍 Province Origin</div>
+                            <div class="cell-val" id="accSpecCity">DKI Jakarta (Metropolitan Urban)</div>
+                        </div>
+                        <div class="account-spec-cell">
+                            <div class="cell-label">⚖️ Body Stats</div>
+                            <div class="cell-val" id="accSpecBody">Height 170 cm • Weight 65 kg</div>
+                        </div>
+                        <div class="account-spec-cell">
+                            <div class="cell-label">🎂 Age</div>
+                            <div class="cell-val" id="accSpecAge">22 Years</div>
+                        </div>
+                        <div class="account-spec-cell" style="grid-column: 1 / -1;">
+                            <div class="cell-label">👓 Vision Condition</div>
+                            <div class="cell-val" id="accSpecVision">Normal (No Glasses)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons: Logout & Permanent Delete -->
+                <div style="margin-top: 16px;">
+                    <button type="button" class="btn-account-action btn-account-logout" onclick="logoutToGuest()">
+                        <span>🚪</span>
+                        <span>Log Out of Account</span>
+                    </button>
+                    <button type="button" class="btn-account-action btn-account-delete" onclick="handlePermanentDeleteAccount()">
+                        <span>🗑️</span>
+                        <span>Delete Account Permanently</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- VIEW 2: GUEST / AUTH FORMS VIEW -->
+            <div id="authGuestView">
+                <!-- Tabs -->
+                <div class="auth-tabs-nav" id="authGuestTabsNav">
+                    <button type="button" class="auth-tab-btn active" id="tabBtnLogin" onclick="switchAuthTab('login')">🔑 Log In</button>
+                    <button type="button" class="auth-tab-btn" id="tabBtnRegister" onclick="switchAuthTab('register')">📝 Register</button>
+                    <button type="button" class="auth-tab-btn" id="tabBtnGuest" onclick="switchAuthTab('guest')">👤 Guest Mode</button>
+                </div>
+
+                <!-- TAB 1: LOGIN -->
+                <div class="auth-tab-content active" id="authTabLogin">
+                    <form onsubmit="handleUserLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="loginEmail" class="form-input" placeholder="you@email.com" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                        </div>
+                        <button type="submit" class="btn-modal-primary" style="margin-top: 12px;">Log In to Account</button>
+                    </form>
+                </div>
+
+                <!-- TAB 2: REGISTER -->
+                <div class="auth-tab-content" id="authTabRegister">
+                    <form onsubmit="handleUserRegistration(event)">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" id="regName" class="form-input" placeholder="Your full name" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email</label>
+                            <input type="email" id="regEmail" class="form-input" placeholder="you@email.com" required autocomplete="email">
+                        </div>
+                        <div class="form-row-2">
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <input type="password" id="regPassword" class="form-input" placeholder="At least 6 characters" required minlength="6" autocomplete="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" id="regConfirmPassword" class="form-input" placeholder="Repeat password" required minlength="6" autocomplete="new-password">
+                            </div>
+                        </div>
+                        <p style="font-size: 0.72rem; color: #52a32d; margin: 6px 0 12px; font-weight: 600;">
+                            💡 After registering, you will be directed to complete your physical profile for accurate calculations.
+                        </p>
+                        <button type="submit" class="btn-modal-primary">Register New Account</button>
+                    </form>
+                </div>
+
+                <!-- TAB 3: GUEST MODE -->
+                <div class="auth-tab-content" id="authTabGuest">
+                    <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px; padding: 14px; margin-bottom: 14px;">
+                        <div style="font-size: 0.85rem; font-weight: 700; color: #1e40af; margin-bottom: 4px;">Guest Mode (Offline / Trial Features)</div>
+                        <p style="font-size: 0.75rem; color: #3b82f6; line-height: 1.4;">You can use all precision calculators and GPS tracking. Activity history is stored in session and not synced to Cloud.</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Guest Display Name</label>
+                        <input type="text" id="inputGuestNickname" class="form-input" placeholder="e.g. Eco Explorer">
+                    </div>
+                    <button type="button" class="btn-modal-primary" onclick="saveGuestNickname()">Continue as Guest</button>
+                </div>
+            </div>
+
+            <div style="margin-top: 18px; text-align: center;">
+                <button type="button" class="btn-modal-secondary" onclick="closeAuthModal()" style="width: auto; padding: 8px 24px;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===================================================
+         JAVASCRIPT APPLICATION LOGIC & PRECISION FORMULAS
+         =================================================== -->
+    <script>
+        // ===================================================
+        // 1. FIREBASE INTEGRATION SERVICE (eco2track-new)
+        // ===================================================
+        var firebaseConfig = window.firebaseConfig || {
+            apiKey: "AIzaSyAxVOQg7rnrgUaOyvSXxrgelEqyLEcUo6c",
+            authDomain: "eco2track-new.firebaseapp.com",
+            projectId: "eco2track-new",
+            storageBucket: "eco2track-new.firebasestorage.app",
+            messagingSenderId: "647174491993",
+            appId: "1:647174491993:web:20359ca5bdd587877d0648"
+        };
+        window.firebaseConfig = firebaseConfig;
+
+        var EcoTrackFirebase = window.EcoTrackFirebase || {
+            config: firebaseConfig,
+            app: null,
+            auth: null,
+            db: null,
+            isInitialized: false,
+
+            init() {
+                try {
+                    if (typeof firebase !== 'undefined') {
+                        if (!firebase.apps || !firebase.apps.length) {
+                            this.app = firebase.initializeApp(firebaseConfig);
+                        } else {
+                            this.app = firebase.app();
+                        }
+                        if (firebase.auth) {
+                            this.auth = firebase.auth();
+                        }
+                        if (firebase.firestore) {
+                            this.db = firebase.firestore();
+                        }
+                        this.isInitialized = true;
+                        console.log("🔥 [EcoTrack] Firebase Connected successfully to project: " + firebaseConfig.projectId);
+                    }
+                } catch (e) {
+                    console.warn("⚠️ Firebase Init fallback:", e);
+                }
+                return this;
+            },
+
+            async registerUser(email, password, displayName = '') {
+                if (!this.auth) return { success: false, fallback: true, error: "Firebase Auth not ready" };
+                try {
+                    const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    if (displayName && user.updateProfile) {
+                        try { await user.updateProfile({ displayName }); } catch(e){}
+                    }
+                    const userData = {
+                        id: user.uid,
+                        name: displayName || email.split('@')[0],
+                        email: user.email,
+                        type: 'registered',
+                        createdAt: new Date().toISOString(),
+                        profile: {
+                            name: displayName || email.split('@')[0],
+                            age: 22,
+                            city: 'jakarta',
+                            height: 170,
+                            weight: 65,
+                            vision: 'normal',
+                            completed: false
+                        }
+                    };
+                    if (this.db) {
+                        try {
+                            await this.db.collection('users').doc(user.uid).set(userData, { merge: true });
+                        } catch(e){}
+                    }
+                    return { success: true, user: userData };
+                } catch (err) {
+                    return { success: false, error: err.message, code: err.code };
+                }
+            },
+
+            async loginUser(email, password) {
+                if (!this.auth) return { success: false, fallback: true, error: "Firebase Auth not ready" };
+                try {
+                    const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    let profileData = { id: user.uid, name: user.displayName || email.split('@')[0], email: user.email, type: 'registered' };
+                    
+                    if (this.db) {
+                        try {
+                            const doc = await this.db.collection('users').doc(user.uid).get();
+                            if (doc.exists) {
+                                const data = doc.data();
+                                profileData = { ...profileData, ...data };
+                            }
+                        } catch(e){}
+                    }
+                    return { success: true, user: profileData };
+                } catch (err) {
+                    return { success: false, error: err.message, code: err.code };
+                }
+            },
+
+            async saveUserProfile(userId, profileData) {
+                if (!this.db || !userId) return false;
+                try {
+                    await this.db.collection('users').doc(userId).set({
+                        name: profileData.name || '',
+                        profile: profileData,
+                        lastUpdated: new Date().toISOString()
+                    }, { merge: true });
+                    console.log("🔥 [Firebase] Profile synced to Cloud Firestore:", userId);
+                    return true;
+                } catch(e) { return false; }
+            },
+
+            async saveRecord(userId, record) {
+                if (!this.db) return false;
+                try {
+                    const recordPayload = {
+                        ...record,
+                        syncedAt: new Date().toISOString()
+                    };
+
+                    if (userId && !userId.startsWith('guest_')) {
+                        await this.db.collection('users').doc(userId).collection('records').doc(record.id).set(recordPayload);
+                    }
+                    
+                    try {
+                        await this.db.collection('activity_records').doc(record.id).set(recordPayload);
+                    } catch(e){}
+
+                    console.log("🔥 [Firebase] Activity record recorded to Cloud Firestore:", record.id);
+                    return true;
+                } catch(e) {
+                    console.error("❌ [Firebase] Failed to save record:", e);
+                    return false;
+                }
+            },
+
+            async getRecords(userId) {
+                if (!this.db || !userId) return [];
+                try {
+                    const snap = await this.db.collection('users').doc(userId).collection('records').orderBy('timestamp', 'desc').get();
+                    if (!snap.empty) {
+                        return snap.docs.map(d => d.data());
+                    }
+                    const snapRoot = await this.db.collection('activity_records').where('userId', '==', userId).get();
+                    return snapRoot.docs.map(d => d.data()).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                } catch(e) { 
+                    return []; 
+                }
+            },
+
+            async deleteRecord(userId, recordId) {
+                if (!this.db) return false;
+                try {
+                    if (userId && !userId.startsWith('guest_')) {
+                        await this.db.collection('users').doc(userId).collection('records').doc(recordId).delete();
+                    }
+                    try {
+                        await this.db.collection('activity_records').doc(recordId).delete();
+                    } catch(e){}
+                    return true;
+                } catch(e){ return false; }
+            },
+
+            async clearAllRecords(userId) {
+                if (!this.db || !userId) return false;
+                try {
+                    const snap = await this.db.collection('users').doc(userId).collection('records').get();
+                    const batch = this.db.batch();
+                    snap.docs.forEach(doc => batch.delete(doc.ref));
+                    await batch.commit();
+                    return true;
+                } catch(e){ return false; }
+            }
+        };
+
+        // ===================================================
+        // 2. SCIENTIFIC CONSTANTS & MET COEFFICIENTS
+        // ===================================================
+        const ACTIVITY_CONFIG = {
+            run: {
+                id: 'run',
+                name: 'Running',
+                icon: '🏃‍♂️',
+                type: 'eco',
+                baseMet: 8.3,
+                baseEmDisplacement: 0.192, // kg CO2e saved vs car
+                color: '#52a32d',
+                title: '🌱 Carbon Saved',
+                sub: 'Body metabolism & clean footprint computation',
+                sign: '-',
+                simSpeedKmh: 9.5
+            },
+            walk: {
+                id: 'walk',
+                name: 'Walking',
+                icon: '🚶',
+                type: 'eco',
+                baseMet: 3.8,
+                baseEmDisplacement: 0.192,
+                color: '#52a32d',
+                title: '🌱 Carbon Saved',
+                sub: 'Body metabolism & clean footprint computation',
+                sign: '-',
+                simSpeedKmh: 5.0
+            },
+            bike: {
+                id: 'bike',
+                name: 'Cycling',
+                icon: '🚴',
+                type: 'eco',
+                baseMet: 6.8,
+                baseEmDisplacement: 0.192,
+                color: '#52a32d',
+                title: '🌱 Carbon Saved',
+                sub: 'Zero exhaust emission commute',
+                sign: '-',
+                simSpeedKmh: 18.0
+            },
+            motorcycle: {
+                id: 'motorcycle',
+                name: 'Motorcycle',
+                icon: '🛵',
+                type: 'motorized',
+                baseEmissionKgPerKm: 0.103, // 125cc gasoline
+                fuelRatePerKm: 0.024,      // ~41.6 km/L
+                color: '#f97316',
+                title: '🔥 Carbon Emitted',
+                sub: 'Passenger load & weather drag correction',
+                sign: '+',
+                simSpeedKmh: 38.0
+            },
+            car: {
+                id: 'car',
+                name: 'Car',
+                icon: '🚗',
+                type: 'motorized',
+                baseEmissionKgPerKm: 0.192, // 1500cc gasoline ICE
+                fuelRatePerKm: 0.083,      // ~12 km/L
+                color: '#ef4444',
+                title: '🔥 Carbon Emitted',
+                sub: 'AC load, passenger & regional topography correction',
+                sign: '+',
+                simSpeedKmh: 45.0
+            }
+        };
+
+        // 38 Provinsi di Indonesia (Topography Multipliers & Geographic Profile)
+        const CITY_FACTORS = {
+            // Pulau Jawa (6 Provinsi)
+            jakarta: { name: 'DKI Jakarta', factor: 1.06, desc: 'Metropolitan Urban & Stop-and-Go' },
+            jabar: { name: 'Jawa Barat', factor: 1.14, desc: 'Highlands & Rolling Hills' },
+            jateng: { name: 'Jawa Tengah', factor: 1.07, desc: 'Plains & Mountain Slopes' },
+            diy: { name: 'DI Yogyakarta', factor: 0.98, desc: 'Regular Suburban Plains' },
+            jatim: { name: 'Jawa Timur', factor: 1.05, desc: 'Broad Plains & Coastline Corridor' },
+            banten: { name: 'Banten', factor: 1.04, desc: 'Industrial Zone & Coastline' },
+
+            // Pulau Sumatera (10 Provinsi)
+            aceh: { name: 'Aceh', factor: 1.04, desc: 'Coastline & Hills' },
+            sumut: { name: 'Sumatera Utara', factor: 1.06, desc: 'Highlands & Urban Core' },
+            sumbar: { name: 'Sumatera Barat', factor: 1.12, desc: 'Bukit Barisan Mountain Ridge' },
+            riau: { name: 'Riau', factor: 1.02, desc: 'Lowlands & Peatlands' },
+            kepri: { name: 'Kepulauan Riau', factor: 1.01, desc: 'Maritime Archipelago & Coastal' },
+            jambi: { name: 'Jambi', factor: 1.03, desc: 'Lowlands & River Basins' },
+            sumsel: { name: 'Sumatera Selatan', factor: 1.03, desc: 'Lowlands & Wetlands' },
+            bengkulu: { name: 'Bengkulu', factor: 1.08, desc: 'Coastal & Mountain Terrain' },
+            lampung: { name: 'Lampung', factor: 1.05, desc: 'Hills & Transitional Plains' },
+            babel: { name: 'Kepulauan Bangka Belitung', factor: 1.01, desc: 'Archipelago & Gentle Coasts' },
+
+            // Bali & Nusa Tenggara (3 Provinsi)
+            bali: { name: 'Bali', factor: 1.02, desc: 'Coastal & Tourism Corridors' },
+            ntb: { name: 'Nusa Tenggara Barat', factor: 1.07, desc: 'Hilly Archipelago & Mountain Slopes' },
+            ntt: { name: 'Nusa Tenggara Timur', factor: 1.10, desc: 'Savanna Archipelago & Steep Contours' },
+
+            // Pulau Kalimantan (5 Provinsi)
+            kalbar: { name: 'Kalimantan Barat', factor: 1.02, desc: 'Kapuas River Lowlands' },
+            kalteng: { name: 'Kalimantan Tengah', factor: 1.01, desc: 'Rainforest & Peatlands' },
+            kalsel: { name: 'Kalimantan Selatan', factor: 1.03, desc: 'Barito Basin Wetlands' },
+            kaltim: { name: 'Kalimantan Timur', factor: 1.08, desc: 'Karst Hills & Capital District' },
+            kalut: { name: 'Kalimantan Utara', factor: 1.05, desc: 'Borderlands & Major Riverways' },
+
+            // Pulau Sulawesi (6 Provinsi)
+            sulut: { name: 'Sulawesi Utara', factor: 1.08, desc: 'Volcanic Coast & Hills' },
+            sulteng: { name: 'Sulawesi Tengah', factor: 1.11, desc: 'Fault Valleys & Steep Mountains' },
+            sulsel: { name: 'Sulawesi Selatan', factor: 1.04, desc: 'Urban Plains & Strait Coast' },
+            sultra: { name: 'Sulawesi Tenggara', factor: 1.06, desc: 'Island Coast & Karst Terrain' },
+            gorontalo: { name: 'Gorontalo', factor: 1.07, desc: 'Hills & Tomini Bay Coast' },
+            sulbar: { name: 'Sulawesi Barat', factor: 1.09, desc: 'Mandar Slopes & Coastal Belt' },
+
+            // Kepulauan Maluku (2 Provinsi)
+            maluku: { name: 'Maluku', factor: 1.02, desc: 'Maritime Island Cluster' },
+            malut: { name: 'Maluku Utara', factor: 1.05, desc: 'Active Volcanic Islands' },
+
+            // Pulau Papua (6 Provinsi)
+            papua: { name: 'Papua', factor: 1.08, desc: 'Bay Coastal & Jayapura Hills' },
+            papuabarat: { name: 'Papua Barat', factor: 1.07, desc: 'Bird Head Peninsula Coast' },
+            papuaselatan: { name: 'Papua Selatan', factor: 1.01, desc: 'Lowlands & Merauke Savanna' },
+            papuatengah: { name: 'Papua Tengah', factor: 1.18, desc: 'Central Mountains & Highlands' },
+            papuapegunungan: { name: 'Papua Pegunungan', factor: 1.22, desc: 'Baliem Valley & High Altitude' },
+            papuabaratdaya: { name: 'Papua Barat Daya', factor: 1.03, desc: 'Raja Ampat Maritime Coast' },
+
+            // Legacy City Aliases
+            bandung: { name: 'Jawa Barat', factor: 1.14, desc: 'Dataran Tinggi & Berbukit' },
+            surabaya: { name: 'Jawa Timur', factor: 1.05, desc: 'Dataran Luas & Jalur Pantura' },
+            medan: { name: 'Sumatera Utara', factor: 1.06, desc: 'Dataran Tinggi & Urban' },
+            semarang: { name: 'Jawa Tengah', factor: 1.07, desc: 'Dataran & Lereng Gunung' },
+            yogyakarta: { name: 'DI Yogyakarta', factor: 0.98, desc: 'Dataran Teratur Suburban' },
+            malang: { name: 'Jawa Timur', factor: 1.05, desc: 'Dataran Luas & Jalur Pantura' },
+            denpasar: { name: 'Bali', factor: 1.02, desc: 'Pesisir & Kawasan Wisata' },
+            makassar: { name: 'Sulawesi Selatan', factor: 1.04, desc: 'Dataran Urban & Pesisir Selat' },
+            other: { name: 'National Standard', factor: 1.00, desc: 'Baseline National Standard' }
+        };
+
+        // Weather Multipliers
+        const WEATHER_FACTORS = {
+            clear: {
+                name: 'Clear / Normal',
+                icon: '⛅',
+                humanMetMultiplier: 1.00,
+                carAcMultiplier: 1.00,
+                bikeCoolingMultiplier: 1.00,
+                roadDragMultiplier: 1.00,
+                desc: 'Optimal temperature (25°C), standard friction.'
+            },
+            sunny: {
+                name: 'Hot / Sunny',
+                icon: '☀️',
+                humanMetMultiplier: 1.12,  // Extra thermoregulation & sweat cooling
+                carAcMultiplier: 1.18,     // High AC compressor load
+                bikeCoolingMultiplier: 1.05,
+                roadDragMultiplier: 1.00,
+                desc: 'High heat (>32°C). Car AC operates at peak load (+18%), calories increase due to thermoregulation.'
+            },
+            rainy: {
+                name: 'Rainy / Wet',
+                icon: '🌧️',
+                humanMetMultiplier: 1.15,  // Slip resistance & wet apparel drag
+                carAcMultiplier: 1.10,     // Defogger + wipers + lights
+                bikeCoolingMultiplier: 1.08,
+                roadDragMultiplier: 1.12,  // Wet asphalt hydro-resistance
+                desc: 'Wet pavement & rain. Tire friction increases (+12%), wipers & lights load, physical movement calories increase.'
+            }
+        };
+
+        // Vision descriptions
+        const VISION_OPTIONS = {
+            normal: 'Normal (No Glasses)',
+            minus: 'Nearsighted (Myopia)',
+            plus: 'Farsighted (Hyperopia)',
+            silinder: 'Astigmatism (Cylinder)',
+            minus_silinder: 'Myopia & Astigmatism'
+        };
+
+        // ===================================================
+        // 3. APPLICATION STATE
+        // ===================================================
+        let currentActivity = 'run';
+        let currentWeather = 'clear';
+        let currentPassengers = 1;
+
+        let isRunning = false;
+        let isPaused = false;
+        let startTime = 0;
+        let elapsedTime = 0;
+        let timerInterval = null;
+
+        let totalDistance = 0;
+        let positions = [];
+        let startAddress = 'Belum dimulai';
+        let currentAddress = 'Menunggu pergerakan...';
+
+        let isSimulating = false;
+        let simInterval = null;
+        let simRouteIndex = 0;
+        let simRouteProgress = 0;
+        let lastSimTime = 0;
+        let watchId = null;
+
+        let map, routePolyline, currentMarker, startMarker;
+
+        const demoRoute = [
+            [-6.175392, 106.827153],
+            [-6.182000, 106.828000],
+            [-6.190500, 106.826500],
+            [-6.197000, 106.825000],
+            [-6.204000, 106.824100],
+            [-6.211000, 106.822000],
+            [-6.218500, 106.819700],
+            [-6.225000, 106.809000],
+            [-6.228500, 106.801000]
+        ];
+
+        // ===================================================
+        // 4. USER & PROFILE SPECIFICATION MANAGER
+        // ===================================================
+        let activeSessionUser = null;
+
+        const UserManager = {
+            ACCOUNTS_DB_KEY: 'ecotrack_accounts_db_v2',
+            ACTIVE_USER_SESSION_KEY: 'ecotrack_active_session_v2',
+
+            getGuestDefault() {
+                return {
+                    id: 'guest_user',
+                    name: 'Guest',
+                    email: '',
+                    type: 'guest',
+                    profile: {
+                        name: 'Guest',
+                        age: 22,
+                        city: 'jakarta',
+                        height: 170,
+                        weight: 65,
+                        vision: 'normal',
+                        completed: false
+                    }
+                };
+            },
+
+            getAccounts() {
+                try {
+                    const data = localStorage.getItem(this.ACCOUNTS_DB_KEY);
+                    if (data) {
+                        const list = JSON.parse(data);
+                        return Array.isArray(list) ? list : [];
+                    }
+                } catch(e){}
+                return [];
+            },
+
+            saveAccount(account) {
+                try {
+                    if (!account) return false;
+                    const accounts = this.getAccounts();
+                    const idx = accounts.findIndex(a => 
+                        (a.id && account.id && a.id === account.id) || 
+                        (a.email && account.email && a.email.toLowerCase() === account.email.toLowerCase())
+                    );
+                    if (idx >= 0) {
+                        accounts[idx] = { ...accounts[idx], ...account };
+                    } else {
+                        accounts.push(account);
+                    }
+                    localStorage.setItem(this.ACCOUNTS_DB_KEY, JSON.stringify(accounts));
+                    return true;
+                } catch(e) { return false; }
+            },
+
+            findAccount(email) {
+                if (!email) return null;
+                return this.getAccounts().find(a => a.email && a.email.toLowerCase() === email.trim().toLowerCase()) || null;
+            },
+
+            findAccountById(id) {
+                if (!id) return null;
+                return this.getAccounts().find(a => a.id === id) || null;
+            },
+
+            getCurrentUser() {
+                if (activeSessionUser) {
+                    if (!activeSessionUser.profile) {
+                        activeSessionUser.profile = {
+                            name: activeSessionUser.name || 'EcoTrack User',
+                            age: 22,
+                            city: 'jakarta',
+                            height: 170,
+                            weight: 65,
+                            vision: 'normal',
+                            completed: false
+                        };
+                    }
+                    return activeSessionUser;
+                }
+                return this.getGuestDefault();
+            },
+
+            setCurrentUser(user) {
+                activeSessionUser = user;
+                try {
+                    if (user && user.type === 'registered') {
+                        sessionStorage.setItem(this.ACTIVE_USER_SESSION_KEY, JSON.stringify(user));
+                    } else {
+                        sessionStorage.removeItem(this.ACTIVE_USER_SESSION_KEY);
+                    }
+                } catch(e){}
+            },
+
+            restoreSession() {
+                try {
+                    const saved = sessionStorage.getItem(this.ACTIVE_USER_SESSION_KEY);
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (parsed && parsed.type === 'registered') {
+                            const latest = this.findAccount(parsed.email) || this.findAccountById(parsed.id) || parsed;
+                            activeSessionUser = latest;
+                            return latest;
+                        }
+                    }
+                } catch(e){}
+                return null;
+            },
+
+            clearActiveUser() {
+                activeSessionUser = null;
+                try {
+                    sessionStorage.removeItem(this.ACTIVE_USER_SESSION_KEY);
+                } catch(e){}
+            },
+
+            async updateUserProfileData(profileData) {
+                const user = this.getCurrentUser();
+                user.name = profileData.name || user.name;
+                user.profile = {
+                    ...(user.profile || {}),
+                    ...profileData,
+                    completed: true
+                };
+
+                this.setCurrentUser(user);
+
+                if (user.type === 'registered') {
+                    const accounts = this.getAccounts();
+                    const idx = accounts.findIndex(a => 
+                        (a.id && user.id && a.id === user.id) || 
+                        (a.email && user.email && a.email.toLowerCase() === user.email.toLowerCase())
+                    );
+                    if (idx >= 0) {
+                        accounts[idx].name = user.name;
+                        accounts[idx].profile = user.profile;
+                        localStorage.setItem(this.ACCOUNTS_DB_KEY, JSON.stringify(accounts));
+                    } else {
+                        this.saveAccount(user);
+                    }
+
+                    // Sync to Firestore if initialized
+                    if (EcoTrackFirebase.isInitialized && user.id) {
+                        EcoTrackFirebase.saveUserProfile(user.id, user.profile);
+                    }
+                }
+
+                renderUserProfile();
+                updateProfileSpecsBar();
+                renderAccountModalSpecs(user);
+                showToast("✅ Profile & physical specs updated successfully!", "success");
+            }
+        };
+
+        // ===================================================
+        // 5. ACTIVITY RECORD PERSISTENCE
+        // ===================================================
+        const RecordManager = {
+            getKey(userId) {
+                return 'ecotrack_records_v2_' + userId;
+            },
+
+            getRecords(userId) {
+                if (!userId || userId.startsWith('guest_')) return [];
+                try {
+                    const raw = localStorage.getItem(this.getKey(userId));
+                    if (raw) return JSON.parse(raw);
+                } catch(e){}
+                return [];
+            },
+
+            saveRecord(record) {
+                if (!record) return false;
+                try {
+                    if (record.userId && !record.userId.startsWith('guest_')) {
+                        const list = this.getRecords(record.userId);
+                        const idx = list.findIndex(r => r.id === record.id);
+                        if (idx >= 0) list[idx] = record;
+                        else list.unshift(record);
+                        localStorage.setItem(this.getKey(record.userId), JSON.stringify(list));
+                    }
+                    if (EcoTrackFirebase.isInitialized) {
+                        EcoTrackFirebase.saveRecord(record.userId, record);
+                    }
+                    return true;
+                } catch(e) { return false; }
+            },
+
+            deleteRecord(recordId, userId) {
+                try {
+                    const list = this.getRecords(userId).filter(r => r.id !== recordId);
+                    localStorage.setItem(this.getKey(userId), JSON.stringify(list));
+                    if (EcoTrackFirebase.isInitialized && userId) {
+                        EcoTrackFirebase.deleteRecord(userId, recordId);
+                    }
+                    return true;
+                } catch(e) { return false; }
+            },
+
+            clearAll(userId) {
+                try {
+                    localStorage.removeItem(this.getKey(userId));
+                    if (EcoTrackFirebase.isInitialized && userId) {
+                        EcoTrackFirebase.clearAllRecords(userId);
+                    }
+                    return true;
+                } catch(e) { return false; }
+            }
+        };
+
+        // ===================================================
+        // 6. SCIENTIFIC PRECISION CALCULATION ENGINE
+        // ===================================================
+        // Helper: Safe decimal number parser (supports comma or dot)
+        function parseDecimal(value, defaultValue = 0) {
+            if (value === undefined || value === null || value === '') return defaultValue;
+            if (typeof value === 'number') return isNaN(value) ? defaultValue : value;
+            const parsed = parseFloat(String(value).replace(',', '.'));
+            return isNaN(parsed) ? defaultValue : parsed;
+        }
+
+        // Helper: Format decimal display (e.g., 170 -> "170", 170.5 -> "170.5")
+        function formatDecimalDisplay(num) {
+            const n = Number(num);
+            if (isNaN(n)) return String(num || '');
+            return Number.isInteger(n) ? n.toString() : parseFloat(n.toFixed(2)).toString();
+        }
+
+        function calculatePrecisionCarbon(distanceKm, durationSec, activityKey, weatherKey, passengerCount) {
+            const user = UserManager.getCurrentUser();
+            const prof = user.profile || { height: 170, weight: 65, age: 22, city: 'jakarta' };
+            const cfg = ACTIVITY_CONFIG[activityKey];
+            const isMotor = cfg.type === 'motorized';
+
+            const weather = WEATHER_FACTORS[weatherKey] || WEATHER_FACTORS.clear;
+            const city = CITY_FACTORS[prof.city] || CITY_FACTORS.jakarta;
+
+            const hours = durationSec / 3600;
+            const speedKmh = hours > 0 ? (distanceKm / hours) : 0;
+            const userWeight = parseDecimal(prof.weight, 65);
+
+            if (!isMotor) {
+                // 1. Human Body Metabolism (Mifflin-St Jeor + MET Dynamic)
+                // Speed-adjusted MET
+                let dynamicMet = cfg.baseMet;
+                if (activityKey === 'run') {
+                    dynamicMet = Math.max(6.0, 6.0 + (speedKmh > 0 ? (speedKmh - 7.0) * 0.8 : 0));
+                } else if (activityKey === 'walk') {
+                    dynamicMet = Math.max(2.5, 2.8 + (speedKmh > 0 ? (speedKmh - 4.0) * 0.5 : 0));
+                } else if (activityKey === 'bike') {
+                    dynamicMet = Math.max(4.0, 5.0 + (speedKmh > 0 ? (speedKmh - 12.0) * 0.3 : 0));
+                }
+
+                // Weather metabolic strain multiplier
+                const weatherMet = dynamicMet * weather.humanMetMultiplier;
+
+                // Calories = MET * Weight(kg) * Time(hours)
+                const caloriesBurned = Math.round(weatherMet * userWeight * hours);
+
+                // Carbon Saved = Avoided Motor Vehicle Emissions in City Grid
+                const carbonSavedKg = Number((distanceKm * cfg.baseEmDisplacement * city.factor).toFixed(3));
+
+                return {
+                    isMotor: false,
+                    carbonAmountKg: carbonSavedKg,
+                    calories: caloriesBurned,
+                    fuelLiter: 0,
+                    emissionRateGramsPerKm: 0,
+                    perCapitaCarbonKg: carbonSavedKg
+                };
+            } else {
+                // 2. Motorized Vehicle Emissions with Passenger Load & Weather AC/Drag
+                const numPass = Math.max(1, passengerCount || 1);
+                const totalPayloadKg = userWeight + (numPass - 1) * 65; // Driver + extra passengers
+
+                // Additional mass factor: +2.5% emission per 50kg over base
+                const payloadMultiplier = 1.0 + (Math.max(0, totalPayloadKg - 70) * (0.025 / 50));
+
+                // Weather AC and aerodynamic/road drag factor
+                let weatherMultiplier = 1.0;
+                if (activityKey === 'car') {
+                    weatherMultiplier = weather.carAcMultiplier * weather.roadDragMultiplier;
+                } else {
+                    weatherMultiplier = weather.bikeCoolingMultiplier * weather.roadDragMultiplier;
+                }
+
+                // Total vehicle emission (kg CO2e)
+                const totalVehicleCarbonKg = distanceKm * cfg.baseEmissionKgPerKm * payloadMultiplier * weatherMultiplier * city.factor;
+                const perCapitaCarbonKg = totalVehicleCarbonKg / numPass;
+
+                // Fuel burned (Liter) - 1 Liter gasoline = ~2.31 kg CO2e
+                const fuelLiter = totalVehicleCarbonKg / 2.31;
+                const emissionRateGramsPerKm = Math.round((totalVehicleCarbonKg / Math.max(0.001, distanceKm)) * 1000);
+
+                return {
+                    isMotor: true,
+                    carbonAmountKg: Number(totalVehicleCarbonKg.toFixed(3)),
+                    calories: 0,
+                    fuelLiter: Number(fuelLiter.toFixed(2)),
+                    emissionRateGramsPerKm: emissionRateGramsPerKm,
+                    perCapitaCarbonKg: Number(perCapitaCarbonKg.toFixed(3))
+                };
+            }
+        }
+
+        // ===================================================
+        // 7. MAP & GPS CONTROLLER
+        // ===================================================
+        function initMap() {
+            const defaultLat = -6.175392;
+            const defaultLng = 106.827153;
+
+            map = L.map('map', {
+                zoomControl: true,
+                attributionControl: false
+            }).setView([defaultLat, defaultLng], 15);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            routePolyline = L.polyline([], {
+                color: ACTIVITY_CONFIG[currentActivity].color,
+                weight: 5,
+                opacity: 0.85,
+                lineJoin: 'round'
+            }).addTo(map);
+
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const lat = pos.coords.latitude;
+                        const lng = pos.coords.longitude;
+                        map.setView([lat, lng], 16);
+                        document.getElementById('gpsStatusText').innerText = "GPS Connected: Signal Ready!";
+                        document.getElementById('gpsCoordText').innerText = "Lat: " + lat.toFixed(4) + ", Lon: " + lng.toFixed(4);
+                    },
+                    (err) => {
+                        document.getElementById('gpsStatusText').innerText = "GPS Standby (Use Simulation Mode if indoors)";
+                    },
+                    { enableHighAccuracy: true, timeout: 6000 }
+                );
+            }
+
+            updateDashboardTheme();
+        }
+
+        function selectActivity(type) {
+            if (isRunning) {
+                alert("Cannot change activity mode while a session is running.");
+                return;
+            }
+            currentActivity = type;
+            document.querySelectorAll('.activity-card').forEach(card => card.classList.remove('active'));
+            const selectedCard = document.getElementById('act-' + type);
+            if (selectedCard) selectedCard.classList.add('active');
+
+            // Adjust passenger defaults
+            const passBlock = document.getElementById('passengerBlockWrap');
+            const passTitle = document.getElementById('passengerTitleSub');
+            if (type === 'motorcycle') {
+                if (passBlock) passBlock.style.display = 'flex';
+                if (passTitle) passTitle.innerText = "Motorcycle Passengers (Max 2):";
+                if (currentPassengers > 2) currentPassengers = 2;
+            } else if (type === 'car') {
+                if (passBlock) passBlock.style.display = 'flex';
+                if (passTitle) passTitle.innerText = "Total Car Passengers:";
+            } else {
+                if (passBlock) passBlock.style.display = 'none';
+            }
+
+            updatePassengerUI();
+            updateDashboardTheme();
+        }
+
+        function setWeather(weatherKey) {
+            currentWeather = weatherKey;
+            document.querySelectorAll('.weather-btn').forEach(btn => btn.classList.remove('active'));
+            const btn = document.getElementById('wbtn-' + weatherKey);
+            if (btn) btn.classList.add('active');
+
+            const note = document.getElementById('weatherImpactNote');
+            if (note) {
+                const w = WEATHER_FACTORS[weatherKey];
+                note.innerText = w ? w.desc : '';
+            }
+
+            let totalSec = Math.max(0, Math.floor(elapsedTime / 1000));
+            calculateMetrics(totalSec);
+            showToast(`Weather set to: ${WEATHER_FACTORS[weatherKey].name}`, 'info');
+        }
+
+        function adjustPassengers(delta) {
+            if (isRunning) {
+                alert("Cannot change passenger count while a session is running.");
+                return;
+            }
+            const max = currentActivity === 'motorcycle' ? 2 : 8;
+            currentPassengers = Math.min(max, Math.max(1, currentPassengers + delta));
+            updatePassengerUI();
+
+            let totalSec = Math.max(0, Math.floor(elapsedTime / 1000));
+            calculateMetrics(totalSec);
+        }
+
+        function updatePassengerUI() {
+            const countElem = document.getElementById('passengerCountDisplay');
+            const btnDec = document.getElementById('btnPassDec');
+            const btnInc = document.getElementById('btnPassInc');
+            const effText = document.getElementById('passengerEfficiencyText');
+            const max = currentActivity === 'motorcycle' ? 2 : 8;
+
+            if (countElem) countElem.innerText = currentPassengers;
+            if (btnDec) btnDec.disabled = currentPassengers <= 1;
+            if (btnInc) btnInc.disabled = currentPassengers >= max;
+
+            if (effText) {
+                if (currentPassengers === 1) {
+                    effText.innerText = "1 Person (Driver Only) • 100% emission allocated per person";
+                } else {
+                    const pct = Math.round(100 / currentPassengers);
+                    effText.innerText = `${currentPassengers} People (Carpooling) • Per-person emission reduced by up to ${100 - pct}%!`;
+                }
+            }
+        }
+
+        function updateDashboardTheme() {
+            const config = ACTIVITY_CONFIG[currentActivity];
+            const isMotor = config.type === 'motorized';
+
+            if (routePolyline) routePolyline.setStyle({ color: config.color });
+
+            const hero = document.getElementById('timerHero');
+            if (isMotor) hero.classList.add('motorized-mode');
+            else hero.classList.remove('motorized-mode');
+
+            const carbonBox = document.getElementById('carbonBox');
+            const carbonBoxTitle = document.getElementById('carbonBoxTitle');
+            const carbonBoxSub = document.getElementById('carbonBoxSub');
+            const carbonSign = document.getElementById('carbonSign');
+            const carbonPerCapitaTag = document.getElementById('carbonPerCapitaTag');
+
+            carbonBoxTitle.innerText = config.title;
+            carbonBoxSub.innerText = config.sub;
+            carbonSign.innerText = config.sign;
+
+            if (isMotor) {
+                carbonBox.className = 'carbon-box motor-mode';
+                if (carbonPerCapitaTag) carbonPerCapitaTag.style.display = 'inline-block';
+            } else {
+                carbonBox.className = 'carbon-box eco-mode';
+                if (carbonPerCapitaTag) carbonPerCapitaTag.style.display = 'none';
+            }
+
+            const metricLabel3 = document.getElementById('metricLabel3');
+            const metricUnit3 = document.getElementById('metricUnit3');
+            const metricLabel4 = document.getElementById('metricLabel4');
+            const metricUnit4 = document.getElementById('metricUnit4');
+
+            if (isMotor) {
+                metricLabel3.innerText = "Est. Fuel";
+                metricUnit3.innerText = "Liters";
+                metricLabel4.innerText = "Emission Rate";
+                metricUnit4.innerText = "g/km";
+            } else {
+                metricLabel3.innerText = "Pace";
+                metricUnit3.innerText = "/km";
+                metricLabel4.innerText = "Calories Burned (Precision)";
+                metricUnit4.innerText = "kcal";
+            }
+
+            let totalSec = Math.max(0, Math.floor(elapsedTime / 1000));
+            calculateMetrics(totalSec);
+        }
+
+        function toggleSimulationMode() {
+            if (isRunning) {
+                alert("Cannot change simulation mode while a session is running.");
+                return;
+            }
+            isSimulating = !isSimulating;
+            const btn = document.getElementById('simToggleBtn');
+            const dot = document.getElementById('gpsDot');
+            const statusText = document.getElementById('gpsStatusText');
+
+            if (isSimulating) {
+                btn.classList.add('active');
+                btn.innerText = "⚡ GPS Simulation: ON";
+                dot.style.background = "#0ea5e9";
+                statusText.innerText = "Demo Route Simulation Ready!";
+                map.setView(demoRoute[0], 16);
+            } else {
+                btn.classList.remove('active');
+                btn.innerText = "⚡ GPS Simulation: OFF";
+                dot.style.background = "#52a32d";
+                statusText.innerText = "Real Device GPS Ready.";
+            }
+        }
+
+        function startActivity() {
+            isRunning = true;
+            isPaused = false;
+            startTime = Date.now() - elapsedTime;
+            lastSimTime = Date.now();
+            timerInterval = setInterval(updateTimer, 100);
+
+            updateStatusUI("RUNNING", "running");
+            renderControls('running');
+
+            if (isSimulating) startSimulationTracking();
+            else startGPSTracking();
+        }
+
+        function pauseActivity() {
+            isRunning = false;
+            isPaused = true;
+            clearInterval(timerInterval);
+            if (simInterval) clearInterval(simInterval);
+            if (watchId) navigator.geolocation.clearWatch(watchId);
+
+            updateStatusUI("PAUSED", "paused");
+            renderControls('paused');
+        }
+
+        function resumeActivity() {
+            isRunning = true;
+            isPaused = false;
+            startTime = Date.now() - elapsedTime;
+            lastSimTime = Date.now();
+            timerInterval = setInterval(updateTimer, 100);
+
+            updateStatusUI("RUNNING", "running");
+            renderControls('running');
+
+            if (isSimulating) startSimulationTracking();
+            else startGPSTracking();
+        }
+
+        function finishActivity() {
+            pauseActivity();
+            showSummaryModal();
+        }
+
+        function updateTimer() {
+            const now = Date.now();
+            elapsedTime = now - startTime;
+            
+            let totalSec = Math.floor(elapsedTime / 1000);
+            let hours = Math.floor(totalSec / 3600);
+            let minutes = Math.floor((totalSec % 3600) / 60);
+            let seconds = totalSec % 60;
+            let ms = Math.floor((elapsedTime % 1000) / 100);
+
+            document.getElementById('timerHours').innerText = String(hours).padStart(2, '0');
+            document.getElementById('timerMinutes').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('timerSeconds').innerText = String(seconds).padStart(2, '0');
+            document.getElementById('timerMilliseconds').innerText = ms;
+
+            if (isSimulating && isRunning) {
+                const dtSeconds = (now - lastSimTime) / 1000;
+                lastSimTime = now;
+                const config = ACTIVITY_CONFIG[currentActivity];
+                const deltaKm = (config.simSpeedKmh / 3600) * dtSeconds;
+                totalDistance += deltaKm;
+            }
+
+            calculateMetrics(totalSec);
+        }
+
+        function calculateMetrics(totalSeconds) {
+            const result = calculatePrecisionCarbon(totalDistance, totalSeconds, currentActivity, currentWeather, currentPassengers);
+
+            document.getElementById('metricDistance').innerText = totalDistance.toFixed(2);
+
+            const hours = totalSeconds / 3600;
+            const avgSpeed = hours > 0 ? (totalDistance / hours) : 0;
+            document.getElementById('metricSpeed').innerText = avgSpeed.toFixed(1);
+
+            const val3 = document.getElementById('metricValue3');
+            const val4 = document.getElementById('metricValue4');
+            const perCapitaElem = document.getElementById('carbonPerCapitaTag');
+
+            if (result.isMotor) {
+                val3.innerText = result.fuelLiter.toFixed(2);
+                val4.innerText = result.emissionRateGramsPerKm;
+                if (perCapitaElem) {
+                    perCapitaElem.innerText = `Emission per Passenger: ${result.perCapitaCarbonKg.toFixed(3)} kg CO₂e`;
+                }
+            } else {
+                if (totalDistance > 0.01) {
+                    const paceDecimal = (totalSeconds / 60) / totalDistance;
+                    const paceMin = Math.floor(paceDecimal);
+                    const paceSec = Math.floor((paceDecimal - paceMin) * 60);
+                    val3.innerText = paceMin + ":" + String(paceSec).padStart(2, '0');
+                } else {
+                    val3.innerText = "0:00";
+                }
+                val4.innerText = result.calories;
+            }
+
+            document.getElementById('metricCarbon').innerText = result.carbonAmountKg.toFixed(3);
+        }
+
+        function startGPSTracking() {
+            if (!("geolocation" in navigator)) {
+                alert("Geolocation is not supported in this browser. Automatically switching to simulation mode.");
+                toggleSimulationMode();
+                startSimulationTracking();
+                return;
+            }
+
+            watchId = navigator.geolocation.watchPosition(
+                (pos) => recordCoordinate(pos.coords.latitude, pos.coords.longitude, false),
+                (err) => console.warn("GPS tracking error:", err),
+                { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
+            );
+        }
+
+        function startSimulationTracking() {
+            if (positions.length === 0) recordCoordinate(demoRoute[0][0], demoRoute[0][1], true);
+
+            simInterval = setInterval(() => {
+                if (!isRunning) return;
+                const p1 = demoRoute[simRouteIndex];
+                const nextIdx = (simRouteIndex + 1) % demoRoute.length;
+                const p2 = demoRoute[nextIdx];
+
+                simRouteProgress += 0.08;
+                if (simRouteProgress >= 1) {
+                    simRouteProgress = 0;
+                    simRouteIndex = nextIdx;
+                }
+
+                const lat = p1[0] + (p2[0] - p1[0]) * simRouteProgress;
+                const lng = p1[1] + (p2[1] - p1[1]) * simRouteProgress;
+                recordCoordinate(lat, lng, true);
+            }, 600);
+        }
+
+        function recordCoordinate(lat, lng, isSim) {
+            const newPoint = [lat, lng];
+            document.getElementById('gpsCoordText').innerText = "Lat: " + lat.toFixed(5) + ", Lon: " + lng.toFixed(5);
+
+            if (positions.length === 0) {
+                positions.push(newPoint);
+                routePolyline.setLatLngs(positions);
+                map.setView(newPoint, 16);
+
+                const startIcon = L.divIcon({ html: '🏁', iconSize: [26, 26], iconAnchor: [13, 13] });
+                startMarker = L.marker(newPoint, { icon: startIcon }).addTo(map);
+
+                const pulseIcon = L.divIcon({ className: 'gps-pulse-marker', iconSize: [18, 18], iconAnchor: [9, 9] });
+                currentMarker = L.marker(newPoint, { icon: pulseIcon }).addTo(map);
+
+                startAddress = `Lat ${lat.toFixed(4)}, Lon ${lng.toFixed(4)}`;
+                document.getElementById('startLocationText').innerText = startAddress;
+            } else {
+                const lastPoint = positions[positions.length - 1];
+                const d = getDistanceInKm(lastPoint[0], lastPoint[1], lat, lng);
+                if (!isSim && d > 0.001) totalDistance += d;
+
+                if (d > 0.0005) {
+                    positions.push(newPoint);
+                    routePolyline.setLatLngs(positions);
+                    if (currentMarker) currentMarker.setLatLng(newPoint);
+                    map.panTo(newPoint);
+
+                    currentAddress = `Current Position (${totalDistance.toFixed(2)} km)`;
+                    document.getElementById('currentLocationText').innerText = currentAddress;
+                }
+            }
+
+            let totalSec = Math.max(1, Math.floor(elapsedTime / 1000));
+            calculateMetrics(totalSec);
+        }
+
+        function getDistanceInKm(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * (Math.PI / 180);
+            const dLon = (lon2 - lon1) * (Math.PI / 180);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+        }
+
+        function updateStatusUI(label, stateClass) {
+            const badge = document.getElementById('statusBadge');
+            const statusText = document.getElementById('statusText');
+            statusText.innerText = label;
+            badge.className = 'live-badge ' + (stateClass === 'running' ? 'running' : (stateClass === 'paused' ? 'paused' : ''));
+        }
+
+        function renderControls(state) {
+            const container = document.getElementById('controlsContainer');
+            if (state === 'running') {
+                container.innerHTML = `
+                    <button class="btn-action btn-pause" onclick="pauseActivity()">⏸️ Pause</button>
+                    <button class="btn-action btn-finish" onclick="finishActivity()">🏁 Finish</button>
+                `;
+            } else if (state === 'paused') {
+                container.innerHTML = `
+                    <button class="btn-action btn-start" onclick="resumeActivity()">▶️ Resume</button>
+                    <button class="btn-action btn-finish" onclick="finishActivity()">🏁 Finish</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button class="btn-action btn-start" id="btnStart" onclick="startActivity()">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        Start Activity
+                    </button>
+                `;
+            }
+        }
+
+        // ===================================================
+        // 8. SUMMARY & HISTORY MODAL
+        // ===================================================
+        function showSummaryModal() {
+            const modal = document.getElementById('summaryModal');
+            const user = UserManager.getCurrentUser();
+            const config = ACTIVITY_CONFIG[currentActivity];
+            const isMotor = config.type === 'motorized';
+
+            let totalSec = Math.floor(elapsedTime / 1000);
+            let hours = Math.floor(totalSec / 3600);
+            let minutes = Math.floor((totalSec % 3600) / 60);
+            let seconds = totalSec % 60;
+            let timeStr = String(hours).padStart(2, '0') + ":" + String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+
+            const hoursCalc = totalSec / 3600;
+            const avgSpeed = hoursCalc > 0 ? (totalDistance / hoursCalc).toFixed(1) : '0.0';
+
+            const calc = calculatePrecisionCarbon(totalDistance, totalSec, currentActivity, currentWeather, currentPassengers);
+
+            document.getElementById('modalActivityType').innerText = `${config.name} ${config.icon}`;
+            document.getElementById('modalTotalTime').innerText = timeStr;
+            document.getElementById('modalTotalDistance').innerText = totalDistance.toFixed(2) + ' km';
+            document.getElementById('modalAvgSpeed').innerText = avgSpeed + ' km/h';
+
+            const highlightBox = document.getElementById('modalHighlightBox');
+            const item5Label = document.getElementById('modalItem5Label');
+            const item5Val = document.getElementById('modalItem5Val');
+            const item6Label = document.getElementById('modalItem6Label');
+            const item6Val = document.getElementById('modalItem6Val');
+            const savePill = document.getElementById('modalSavePill');
+
+            if (user.type === 'registered') {
+                savePill.innerHTML = `✅ Record automatically synced to account <strong>${user.name}</strong> (Firebase Cloud Sync 🔥)`;
+            } else {
+                savePill.innerHTML = `🌐 Activity recorded in local session & Cloud Live Tracker (Guest Mode)`;
+            }
+
+            if (isMotor) {
+                highlightBox.style.background = '#fef2f2';
+                highlightBox.style.color = '#991b1b';
+                highlightBox.style.border = '1px solid #fecaca';
+                highlightBox.innerHTML = `
+                    🔥 <strong>Total Vehicle Emission:</strong> +${calc.carbonAmountKg} kg CO₂e<br>
+                    👥 <strong>Per Passenger Emission:</strong> +${calc.perCapitaCarbonKg} kg CO₂e (${currentPassengers} passenger${currentPassengers > 1 ? 's' : ''})<br>
+                    ⛽ <strong>Estimated Fuel:</strong> ~${calc.fuelLiter} Liters (${WEATHER_FACTORS[currentWeather].name})
+                `;
+                item5Label.innerText = "Fuel Consumption";
+                item5Val.innerText = calc.fuelLiter + " Liters";
+                item6Label.innerText = "Per Person Emission";
+                item6Val.innerText = calc.perCapitaCarbonKg + " kg CO₂e";
+            } else {
+                highlightBox.style.background = '#f2faf0';
+                highlightBox.style.color = '#255213';
+                highlightBox.style.border = '1px solid #c4eab9';
+                highlightBox.innerHTML = `
+                    🌱 <strong>Carbon Footprint Saved:</strong> ${calc.carbonAmountKg} kg CO₂e!<br>
+                    ⚡ <strong>Calories Burned (Precision):</strong> ${calc.calories} kcal<br>
+                    🌦️ <strong>Weather Condition:</strong> ${WEATHER_FACTORS[currentWeather].name}
+                `;
+                item5Label.innerText = "Calories Burned";
+                item5Val.innerText = calc.calories + " kcal";
+                item6Label.innerText = "Carbon Saved";
+                item6Val.innerText = "-" + calc.carbonAmountKg + " kg CO₂e";
+            }
+
+            const now = new Date();
+            const record = {
+                id: 'rec_' + Date.now(),
+                userId: user.id || ('guest_' + Date.now()),
+                userName: user.name || 'Guest',
+                userType: user.type,
+                title: '',
+                timestamp: now.toISOString(),
+                dateFormatted: `${now.getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
+                activityId: currentActivity,
+                activityName: config.name,
+                activityIcon: config.icon,
+                activityType: config.type,
+                weather: currentWeather,
+                passengers: currentPassengers,
+                durationSec: totalSec,
+                durationFormatted: timeStr,
+                distanceKm: Number(totalDistance.toFixed(2)),
+                avgSpeedKmh: Number(avgSpeed),
+                carbonAmountKg: calc.carbonAmountKg,
+                perCapitaCarbonKg: calc.perCapitaCarbonKg,
+                calories: calc.calories,
+                fuelLiter: calc.fuelLiter
+            };
+            RecordManager.saveRecord(record);
+            renderHistorySection();
+            showToast("🔥 Activity record saved and synced to Firebase!", "success");
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('summaryModal').style.display = 'none';
+        }
+
+        function viewInHistoryFromModal() {
+            closeModal();
+            const section = document.getElementById('historySection');
+            if (section) section.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function resetWorkout() {
+            closeModal();
+            isRunning = false;
+            isPaused = false;
+            elapsedTime = 0;
+            totalDistance = 0;
+            positions = [];
+
+            if (timerInterval) clearInterval(timerInterval);
+            if (simInterval) clearInterval(simInterval);
+            if (watchId) navigator.geolocation.clearWatch(watchId);
+
+            document.getElementById('timerHours').innerText = '00';
+            document.getElementById('timerMinutes').innerText = '00';
+            document.getElementById('timerSeconds').innerText = '00';
+            document.getElementById('timerMilliseconds').innerText = '0';
+            document.getElementById('metricDistance').innerText = '0.00';
+            document.getElementById('metricSpeed').innerText = '0.0';
+            document.getElementById('metricValue3').innerText = '0:00';
+            document.getElementById('metricValue4').innerText = '0';
+            document.getElementById('metricCarbon').innerText = '0.000';
+
+            if (routePolyline) routePolyline.setLatLngs([]);
+            if (startMarker && map) map.removeLayer(startMarker);
+            if (currentMarker && map) map.removeLayer(currentMarker);
+
+            updateStatusUI("STANDBY", "standby");
+            renderControls('standby');
+        }
+
+        // ===================================================
+        // 9. ONBOARDING & SPECIFICATION FORM HANDLERS
+        // ===================================================
+        function openOnboardingModal(isNewSignup = false) {
+            const user = UserManager.getCurrentUser();
+            const modal = document.getElementById('onboardingModal');
+            const prof = user.profile || {};
+
+            document.getElementById('onboardName').value = prof.name || user.name || '';
+            document.getElementById('onboardAge').value = prof.age || 22;
+            document.getElementById('onboardCity').value = prof.city || 'jakarta';
+            document.getElementById('onboardHeight').value = prof.height !== undefined ? prof.height : 170;
+            document.getElementById('onboardWeight').value = prof.weight !== undefined ? prof.weight : 65;
+            document.getElementById('onboardVision').value = prof.vision || 'normal';
+
+            const titleElem = document.getElementById('onboardingTitle');
+            const subElem = document.getElementById('onboardingSubtitle');
+            const btnCancel = document.getElementById('btnCancelOnboard');
+            const btnSubmit = document.getElementById('btnSubmitOnboard');
+
+            if (isNewSignup) {
+                if (titleElem) titleElem.innerText = "Complete Physical Specifications";
+                if (subElem) subElem.innerHTML = "Welcome! Enter your physical specs and location <strong>(one-time setup)</strong> for scientifically accurate calories & carbon footprint calculations.";
+                if (btnCancel) btnCancel.style.display = 'none';
+                if (btnSubmit) btnSubmit.innerText = "Save & Continue to Dashboard";
+            } else {
+                if (titleElem) titleElem.innerText = "⚙️ Edit Profile Specifications";
+                if (subElem) subElem.innerHTML = "Update your physical attributes, posture, or region anytime. Changes immediately sync to live calculations.";
+                if (btnCancel) btnCancel.style.display = 'inline-block';
+                if (btnSubmit) btnSubmit.innerText = "Save Specification Changes";
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function closeOnboardingModal() {
+            document.getElementById('onboardingModal').style.display = 'none';
+        }
+
+        function openProfileSpecsModal() {
+            closeAuthModal();
+            openOnboardingModal(false);
+        }
+
+        async function handleSaveOnboardingProfile(event) {
+            event.preventDefault();
+            const name = document.getElementById('onboardName').value.trim();
+            const age = parseInt(document.getElementById('onboardAge').value) || 22;
+            const city = document.getElementById('onboardCity').value;
+            const height = parseDecimal(document.getElementById('onboardHeight').value, 170);
+            const weight = parseDecimal(document.getElementById('onboardWeight').value, 65);
+            const vision = document.getElementById('onboardVision').value;
+
+            await UserManager.updateUserProfileData({ name, age, city, height, weight, vision });
+            closeOnboardingModal();
+
+            let totalSec = Math.max(0, Math.floor(elapsedTime / 1000));
+            calculateMetrics(totalSec);
+        }
+
+        function updateProfileSpecsBar() {
+            const user = UserManager.getCurrentUser();
+            const prof = user.profile || { name: 'Guest', age: 22, city: 'jakarta', height: 170, weight: 65, vision: 'normal' };
+
+            const cityObj = CITY_FACTORS[prof.city] || CITY_FACTORS.jakarta;
+            const visionLabel = VISION_OPTIONS[prof.vision] || 'Normal';
+
+            document.getElementById('specNameDisplay').innerText = prof.name || user.name;
+            document.getElementById('specCityDisplay').innerText = `${cityObj.name} (${cityObj.desc})`;
+            document.getElementById('specBodyDisplay').innerText = `Height ${formatDecimalDisplay(prof.height)} cm • Weight ${formatDecimalDisplay(prof.weight)} kg (${prof.age} yrs)`;
+            document.getElementById('specVisionDisplay').innerText = visionLabel;
+        }
+
+        // ===================================================
+        // 10. AUTH & USER PROFILE MODAL
+        // ===================================================
+        function openAuthModal() {
+            const user = UserManager.getCurrentUser();
+            const modal = document.getElementById('authModal');
+            const isReg = user.type === 'registered';
+
+            document.getElementById('authActiveName').innerText = user.name;
+            document.getElementById('authActiveSub').innerText = isReg ? (user.email || 'Registered Account') : 'Guest Mode (Local Storage)';
+
+            const loggedInView = document.getElementById('authLoggedInView');
+            const guestView = document.getElementById('authGuestView');
+            const modalTitle = document.getElementById('authModalTitle');
+            const modalSubtitle = document.getElementById('authModalSubtitle');
+
+            if (isReg) {
+                if (modalTitle) modalTitle.innerText = "Manage EcoTrack Account";
+                if (modalSubtitle) modalSubtitle.innerText = "Precision physical specs, session controls, and account settings.";
+                if (guestView) guestView.style.display = 'none';
+                if (loggedInView) {
+                    loggedInView.style.display = 'block';
+                    renderAccountModalSpecs(user);
+                }
+            } else {
+                if (modalTitle) modalTitle.innerText = "EcoTrack Account & Portal";
+                if (modalSubtitle) modalSubtitle.innerText = "Register a new account or log in to sync your carbon footprint history.";
+                if (loggedInView) loggedInView.style.display = 'none';
+                if (guestView) guestView.style.display = 'block';
+                switchAuthTab('login');
+            }
+
+            modal.style.display = 'flex';
+        }
+
+        function renderAccountModalSpecs(user) {
+            const prof = user.profile || { height: 170, weight: 65, age: 22, city: 'jakarta', vision: 'normal' };
+            const cityObj = CITY_FACTORS[prof.city] || CITY_FACTORS.jakarta;
+            const visionLabel = VISION_OPTIONS[prof.vision] || 'Normal';
+
+            const cellCity = document.getElementById('accSpecCity');
+            const cellBody = document.getElementById('accSpecBody');
+            const cellAge = document.getElementById('accSpecAge');
+            const cellVision = document.getElementById('accSpecVision');
+
+            if (cellCity) cellCity.innerText = `${cityObj.name} (${cityObj.desc})`;
+            if (cellBody) cellBody.innerText = `Height ${formatDecimalDisplay(prof.height)} cm • Weight ${formatDecimalDisplay(prof.weight)} kg`;
+            if (cellAge) cellAge.innerText = `${prof.age} Years Old`;
+            if (cellVision) cellVision.innerText = visionLabel;
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').style.display = 'none';
+        }
+
+        function switchAuthTab(tab) {
+            const tabs = ['login', 'register', 'guest'];
+            tabs.forEach(t => {
+                const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+                const content = document.getElementById('authTab' + t.charAt(0).toUpperCase() + t.slice(1));
+                if (btn) btn.classList.toggle('active', t === tab);
+                if (content) content.classList.toggle('active', t === tab);
+            });
+        }
+
+        async function handlePermanentDeleteAccount() {
+            const user = UserManager.getCurrentUser();
+            if (user.type !== 'registered') return;
+
+            const confirm1 = confirm(`⚠️ PERMANENT ACCOUNT DELETION WARNING:\n\nAre you sure you want to permanently delete the account "${user.name}" (${user.email})?\n\nAll travel history, carbon records, and physical specs will be deleted FOREVER and cannot be recovered.`);
+            if (!confirm1) return;
+
+            const confirm2 = confirm(`Final Confirmation:\n\nClick OK to permanently delete the account ${user.email}. This action cannot be undone.`);
+            if (!confirm2) return;
+
+            // 1. Remove from local accounts database
+            try {
+                const accounts = UserManager.getAccounts();
+                const filtered = accounts.filter(a => a.id !== user.id && a.email.toLowerCase() !== (user.email || '').toLowerCase());
+                localStorage.setItem(UserManager.ACCOUNTS_DB_KEY, JSON.stringify(filtered));
+            } catch(e){}
+
+            // 2. Clear all activity records for this user
+            RecordManager.clearAll(user.id);
+
+            // 3. Delete from Firebase if initialized
+            if (EcoTrackFirebase.isInitialized) {
+                if (EcoTrackFirebase.db && user.id) {
+                    try {
+                        await EcoTrackFirebase.db.collection('users').doc(user.id).delete();
+                    } catch(e){}
+                }
+                if (EcoTrackFirebase.auth && EcoTrackFirebase.auth.currentUser) {
+                    try {
+                        await EcoTrackFirebase.auth.currentUser.delete();
+                    } catch(e){}
+                }
+            }
+
+            // 4. Clear active in-memory session
+            UserManager.clearActiveUser();
+
+            // 5. Update UI to Guest state
+            renderUserProfile();
+            updateProfileSpecsBar();
+            renderHistorySection();
+            closeAuthModal();
+
+            showToast("🗑️ Your account has been permanently deleted.", "danger");
+        }
+
+        async function handleUserRegistration(event) {
+            event.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim().toLowerCase();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+
+            if (password !== confirmPassword) {
+                showToast("Password confirmation does not match!", "danger");
+                return;
+            }
+
+            if (UserManager.findAccount(email)) {
+                showToast("This email is already registered. Please log in.", "danger");
+                switchAuthTab('login');
+                document.getElementById('loginEmail').value = email;
+                return;
+            }
+
+            let userId = 'usr_' + Date.now();
+            let newAcc = {
+                id: userId,
+                name: name,
+                email: email,
+                password: password,
+                type: 'registered',
+                profile: {
+                    name: name,
+                    age: 22,
+                    city: 'jakarta',
+                    height: 170,
+                    weight: 65,
+                    vision: 'normal',
+                    completed: false
+                }
+            };
+
+            if (EcoTrackFirebase.isInitialized) {
+                const fbRes = await EcoTrackFirebase.registerUser(email, password, name);
+                if (fbRes.success) {
+                    userId = fbRes.user.id;
+                    newAcc.id = userId;
+                }
+            }
+
+            UserManager.saveAccount(newAcc);
+            UserManager.setCurrentUser(newAcc);
+
+            renderUserProfile();
+            updateProfileSpecsBar();
+            closeAuthModal();
+
+            showToast(`🎉 Account registered successfully! Please complete your physical specs.`, "success");
+            setTimeout(() => {
+                openOnboardingModal(true);
+            }, 300);
+        }
+
+        async function handleUserLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const password = document.getElementById('loginPassword').value;
+
+            let loggedInUser = null;
+            if (EcoTrackFirebase.isInitialized) {
+                const fbRes = await EcoTrackFirebase.loginUser(email, password);
+                if (fbRes.success) loggedInUser = fbRes.user;
+            }
+
+            const localAcc = UserManager.findAccount(email);
+
+            if (loggedInUser) {
+                if (localAcc) {
+                    loggedInUser.profile = {
+                        ...(localAcc.profile || {}),
+                        ...(loggedInUser.profile || {})
+                    };
+                    loggedInUser.name = loggedInUser.name || localAcc.name;
+                    loggedInUser.password = password;
+                }
+            } else {
+                if (localAcc && localAcc.password === password) {
+                    loggedInUser = localAcc;
+                }
+            }
+
+            if (!loggedInUser) {
+                showToast("Invalid email or password!", "danger");
+                return;
+            }
+
+            // Save / sync merged account locally
+            UserManager.saveAccount(loggedInUser);
+            UserManager.setCurrentUser(loggedInUser);
+
+            // Sync records from Cloud Firestore
+            if (EcoTrackFirebase.isInitialized && loggedInUser.id) {
+                try {
+                    const cloudRecs = await EcoTrackFirebase.getRecords(loggedInUser.id);
+                    if (cloudRecs && cloudRecs.length > 0) {
+                        const localRecs = RecordManager.getRecords(loggedInUser.id);
+                        const recMap = new Map();
+                        cloudRecs.forEach(r => recMap.set(r.id, r));
+                        localRecs.forEach(r => recMap.set(r.id, r));
+                        const merged = Array.from(recMap.values()).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                        localStorage.setItem(RecordManager.getKey(loggedInUser.id), JSON.stringify(merged));
+                        console.log(`🔥 [Firebase] Synced ${merged.length} records for ${loggedInUser.name}`);
+                    }
+                } catch(e){
+                    console.warn("Could not sync cloud records on login:", e);
+                }
+            }
+
+            renderUserProfile();
+            updateProfileSpecsBar();
+            renderHistorySection();
+            closeAuthModal();
+
+            showToast(`Welcome back, ${loggedInUser.name}! (Firebase Synced)`, "success");
+
+            // Hanya minta data jika akun belum pernah menyelesaikan spesifikasi (completed !== true)
+            const isCompleted = Boolean(loggedInUser.profile && loggedInUser.profile.completed === true);
+            if (!isCompleted) {
+                setTimeout(() => {
+                    openOnboardingModal(true);
+                }, 350);
+            }
+        }
+
+        function saveGuestNickname() {
+            const input = document.getElementById('inputGuestNickname');
+            const name = input && input.value.trim() ? input.value.trim() : 'Eco Explorer';
+            const user = UserManager.getCurrentUser();
+            user.name = name;
+            user.type = 'guest';
+            UserManager.setCurrentUser(user);
+            renderUserProfile();
+            updateProfileSpecsBar();
+            closeAuthModal();
+            showToast(`Switched to Guest Mode: ${name}`, "info");
+        }
+
+        function logoutToGuest() {
+            if (confirm("Log out of account and switch to Guest Mode?")) {
+                UserManager.clearActiveUser();
+                if (EcoTrackFirebase.auth) {
+                    try { EcoTrackFirebase.auth.signOut(); } catch(e){}
+                }
+                renderUserProfile();
+                updateProfileSpecsBar();
+                renderHistorySection();
+                closeAuthModal();
+                showToast("You have logged out and returned to Guest Mode.", "info");
+            }
+        }
+
+        function renderUserProfile() {
+            const user = UserManager.getCurrentUser();
+            const isReg = user.type === 'registered';
+
+            document.getElementById('userDisplayName').innerText = user.name || 'Guest';
+            const badge = document.getElementById('userRoleBadge');
+            badge.className = 'user-role-badge ' + (isReg ? 'registered' : 'guest');
+            badge.innerText = isReg ? 'Registered Account' : 'Guest Mode';
+
+            const notice = document.getElementById('historyAccountNotice');
+            if (notice) {
+                notice.innerText = isReg ? `${user.name} (${user.email})` : 'Guest Mode (Activities Not Synced Permanently)';
+            }
+        }
+
+        // ===================================================
+        // 11. HISTORY SECTION RENDERING
+        // ===================================================
+        let activeHistoryFilter = 'all';
+
+        function setHistoryFilter(filter) {
+            activeHistoryFilter = filter;
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.toggle('active', p.getAttribute('data-filter') === filter));
+            renderHistorySection();
+        }
+
+        function renderHistorySection() {
+            const user = UserManager.getCurrentUser();
+            const isGuest = user.type !== 'registered';
+            const records = RecordManager.getRecords(user.id);
+
+            const countAll = document.getElementById('countAll');
+            const countEco = document.getElementById('countEco');
+            const countMotor = document.getElementById('countMotor');
+
+            const ecoRecs = records.filter(r => r.activityType === 'eco');
+            const motorRecs = records.filter(r => r.activityType === 'motorized');
+
+            if (countAll) countAll.innerText = isGuest ? 0 : records.length;
+            if (countEco) countEco.innerText = isGuest ? 0 : ecoRecs.length;
+            if (countMotor) countMotor.innerText = isGuest ? 0 : motorRecs.length;
+
+            const container = document.getElementById('historyCardsList');
+            if (!container) return;
+
+            if (isGuest) {
+                container.innerHTML = `
+                    <div class="empty-history-state">
+                        <div class="empty-icon">👤</div>
+                        <h4 class="empty-title">Guest Mode Active</h4>
+                        <p class="empty-desc">Log in or register an account to save your travel history and sync to the Cloud.</p>
+                        <button type="button" class="btn-modal-primary" style="width: auto; margin-top: 14px; padding: 8px 20px;" onclick="openAuthModal()">🔑 Log In / Register Account</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let displayList = records;
+            if (activeHistoryFilter === 'eco') displayList = ecoRecs;
+            else if (activeHistoryFilter === 'motorized') displayList = motorRecs;
+            else if (activeHistoryFilter !== 'all') displayList = records.filter(r => r.activityId === activeHistoryFilter);
+
+            if (displayList.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-history-state">
+                        <div class="empty-icon">🌱</div>
+                        <h4 class="empty-title">No Saved History Yet</h4>
+                        <p class="empty-desc">Select a travel mode and press Start Activity to record your journey!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = displayList.map(r => {
+                const isEco = r.activityType === 'eco';
+                const weatherInfo = WEATHER_FACTORS[r.weather] || WEATHER_FACTORS.clear;
+                return `
+                    <div class="history-card ${r.activityType}-type">
+                        <div class="card-top-row">
+                            <div class="card-activity-info">
+                                <div class="card-act-icon">${r.activityIcon || '🏃‍♂️'}</div>
+                                <div class="card-title-block">
+                                    <div class="card-act-name">${r.activityName}</div>
+                                    <div class="card-date-time">${r.dateFormatted}</div>
+                                </div>
+                            </div>
+                            <span class="card-type-chip ${r.activityType}">${isEco ? '🌱 Eco-Friendly' : '⛽ Motorized'}</span>
+                        </div>
+
+                        <div class="card-metrics-grid">
+                            <div class="card-metric-col">
+                                <span class="card-metric-label">Distance</span>
+                                <span class="card-metric-val">${r.distanceKm.toFixed(2)} <span class="sub">km</span></span>
+                            </div>
+                            <div class="card-metric-col">
+                                <span class="card-metric-label">Time</span>
+                                <span class="card-metric-val">${r.durationFormatted}</span>
+                            </div>
+                            <div class="card-metric-col">
+                                <span class="card-metric-label">Speed</span>
+                                <span class="card-metric-val">${r.avgSpeedKmh.toFixed(1)} <span class="sub">km/h</span></span>
+                            </div>
+                        </div>
+
+                        <div class="card-env-strip">
+                            <span>🌦️ Weather: <strong>${weatherInfo.icon} ${weatherInfo.name}</strong></span>
+                            ${!isEco ? `<span>👥 Passengers: <strong>${r.passengers || 1}</strong></span>` : `<span>⚡ <strong>${r.calories || 0} kcal</strong></span>`}
+                        </div>
+
+                        <div class="card-carbon-badge ${isEco ? 'eco' : 'motor'}">
+                            <span>${isEco ? '🌱 Carbon Saved' : '🔥 Carbon Emitted'}</span>
+                            <span><strong>${isEco ? '-' : '+'}${r.carbonAmountKg.toFixed(3)} kg CO₂e</strong></span>
+                        </div>
+
+                        <div class="card-footer-actions">
+                            <button class="btn-card-action danger" onclick="deleteHistoryRecord('${r.id}')">🗑️ Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function deleteHistoryRecord(id) {
+            if (confirm("Delete this activity record?")) {
+                const user = UserManager.getCurrentUser();
+                RecordManager.deleteRecord(id, user.id);
+                renderHistorySection();
+                showToast("Activity record deleted successfully.", "info");
+            }
+        }
+
+        function confirmClearHistory() {
+            const user = UserManager.getCurrentUser();
+            const records = RecordManager.getRecords(user.id);
+            if (records.length === 0) {
+                showToast("No history to clear.", "info");
+                return;
+            }
+            if (confirm(`Clear all (${records.length}) activity records?`)) {
+                RecordManager.clearAll(user.id);
+                renderHistorySection();
+                showToast("All activity history has been cleared.", "danger");
+            }
+        }
+
+        function exportData(format) {
+            const user = UserManager.getCurrentUser();
+            const records = RecordManager.getRecords(user.id);
+            if (records.length === 0) {
+                showToast("No activity records available to export.", "info");
+                return;
+            }
+            if (format === 'csv') {
+                const headers = ["ID", "Date", "Activity", "Type", "Distance (km)", "Duration", "Speed (km/h)", "Weather", "Passengers", "Carbon Impact (kg CO2e)"];
+                const rows = records.map(r => [
+                    r.id, `"${r.dateFormatted}"`, `"${r.activityName}"`, r.activityType, r.distanceKm, `"${r.durationFormatted}"`, r.avgSpeedKmh, `"${r.weather}"`, r.passengers || 1, r.carbonAmountKg
+                ]);
+                const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+                const link = document.createElement("a");
+                link.href = encodeURI(csv);
+                link.download = `EcoTrack_Precision_${user.name}_${Date.now()}.csv`;
+                link.click();
+                showToast("CSV file downloaded successfully!", "success");
+            } else {
+                const json = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ user, records }, null, 2));
+                const link = document.createElement("a");
+                link.href = json;
+                link.download = `EcoTrack_Precision_Backup_${Date.now()}.json`;
+                link.click();
+                showToast("JSON backup file downloaded successfully!", "success");
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            const toast = document.createElement('div');
+            toast.className = `toast-item ${type}`;
+            toast.innerHTML = `<span>${type === 'success' ? '✅' : (type === 'danger' ? '⚠️' : 'ℹ️')}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 400);
+            }, 3500);
+        }
+
+        // ===================================================
+        // 12. INITIALIZATION ON DOM READY
+        // ===================================================
+        window.addEventListener('DOMContentLoaded', async () => {
+            EcoTrackFirebase.init();
+
+            // Restore active registered session if available
+            const active = UserManager.restoreSession();
+            if (active && active.id && EcoTrackFirebase.isInitialized) {
+                try {
+                    const cloudRecs = await EcoTrackFirebase.getRecords(active.id);
+                    if (cloudRecs && cloudRecs.length > 0) {
+                        const localRecs = RecordManager.getRecords(active.id);
+                        const recMap = new Map();
+                        cloudRecs.forEach(r => recMap.set(r.id, r));
+                        localRecs.forEach(r => recMap.set(r.id, r));
+                        const merged = Array.from(recMap.values()).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                        localStorage.setItem(RecordManager.getKey(active.id), JSON.stringify(merged));
+                    }
+                } catch(e){}
+            }
+
+            initMap();
+            renderUserProfile();
+            updateProfileSpecsBar();
+            renderHistorySection();
+        });
+    </script>
+</body>
+</html>

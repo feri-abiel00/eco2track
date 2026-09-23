@@ -1,0 +1,40 @@
+{
+  "hosting": [
+    {
+      "site": "terrastep",
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        ".firebaserc",
+        "package.json",
+        "package-lock.json",
+        "firestore.rules",
+        "storage.rules",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "cleanUrls": true
+    },
+    {
+      "site": "eco2track-new",
+      "public": ".",
+      "ignore": [
+        "firebase.json",
+        ".firebaserc",
+        "package.json",
+        "package-lock.json",
+        "firestore.rules",
+        "storage.rules",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "cleanUrls": true
+    }
+  ],
+  "storage": {
+    "rules": "storage.rules"
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

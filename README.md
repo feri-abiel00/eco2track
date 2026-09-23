@@ -84,9 +84,22 @@ To run or inspect the project locally:
 
 ---
 
+## 💻 Windows Desktop Application (.exe)
+
+TerraStep is also distributed as a native standalone Windows application:
+
+- **Direct Download**: [Download TerraStep_Setup.exe](https://github.com/feri-abiel00/eco2track/raw/main/TerraStep_Setup.exe) | [Download ZIP Package](https://terrastep.web.app/TerraStep_Windows.zip)
+- **Features**:
+  - Interactive one-click installer interface.
+  - Automatic Windows Desktop & Start Menu shortcut registration (`TerraStep.lnk`).
+  - Standalone frameless application window powered by native Web runtime with offline caching.
+
+---
+
 ## 👥 Authors & Acknowledgments
 
-This project was developed and presented by **Tim STEAM Science Expo SMA Unggul Del 2026: TERRASTEP** as an interdisciplinary STEAM initiative integrating science, technology, engineering, arts, and mathematics for sustainable climate action.
+This project was developed and presented by **STEAM Science Expo SMA Unggul Del 2026 Team: TERRASTEP** as an interdisciplinary STEAM initiative integrating science, technology, engineering, arts, and mathematics for sustainable climate action.
 
 - **Web Portal**: [terrastep.web.app](https://terrastep.web.app)
+- **Direct App Download**: [Download TerraStep_Setup.exe](https://github.com/feri-abiel00/eco2track/raw/main/TerraStep_Setup.exe)
 - **Repository**: [github.com/feri-abiel00/eco2track](https://github.com/feri-abiel00/eco2track)

@@ -1,6 +1,6 @@
 ![TerraStep - ECO₂Track Ecosystem](ECO₂Track0.png)
 
-**TerraStep** is an advanced environmental monitoring and mobility tracking ecosystem created by **Tim STEAM Science Expo SMA Unggul Del 2026: TERRASTEP**. The platform is publicly hosted and accessible at **[terrastep.web.app](https://terrastep.web.app)**. Engineered to bridge real-world physical activity with rigorous ecological quantification, TerraStep allows individuals and communities to measure their kinetic work, caloric burn, fuel expenditure, and carbon footprint with scientific precision rather than broad approximations.
+**TerraStep** is an advanced environmental monitoring and mobility tracking ecosystem created by **STEAM Science Expo SMA Unggul Del 2026 Team: TERRASTEP**. The platform is publicly hosted and accessible at **[terrastep.web.app](https://terrastep.web.app)**. Engineered to bridge real-world physical activity with rigorous ecological quantification, TerraStep allows individuals and communities to measure their kinetic work, caloric burn, fuel expenditure, and carbon footprint with scientific precision rather than broad approximations.
 
 ---
 

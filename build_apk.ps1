@@ -48,7 +48,9 @@ $assetSourceFiles = @(
     "Physics.html",
     "logo.png",
     "firebase-config.js",
-    "ECO₂Track0.png"
+    "ECO₂Track0.png",
+    "leaflet.js",
+    "leaflet.css"
 )
 
 $assetsTarget = Join-Path $androidDir "assets"

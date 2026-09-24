@@ -1,5 +1,7 @@
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+$projectRoot = (Get-Location).Path
+
 # 1. Build genuine iOS .ipa package
 $ipaTemp = "scratch_ipa"
 if (Test-Path $ipaTemp) { Remove-Item -Recurse -Force $ipaTemp }
@@ -41,7 +43,7 @@ $infoPlist = @'
 [System.IO.File]::WriteAllText((Join-Path $payloadApp "Info.plist"), $infoPlist, [System.Text.Encoding]::UTF8)
 
 # Copy the 5 core modules into iOS payload (MP3, ECO2Track, Mood, Chemistry, Physics)
-$coreWebFiles = @("mp3.html", "ECO2Track.html", "Mood.html", "Physics.html", "kalkulator_kimia.html", "firebase-config.js")
+$coreWebFiles = @("mp3.html", "ECO2Track.html", "Mood.html", "Physics.html", "kalkulator_kimia.html", "firebase-config.js", "leaflet.js", "leaflet.css")
 foreach ($f in $coreWebFiles) {
     if (Test-Path $f) { Copy-Item $f (Join-Path $payloadApp $f) }
 }

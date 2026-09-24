@@ -160,8 +160,12 @@ namespace TerraStepDesktop
                     string shortcutPath = Path.Combine(desktopPath, "TerraStep.lnk");
                     CreateShortcut(shortcutPath, exeToRun, "--launch", icoToUse, "TerraStep - ECO₂Track Virtual MP3 Ecosystem");
 
+                    // Ensure only TerraStep shortcut is on the Desktop (remove obsolete ECO2Track.lnk if present)
                     string ecoShortcut = Path.Combine(desktopPath, "ECO2Track.lnk");
-                    CreateShortcut(ecoShortcut, exeToRun, "--launch", icoToUse, "ECO₂Track - Multi-Module Virtual MP3 Ecosystem");
+                    if (File.Exists(ecoShortcut))
+                    {
+                        try { File.Delete(ecoShortcut); } catch { }
+                    }
                 }
 
                 // 2. Also create in Common/Public Desktop if accessible

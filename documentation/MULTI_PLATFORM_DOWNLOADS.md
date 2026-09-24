@@ -1,10 +1,11 @@
-# Pusat Unduhan Multi-Platform ECO₂Track
+# TerraStep & ECO₂Track Platform Download Center
 
-Berkas unduhan resmi disimpan langsung ke penyimpanan lokal perangkat pengguna (folder Downloads):
+Official installer files and platform availability status:
 
-| Platform | Format | Berkas | Deskripsi |
+| Platform | Format | File / Status | Description |
 | :--- | :--- | :--- | :--- |
-| **Windows (WinOS)** | `.exe` | `downloads/ECO2Track_Windows_Setup.exe` | Installer desktop 64-bit untuk Windows 10 & 11 |
-| **macOS** | `.dmg` | `downloads/ECO2Track_macOS.dmg` | Apple Disk Image Universal (Apple Silicon & Intel) |
-| **Android** | `.apk` | `downloads/ECO2Track_Android.apk` | Paket APK native dengan sensor gerak TerraStep |
-| **iOS** | `.ipa` | `downloads/ECO2Track_iOS.ipa` | Paket arsip IPA untuk iPhone & iPad |
+| **Windows (WinOS)** | `.exe` | `downloads/ECO2Track_Windows_Setup.exe` | 64-bit desktop setup (Creates TerraStep desktop shortcut) |
+| **macOS** | `.dmg` | **IN PROGRESS** | Universal Apple Disk Image (Apple Silicon & Intel) |
+| **Android** | `.apk` | **IN PROGRESS** | Native APK package with TerraStep sensors |
+| **iOS** | `.ipa` | **IN PROGRESS** | iOS IPA archive package for iPhone & iPad |
+

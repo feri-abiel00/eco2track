@@ -14,15 +14,15 @@ This eco-friendly innovation project was created and developed by:
 
 ---
 
-## 📱 Official Multi-Platform Downloads (Direct Installers, No ZIP)
-Four dedicated, standalone native packages saved permanently to the device's local Downloads folder:
+## 📱 Platform Installers & Development Status
+Direct setup downloads and platform availability status:
 
-| Operating System | File Format | File Path | Description |
+| Operating System | File Format | File Path / Status | Description |
 | :--- | :--- | :--- | :--- |
-| **Windows (WinOS)** | `.exe` | [`downloads/ECO2Track_Windows_Setup.exe`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_Windows_Setup.exe) | 64-bit Native Setup for Windows 10 & 11 |
-| **macOS (Apple)** | `.dmg` | [`downloads/ECO2Track_macOS.dmg`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_macOS.dmg) | Universal Apple Disk Image (M1/M2/M3 & Intel) |
-| **Android** | `.apk` | [`downloads/ECO2Track_Android.apk`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_Android.apk) | Signed Android APK with TerraStep sensors |
-| **iOS (iPhone/iPad)** | `.ipa` | [`downloads/ECO2Track_iOS.ipa`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_iOS.ipa) | Sideloadable IPA Package for AltStore / Sideloadly |
+| **Windows (WinOS)** | `.exe` | [`downloads/ECO2Track_Windows_Setup.exe`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_Windows_Setup.exe) | 64-bit Native Setup (Creates TerraStep desktop shortcut) |
+| **macOS (Apple)** | `.dmg` | **IN PROGRESS** | Universal Apple Disk Image (M1/M2/M3 & Intel) - Under Active Development |
+| **Android** | `.apk` | **IN PROGRESS** | Native APK package with TerraStep sensors - Under Active Development |
+| **iOS (iPhone/iPad)** | `.ipa` | **IN PROGRESS** | iOS Application Package - Under Active Development |
 
 ---
 

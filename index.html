@@ -545,6 +545,27 @@
         .tag-mac { background: rgba(226, 232, 240, 0.15); color: #e2e8f0; border: 1px solid rgba(226, 232, 240, 0.3); }
         .tag-apk { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
         .tag-ios { background: rgba(244, 114, 182, 0.15); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.3); }
+        .tag-progress { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(250, 204, 21, 0.45); }
+
+        .btn-progress-3d {
+            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            box-shadow: 0 5px 0 #0f172a;
+            color: #facc15;
+            border: 1px solid rgba(250, 204, 21, 0.35);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .btn-progress-3d:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #475569 0%, #334155 100%);
+            box-shadow: 0 7px 0 #0f172a;
+            color: #fef08a;
+            border-color: rgba(250, 204, 21, 0.65);
+        }
+        .btn-progress-3d:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #0f172a;
+        }
 
         .platform-icon-circle {
             width: 68px;
@@ -889,7 +910,7 @@
                     <div class="platform-filename">ECO2Track_Windows_Setup.exe</div>
                     <p class="platform-specs">
                         Desktop application for Windows 10 & 11 (64-bit).
-                        <br><strong style="color: #4ade80;">Standalone Setup • 26.6 KB</strong>
+                        <br><strong style="color: #4ade80;">Standalone Setup • TerraStep Shortcut</strong>
                     </p>
                     <a href="downloads/ECO2Track_Windows_Setup.exe" 
                        download="ECO2Track_Windows_Setup.exe" 
@@ -901,75 +922,69 @@
 
                 <!-- 2. MacOS Card -->
                 <div class="platform-card">
-                    <span class="platform-tag tag-mac">MacOS</span>
+                    <span class="platform-tag tag-progress">IN PROGRESS</span>
                     <div class="platform-icon-circle icon-mac">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="#ffffff">
                             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.61 1.34-.55.63-1.03 1.67-.9 2.68 1 .08 2.02-.49 2.59-1.17z"/>
                         </svg>
                     </div>
                     <h3 class="platform-name">MacOS</h3>
-                    <div class="platform-filename">ECO2Track_macOS.dmg</div>
+                    <div class="platform-filename" style="color: #facc15; border-color: rgba(250, 204, 21, 0.3);">IN PROGRESS</div>
                     <p class="platform-specs">
                         Apple Disk Image Universal (M1/M2/M3 & Intel Mac).
-                        <br><strong style="color: #4ade80;">Package .dmg • 167 KB</strong>
+                        <br><strong style="color: #facc15;">⏳ Development In Progress</strong>
                     </p>
-                    <a href="downloads/ECO2Track_macOS.dmg" 
-                       download="ECO2Track_macOS.dmg" 
-                       class="btn-game btn-dark-3d" 
-                       onclick="handleDeviceDownload(event, 'MacOS', 'downloads/ECO2Track_macOS.dmg', 'ECO2Track_macOS.dmg')">
-                        <span>⬇ Download MacOS</span>
-                    </a>
+                    <button type="button" class="btn-game btn-progress-3d" 
+                       onclick="showInProgressNotice('MacOS')">
+                        <span>⏳ IN PROGRESS</span>
+                    </button>
                 </div>
 
                 <!-- 3. Android Card -->
                 <div class="platform-card">
-                    <span class="platform-tag tag-apk">Android</span>
+                    <span class="platform-tag tag-progress">IN PROGRESS</span>
                     <div class="platform-icon-circle icon-apk">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="#ffffff">
                             <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4572c.156-.2703.0634-.616-.2069-.772-.2704-.156-.6161-.0634-.772.2069l-2.0227 3.5034C15.349 8.1678 13.7225 7.8 12 7.8s-3.349.3678-4.8729 1.0025L5.1044 5.2991c-.156-.2703-.5016-.3629-.772-.2069-.2703.156-.3629.5017-.2069.772l1.996 3.4572C2.7937 11.2331.5 15.195.5 19.8h23c0-4.605-2.2937-8.5669-5.6185-10.4786"/>
                         </svg>
                     </div>
                     <h3 class="platform-name">Android</h3>
-                    <div class="platform-filename">ECO2Track_Android.apk</div>
+                    <div class="platform-filename" style="color: #facc15; border-color: rgba(250, 204, 21, 0.3);">IN PROGRESS</div>
                     <p class="platform-specs">
                         Native APK package with integrated TerraStep sensors.
-                        <br><strong style="color: #4ade80;">Package .apk • 304 KB</strong>
+                        <br><strong style="color: #facc15;">⏳ Development In Progress</strong>
                     </p>
-                    <a href="downloads/ECO2Track_Android.apk" 
-                       download="ECO2Track_Android.apk" 
-                       class="btn-game btn-green-3d" 
-                       onclick="handleDeviceDownload(event, 'Android', 'downloads/ECO2Track_Android.apk', 'ECO2Track_Android.apk')">
-                        <span>⬇ Download Android</span>
-                    </a>
+                    <button type="button" class="btn-game btn-progress-3d" 
+                       onclick="showInProgressNotice('Android')">
+                        <span>⏳ IN PROGRESS</span>
+                    </button>
                 </div>
 
                 <!-- 4. iOS Card -->
                 <div class="platform-card">
-                    <span class="platform-tag tag-ios">iOS</span>
+                    <span class="platform-tag tag-progress">IN PROGRESS</span>
                     <div class="platform-icon-circle icon-ios">
                         <svg width="36" height="36" viewBox="0 0 24 24" fill="#ffffff">
                             <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.164 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.53 1.03 1.53 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
                         </svg>
                     </div>
                     <h3 class="platform-name">iOS</h3>
-                    <div class="platform-filename">ECO2Track_iOS.ipa</div>
+                    <div class="platform-filename" style="color: #facc15; border-color: rgba(250, 204, 21, 0.3);">IN PROGRESS</div>
                     <p class="platform-specs">
-                        iOS application package for iPhone and iPad.
-                        <br><strong style="color: #4ade80;">Archive .ipa • 269 KB</strong>
+                        iOS application package for iPhone and iPad devices.
+                        <br><strong style="color: #facc15;">⏳ Development In Progress</strong>
                     </p>
-                    <a href="downloads/ECO2Track_iOS.ipa" 
-                       download="ECO2Track_iOS.ipa" 
-                       class="btn-game btn-dark-3d" 
-                       onclick="handleDeviceDownload(event, 'iOS', 'downloads/ECO2Track_iOS.ipa', 'ECO2Track_iOS.ipa')">
-                        <span>⬇ Download iOS</span>
-                    </a>
+                    <button type="button" class="btn-game btn-progress-3d" 
+                       onclick="showInProgressNotice('iOS')">
+                        <span>⏳ IN PROGRESS</span>
+                    </button>
                 </div>
             </div>
 
             <div class="storage-notice-bar">
                 <span style="font-size: 26px;">💾</span>
                 <div style="font-size: 14px; color: #cbd5e1;">
-                    <strong>Permanent Device Storage:</strong> No ZIP archives required. All four files above are downloaded directly into your device's <em>Downloads</em> folder and remain permanently stored.
+                    <strong>Permanent Device Storage:</strong> Download the Windows Setup directly to your device's <em>Downloads</em> folder. MacOS, Android, and iOS native editions are currently in progress!
                 </div>
             </div>
         </section>
@@ -1172,6 +1187,18 @@
 
             toastTitle.textContent = `${platform} Package Saving!`;
             toastMessage.innerHTML = `File <strong>${filename}</strong> has been saved directly to your <strong>Downloads</strong> folder.`;
+            toast.classList.add('show');
+
+            setTimeout(closeToast, 6500);
+        }
+
+        function showInProgressNotice(platform) {
+            const toast = document.getElementById('downloadToast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastTitle.textContent = `${platform} - In Progress!`;
+            toastMessage.innerHTML = `The native <strong>${platform}</strong> package is currently under active development. You can explore the <strong>Web Platform</strong> directly or install the <strong>WinOS Setup</strong>!`;
             toast.classList.add('show');
 
             setTimeout(closeToast, 6500);

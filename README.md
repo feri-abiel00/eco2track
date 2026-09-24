@@ -50,4 +50,4 @@ The project codebase is organized into cleanly partitioned subdirectories while 
 
 ## 🚀 Deployment & Live Endpoints
 - **GitHub Repository**: [https://github.com/feri-abiel00/eco2track](https://github.com/feri-abiel00/eco2track)
-- **Firebase Web App**: [https://terrastep.web.app](https://terrastep.web.app) / [https://eco2track-new.web.app](https://eco2track-new.web.app)
+- **Firebase Web App**: [https://terrastep.web.app](https://terrastep.web.app) 

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECO₂Track Chemistry's Calc</title>
+    <title>ECO₂Track - Chemistry Reaction Calculator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <!-- Firebase SDK v10 (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -240,61 +240,61 @@
 
     <div class="container">
         <div class="top-nav">
-            <a href="mp3.html" class="btn-home">← Kembali ke Beranda</a>
-            <a href="chemistry-2.html" class="btn-home">Khusus unsur/senyawa</a>
+            <a href="mp3.html" class="btn-home">← Back to MP3 Hub</a>
+            <span class="btn-home" style="cursor: default;">Stoichiometry & Molar Mass</span>
             <div class="engine-tag">X-5/X-6 SUD 26/27</div>
         </div>
 
-        <h1>ECO₂Track Chemistry's Calc</h1>
-        <div class="subtitle">Make your problem solve</div>
+        <h1>ECO₂Track Chemistry Calculator</h1>
+        <div class="subtitle">Automated Equation Balancing & Atomic Analysis</div>
 
         <div class="input-group">
-            <input type="text" id="chemical-input" placeholder="Masukkan persamaan kimia (contoh: KMnO4 + HCl -> KCl + MnCl2 + H2O + Cl2)">
-            <button class="btn-calc" onclick="prosesKalkulasi()">Kalkulasikan</button>
+            <input type="text" id="chemical-input" placeholder="Enter chemical equation (e.g. KMnO4 + HCl -> KCl + MnCl2 + H2O + Cl2)">
+            <button class="btn-calc" onclick="prosesKalkulasi()">Balance Equation</button>
         </div>
 
-        <div class="section-title">✦ Persamaan Kimia Setara</div>
-        <div class="result-box" id="eq-result">Invalid Result</div>
+        <div class="section-title">✦ Balanced Chemical Equation</div>
+        <div class="result-box" id="eq-result">Enter an equation above to compute</div>
 
-        <div class="section-title">✦ Langkah Penyetaraan & Bukti Keseimbangan</div>
+        <div class="section-title">✦ Balancing Steps & Equilibrium Proof</div>
 
-        <h4>Tabel Verifikasi Jumlah Unsur:</h4>
+        <h4>Elemental Atom Count Verification:</h4>
         <table>
             <thead>
                 <tr>
-                    <th>Unsur</th>
-                    <th>Jumlah di Reaktan (Kiri)</th>
+                    <th>Element</th>
+                    <th>Reactants (Left)</th>
                     <th>Status</th>
-                    <th>Jumlah di Produk (Kanan)</th>
+                    <th>Products (Right)</th>
                 </tr>
             </thead>
             <tbody id="element-table-body">
-                <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">Data belum tersedia</td></tr>
+                <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">No calculation data available</td></tr>
             </tbody>
         </table>
 
-        <div class="section-title">✦ Karakteristik Ion & Subatomik Total</div>
+        <div class="section-title">✦ Subatomic & Ionic Characteristics</div>
         <table>
             <thead>
                 <tr>
-                    <th>Sisi</th>
-                    <th>Status Muatan / Ion</th>
-                    <th>Total Proton (p⁺)</th>
-                    <th>Total Neutron (n⁰)</th>
-                    <th>Total Elektron (e⁻)</th>
+                    <th>Side</th>
+                    <th>Charge State</th>
+                    <th>Total Protons (p⁺)</th>
+                    <th>Total Neutrons (n⁰)</th>
+                    <th>Total Electrons (e⁻)</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Kiri (Reaktan)</td>
-                    <td>Netral</td>
+                    <td>Left (Reactants)</td>
+                    <td>Neutral</td>
                     <td id="p-left">0</td>
                     <td id="n-left">0</td>
                     <td id="e-left">0</td>
                 </tr>
                 <tr>
-                    <td>Kanan (Produk)</td>
-                    <td>Netral</td>
+                    <td>Right (Products)</td>
+                    <td>Neutral</td>
                     <td id="p-right">0</td>
                     <td id="n-right">0</td>
                     <td id="e-right">0</td>
@@ -302,14 +302,14 @@
             </tbody>
         </table>
 
-        <div class="section-title">✦ Analisis Massa Molar Total</div>
+        <div class="section-title">✦ Total Molar Mass Analysis</div>
         <div class="mass-container">
             <div class="mass-card">
-                <h4>Massa Total Reaktan</h4>
+                <h4>Total Reactant Mass</h4>
                 <div class="mass-val" id="mass-left">0 g/mol</div>
             </div>
             <div class="mass-card">
-                <h4>Massa Total Produk</h4>
+                <h4>Total Product Mass</h4>
                 <div class="mass-val" id="mass-right">0 g/mol</div>
             </div>
         </div>
@@ -357,11 +357,11 @@
 
     function prosesKalkulasi() {
         const input = document.getElementById('chemical-input').value.trim();
-        if (!input) return alert('Silakan masukkan persamaan reaksi kimia!');
+        if (!input) return alert('Please enter a chemical reaction equation!');
 
         let pemisah = input.split('->');
         if (pemisah.length !== 2) pemisah = input.split('→');
-        if (pemisah.length !== 2) return alert('Format salah. Harap gunakan pemisah panah "->"');
+        if (pemisah.length !== 2) return alert('Invalid format. Please use the arrow separator "->"');
 
         let bagianKiri = pemisah[0].split('+').map(s => s.trim()).filter(s => s !== "");
         let bagianKanan = pemisah[1].split('+').map(s => s.trim()).filter(s => s !== "");
@@ -434,7 +434,7 @@
                 }
             }
         } catch(e) {
-            return alert('Reaksi kimia tidak dapat disetarakan secara matematis.');
+            return alert('The chemical equation cannot be balanced mathematically.');
         }
 
         let pengaliBiasa = 1;
@@ -454,7 +454,7 @@
         let koefisienFinal = koefisienMentah.map(v => Math.round(v * pengaliBiasa));
 
         if(koefisienFinal.some(k => k <= 0 || isNaN(k))) {
-            return alert('Persamaan tidak valid. Pastikan semua unsur di reaktan memiliki pasangannya di produk.');
+            return alert('Invalid equation. Please ensure all elements in reactants exist in products.');
         }
 
         let indeksKoef = 0;
@@ -497,7 +497,7 @@
             templateTabel += `<tr>
                 <td><b style="color:#60a5fa">${unsur}</b></td>
                 <td>${tKiri}</td>
-                <td><span class="status-badge">SETARA</span></td>
+                <td><span class="status-badge">BALANCED</span></td>
                 <td>${tKanan}</td>
             </tr>`;
         });

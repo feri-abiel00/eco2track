@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraStep - Ekosistem Mobilitas Cerdas & ECO₂Track</title>
-    <meta name="description" content="TerraStep adalah ekosistem mobilitas cerdas ramah lingkungan yang memuat ECO₂Track, pelacak emisi karbon, dan simulator sains multi-platform.">
+    <title>TerraStep - Smart Mobility & ECO₂Track Ecosystem</title>
+    <meta name="description" content="TerraStep is an environmental smart mobility ecosystem featuring ECO₂Track, real-time carbon emission tracking, and multi-platform calculators.">
     
     <!-- Open Graph / Meta -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://eco2track-new.web.app/">
-    <meta property="og:title" content="TerraStep - Ekosistem Mobilitas Cerdas & ECO₂Track">
-    <meta property="og:description" content="Karya Charissa Lioni Claudia Napitupulu, Feri Abiel Simamora, dan Yobel Tarias Tonggo Sinambela.">
+    <meta property="og:title" content="TerraStep - Smart Mobility & ECO₂Track Ecosystem">
+    <meta property="og:description" content="Created by Charissa Lioni Claudia Napitupulu, Feri Abiel Simamora, and Yobel Tarias Tonggo Sinambela.">
     <meta property="og:image" content="hero-mockup.jpg">
 
     <!-- Favicon -->
@@ -58,7 +58,7 @@
             width: 100%;
             min-height: 100vh;
             overflow-x: hidden;
-            overflow-y: auto !important; /* Halaman sepenuhnya bisa di-scroll */
+            overflow-y: auto !important; /* Fully scrollable document */
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-dark);
             color: var(--text-primary);
@@ -103,7 +103,7 @@
         }
 
         /* ==========================================================================
-           ANIMASI DAUN TERBANG BIASA (CUMAN DAUN TERBANG, TANPA APA-APA)
+           FLYING LEAVES ANIMATION CANVAS (NATURAL BOTANICAL LEAVES OVER SCREEN)
            ========================================================================== */
         #flyingLeavesCanvas {
             position: fixed;
@@ -112,11 +112,11 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 999999; /* Terbang di atas konten secara transparan */
+            z-index: 999999;
         }
 
         /* ==========================================================================
-           HEADER / NAVBAR (Tanpa tombol Start di pojok kanan atas)
+           HEADER / NAVBAR (No start button in top right)
            ========================================================================== */
         .navbar {
             position: fixed;
@@ -170,34 +170,6 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            font-size: 11px;
-            font-weight: 700;
-            background: rgba(34, 197, 94, 0.15);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            color: #4ade80;
-            margin-left: 8px;
-        }
-
-        .status-dot {
-            width: 7px;
-            height: 7px;
-            background: #22c55e;
-            border-radius: 50%;
-            box-shadow: 0 0 8px #22c55e;
-            animation: pulseDot 2s infinite;
-        }
-
-        @keyframes pulseDot {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(0.8); }
-        }
-
         .nav-menu {
             display: flex;
             align-items: center;
@@ -234,7 +206,7 @@
         }
 
         /* ==========================================================================
-           3D TACTILE BUTTONS (SACRED OCTAGON STYLE)
+           3D TACTILE BUTTONS
            ========================================================================== */
         .btn-game {
             display: inline-flex;
@@ -307,7 +279,7 @@
             box-shadow: 0 2px 0 var(--btn-dark-shadow), 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Mega Start Button (Di Halaman Tersebut) */
+        /* Mega Start Button Located Directly On The Page */
         .btn-mega-start {
             padding: 22px 64px;
             font-size: 26px;
@@ -374,7 +346,7 @@
         }
 
         /* ==========================================================================
-           1. HERO & PENJELASAN SINGKAT (TERRASTEP DENGAN ECO2TRACK DI DALAMNYA)
+           1. HERO & BRIEF EXPLANATION
            ========================================================================== */
         .hero-section {
             padding: 140px 0 70px 0;
@@ -416,7 +388,7 @@
             display: inline-block;
         }
 
-        /* Penjelasan Singkat */
+        /* Brief Explanation */
         .brief-box {
             background: linear-gradient(135deg, rgba(13, 25, 35, 0.85) 0%, rgba(6, 17, 24, 0.9) 100%);
             border: 1px solid rgba(74, 222, 128, 0.35);
@@ -471,7 +443,7 @@
         }
 
         /* ==========================================================================
-           2. PEMBUATNYA (CUMAN NAMA SAJA, TANPA FOTO DAN DESKRIPSI)
+           2. CREATORS (NAMES ONLY - NO PHOTOS, NO DESCRIPTIONS)
            ========================================================================== */
         .creators-section {
             padding: 70px 0;
@@ -523,7 +495,7 @@
         }
 
         /* ==========================================================================
-           3. FILE SETUPNYA (4 NATIVE OS DOWNLOADS)
+           3. SETUP FILES (4 NATIVE OS DOWNLOADS - PERMANENT STORAGE)
            ========================================================================== */
         .setup-section {
             padding: 80px 0;
@@ -636,7 +608,7 @@
         }
 
         /* ==========================================================================
-           4. CARA KERJA (HOW IT WORKS)
+           4. HOW IT WORKS
            ========================================================================== */
         .how-section {
             padding: 80px 0;
@@ -696,7 +668,7 @@
         }
 
         /* ==========================================================================
-           5. BARU START (DI HALAMAN TERSEBUT, MENUJU KE MP3)
+           5. START BUTTON (ON PAGE, PROCEEDS TO MP3 PLAYER VIA FLYING LEAVES)
            ========================================================================== */
         .start-grand-section {
             padding: 70px 0 110px 0;
@@ -809,51 +781,50 @@
     <div class="ambient-orb ambient-orb-1"></div>
     <div class="ambient-orb ambient-orb-2"></div>
 
-    <!-- Canvas Khusus Daun Terbang Biasa (Transparan di atas layar) -->
+    <!-- Transparent Flying Leaves Canvas (Just Flying Leaves, Clean & Natural) -->
     <canvas id="flyingLeavesCanvas"></canvas>
 
     <!-- ==========================================================================
-         HEADER / NAVBAR (Tanpa tombol Start di pojok kanan atas)
+         HEADER / NAVBAR (Clean, no start button in top right)
          ========================================================================== -->
     <header class="navbar" id="navbar">
         <div class="nav-container">
             <a href="index.html" class="nav-brand">
                 <img src="logo.png" alt="TerraStep Logo" class="nav-logo">
                 <span class="brand-text">TerraStep</span>
-                
             </a>
 
             <ul class="nav-menu">
-                <li><a href="#penjelasan" class="nav-link">Tentang</a></li>
-                <li><a href="#pembuat" class="nav-link">Pembuat</a></li>
-                <li><a href="#setup" class="nav-link">File Setup</a></li>
-                <li><a href="#cara-kerja" class="nav-link">Cara Kerja</a></li>
-                <li><a href="#mulai" class="nav-link" style="color: #4ade80; font-weight: 700;">Start</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#creators" class="nav-link">Creators</a></li>
+                <li><a href="#setup" class="nav-link">Setup Files</a></li>
+                <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+                <li><a href="#start" class="nav-link" style="color: #4ade80; font-weight: 700;">Start</a></li>
             </ul>
         </div>
     </header>
 
     <main>
         <!-- ==========================================================================
-             1. HERO & PENJELASAN SINGKAT (TERRASTEP DENGAN ECO2TRACK)
+             1. HERO & BRIEF EXPLANATION (TERRASTEP WITH ECO2TRACK INSIDE)
              ========================================================================== -->
-        <section class="section-wrapper hero-section" id="penjelasan">
+        <section class="section-wrapper hero-section" id="about">
             <div class="hero-pill-badge">
-                <span>🌱</span> Ekosistem Mobilitas Cerdas & Jejak Karbon
+                <span>🌱</span> Smart Mobility & Carbon Footprint Ecosystem
             </div>
 
             <h1 class="hero-title">
-                Selamat Datang di <span class="gradient-text">TerraStep</span>
+                Welcome to <span class="gradient-text">TerraStep</span>
             </h1>
 
-            <!-- Penjelasan Singkat -->
+            <!-- Brief Explanation -->
             <div class="brief-box">
-                <h3><span>🌿</span> Tentang TerraStep & ECO₂Track</h3>
+                <h3><span>🌿</span> About TerraStep & ECO₂Track</h3>
                 <p>
-                    <strong>TerraStep</strong> adalah portal ekosistem terpadu yang mewadahi berbagai inovasi mobilitas cerdas dan kelestarian lingkungan. Di dalam website TerraStep, terdapat modul inti yang bernama <strong>ECO₂Track</strong>.
+                    <strong>TerraStep</strong> is an integrated ecosystem portal dedicated to smart mobility innovations and environmental sustainability. Inside the TerraStep platform, <strong>ECO₂Track</strong> serves as the flagship core module.
                 </p>
                 <p>
-                    <strong>ECO₂Track</strong> bertugas melacak emisi mobilitas harian secara real-time, mengonversi langkah kaki dan kayuhan sepeda menjadi kompensasi emisi karbon yang terverifikasi, serta memadukan kalkulator stoikiometri kimia dan dinamika energi fisika untuk mewujudkan bumi yang lebih hijau.
+                    <strong>ECO₂Track</strong> tracks daily travel emissions in real-time, converts walking steps and cycling activity into verified carbon offset savings, and combines stoichiometric chemical combustion calculations with vehicle physics dynamics to foster a greener planet.
                 </p>
             </div>
 
@@ -864,14 +835,14 @@
         </section>
 
         <!-- ==========================================================================
-             2. PEMBUATNYA (CUMAN NAMA SAJA, TANPA FOTO DAN TANPA DESKRIPSI)
+             2. CREATORS (NAMES ONLY - NO PHOTOS, NO DESCRIPTIONS)
              ========================================================================== -->
-        <section class="section-wrapper creators-section" id="pembuat">
+        <section class="section-wrapper creators-section" id="creators">
             <div class="section-header">
-                <div class="section-badge">Pengembang Proyek</div>
-                <h2 class="section-title">Pembuat</h2>
+                <div class="section-badge">Development Team</div>
+                <h2 class="section-title">Creators</h2>
                 <p class="section-desc">
-                    Inovasi TerraStep & ECO₂Track ini diciptakan oleh:
+                    The TerraStep & ECO₂Track ecosystem was created and engineered by:
                 </p>
             </div>
 
@@ -894,14 +865,14 @@
         </section>
 
         <!-- ==========================================================================
-             3. FILE SETUPNYA (4 FILE OS DOWNLOAD LANGSUNG KE PERANGKAT, TANPA ZIP)
+             3. SETUP FILES (4 NATIVE OS DOWNLOADS - PERMANENT DEVICE STORAGE)
              ========================================================================== -->
         <section class="section-wrapper setup-section" id="setup">
             <div class="section-header">
-                <div class="section-badge">Pusat Berkas Unduhan</div>
-                <h2 class="section-title">File Setup</h2>
+                <div class="section-badge">Official Downloads</div>
+                <h2 class="section-title">Setup Files</h2>
                 <p class="section-desc">
-                    Unduh langsung empat berkas setup mandiri di bawah ini. Berkas akan langsung tersimpan di media penyimpanan (folder Downloads) perangkat Anda secara permanen.
+                    Download the official standalone installers below. Files are saved directly to your device storage (Downloads folder) permanently without ZIP archives.
                 </p>
             </div>
 
@@ -917,14 +888,14 @@
                     <h3 class="platform-name">WinOS</h3>
                     <div class="platform-filename">ECO2Track_Windows_Setup.exe</div>
                     <p class="platform-specs">
-                        Aplikasi desktop untuk Windows 10 & 11.
-                        <br><strong style="color: #4ade80;">Setup Mandiri • 26.6 KB</strong>
+                        Desktop application for Windows 10 & 11 (64-bit).
+                        <br><strong style="color: #4ade80;">Standalone Setup • 26.6 KB</strong>
                     </p>
                     <a href="downloads/ECO2Track_Windows_Setup.exe" 
                        download="ECO2Track_Windows_Setup.exe" 
                        class="btn-game btn-blue-3d" 
                        onclick="handleDeviceDownload(event, 'WinOS', 'downloads/ECO2Track_Windows_Setup.exe', 'ECO2Track_Windows_Setup.exe')">
-                        <span>⬇ Unduh WinOS</span>
+                        <span>⬇ Download WinOS</span>
                     </a>
                 </div>
 
@@ -939,14 +910,14 @@
                     <h3 class="platform-name">MacOS</h3>
                     <div class="platform-filename">ECO2Track_macOS.dmg</div>
                     <p class="platform-specs">
-                        Apple Disk Image untuk Mac (Apple Silicon & Intel).
-                        <br><strong style="color: #4ade80;">Paket .dmg • 167 KB</strong>
+                        Apple Disk Image Universal (M1/M2/M3 & Intel Mac).
+                        <br><strong style="color: #4ade80;">Package .dmg • 167 KB</strong>
                     </p>
                     <a href="downloads/ECO2Track_macOS.dmg" 
                        download="ECO2Track_macOS.dmg" 
                        class="btn-game btn-dark-3d" 
                        onclick="handleDeviceDownload(event, 'MacOS', 'downloads/ECO2Track_macOS.dmg', 'ECO2Track_macOS.dmg')">
-                        <span>⬇ Unduh MacOS</span>
+                        <span>⬇ Download MacOS</span>
                     </a>
                 </div>
 
@@ -961,14 +932,14 @@
                     <h3 class="platform-name">Android</h3>
                     <div class="platform-filename">ECO2Track_Android.apk</div>
                     <p class="platform-specs">
-                        Paket instalasi APK native smartphone Android.
-                        <br><strong style="color: #4ade80;">Paket .apk • 304 KB</strong>
+                        Native APK package with integrated TerraStep sensors.
+                        <br><strong style="color: #4ade80;">Package .apk • 304 KB</strong>
                     </p>
                     <a href="downloads/ECO2Track_Android.apk" 
                        download="ECO2Track_Android.apk" 
                        class="btn-game btn-green-3d" 
                        onclick="handleDeviceDownload(event, 'Android', 'downloads/ECO2Track_Android.apk', 'ECO2Track_Android.apk')">
-                        <span>⬇ Unduh Android</span>
+                        <span>⬇ Download Android</span>
                     </a>
                 </div>
 
@@ -983,14 +954,14 @@
                     <h3 class="platform-name">iOS</h3>
                     <div class="platform-filename">ECO2Track_iOS.ipa</div>
                     <p class="platform-specs">
-                        Paket aplikasi iOS untuk iPhone dan iPad.
-                        <br><strong style="color: #4ade80;">Berkas .ipa • 269 KB</strong>
+                        iOS application package for iPhone and iPad.
+                        <br><strong style="color: #4ade80;">Archive .ipa • 269 KB</strong>
                     </p>
                     <a href="downloads/ECO2Track_iOS.ipa" 
                        download="ECO2Track_iOS.ipa" 
                        class="btn-game btn-dark-3d" 
                        onclick="handleDeviceDownload(event, 'iOS', 'downloads/ECO2Track_iOS.ipa', 'ECO2Track_iOS.ipa')">
-                        <span>⬇ Unduh iOS</span>
+                        <span>⬇ Download iOS</span>
                     </a>
                 </div>
             </div>
@@ -998,62 +969,61 @@
             <div class="storage-notice-bar">
                 <span style="font-size: 26px;">💾</span>
                 <div style="font-size: 14px; color: #cbd5e1;">
-                    <strong>Penyimpanan Permanen di Perangkat:</strong> Tidak menggunakan arsip ZIP. Keempat berkas di atas disimpan secara langsung ke folder <em>Downloads / Unduhan</em> di perangkat Anda.
+                    <strong>Permanent Device Storage:</strong> No ZIP archives required. All four files above are downloaded directly into your device's <em>Downloads</em> folder and remain permanently stored.
                 </div>
             </div>
         </section>
 
         <!-- ==========================================================================
-             4. CARA KERJA (HOW IT WORKS)
-             ========================================================================== -->
-        <section class="section-wrapper how-section" id="cara-kerja">
+           4. HOW IT WORKS
+           ========================================================================== -->
+        <section class="section-wrapper how-section" id="how-it-works">
             <div class="section-header">
-                <div class="section-badge">Panduan Operasional</div>
-                <h2 class="section-title">Cara Kerja</h2>
+                <div class="section-badge">Operational Flow</div>
+                <h2 class="section-title">How It Works</h2>
                 <p class="section-desc">
-                    Empat tahapan mudah dalam ekosistem TerraStep & ECO₂Track:
+                    Four straightforward steps within the TerraStep & ECO₂Track ecosystem:
                 </p>
             </div>
 
             <div class="how-steps-grid">
                 <div class="step-box">
                     <div class="step-badge-num">1</div>
-                    <h3 class="step-title">Pilih Moda</h3>
-                    <p class="step-desc">Tentukan aktivitas Anda: berjalan kaki, bersepeda, motor, mobil, bus, atau kereta.</p>
+                    <h3 class="step-title">Select Mode</h3>
+                    <p class="step-desc">Choose your activity: walking, cycling, motorbike, car, bus, or commuter train.</p>
                 </div>
 
                 <div class="step-box">
                     <div class="step-badge-num">2</div>
-                    <h3 class="step-title">Lacak Mobilitas</h3>
-                    <p class="step-desc">Sensor TerraStep dan GPS mencatat jarak perjalanan serta ritme langkah secara otomatis.</p>
+                    <h3 class="step-title">Live Tracking</h3>
+                    <p class="step-desc">TerraStep pedometer sensors and live GPS track distance and pace automatically.</p>
                 </div>
 
                 <div class="step-box">
                     <div class="step-badge-num">3</div>
-                    <h3 class="step-title">Hitung Emisi</h3>
-                    <p class="step-desc">Algoritma menghitung gram emisi CO₂ atau jumlah jejak karbon yang berhasil dihemat.</p>
+                    <h3 class="step-title">Calculate Emission</h3>
+                    <p class="step-desc">Scientific algorithms compute exact gram CO₂ emissions or total carbon footprint saved.</p>
                 </div>
 
                 <div class="step-box">
                     <div class="step-badge-num">4</div>
-                    <h3 class="step-title">Raih Poin Hijau</h3>
-                    <p class="step-desc">Kumpulkan skor TerraStep, buka lencana kebanggaan, dan sinkronkan riwayat Anda.</p>
+                    <h3 class="step-title">Earn Eco-Points</h3>
+                    <p class="step-desc">Collect TerraStep rewards, level up achievement badges, and sync your green records.</p>
                 </div>
             </div>
         </section>
 
         <!-- ==========================================================================
-             5. BARU START (TOMBOL START DI HALAMAN MENUJU KE MP3 DENGAN DAUN TERBANG)
-             ========================================================================== -->
-        <section class="section-wrapper start-grand-section" id="mulai">
+           5. START BUTTON (ON PAGE, PROCEEDS TO MP3 PLAYER VIA FLYING LEAVES)
+           ========================================================================== -->
+        <section class="section-wrapper start-grand-section" id="start">
             <div class="start-grand-box">
-                <div class="section-badge" style="margin-bottom: 18px;">🚀 Peluncuran Portal</div>
-                <h2 class="start-grand-title">Mulai Petualangan Anda</h2>
+                <div class="section-badge" style="margin-bottom: 18px;">🚀 Portal Launch</div>
+                <h2 class="start-grand-title">Start Your Journey</h2>
                 <p class="start-grand-desc">
-                    Tekan tombol start di bawah ini untuk membuka portal perangkat interaktif TerraStep dan menjelajahi seluruh aplikasi di dalamnya.
+                    Click the start button below to launch the interactive TerraStep virtual portal and explore all integrated applications.
                 </p>
 
-                <!-- Tombol START di halaman ini: menuju ke mp3.html dengan animasi daun terbang biasa -->
                 <div>
                     <button class="btn-game btn-green-3d btn-mega-start" id="btnStartAction" onclick="launchWithFlyingLeaves('mp3.html')">
                         <span>▶ START</span>
@@ -1078,23 +1048,22 @@
     <div class="download-toast" id="downloadToast">
         <div class="toast-icon">💾</div>
         <div class="toast-content">
-            <h5 id="toastTitle">Berkas Sedang Disimpan!</h5>
-            <p id="toastMessage">Berkas telah tersimpan permanen di folder Downloads perangkat Anda.</p>
+            <h5 id="toastTitle">File Download Started!</h5>
+            <p id="toastMessage">The file has been permanently saved to your device's Downloads folder.</p>
         </div>
         <button class="toast-close" onclick="closeToast()">×</button>
     </div>
 
     <!-- ==========================================================================
-         SCRIPTS: ANIMASI DAUN TERBANG BIASA & DOWNLOAD
+         SCRIPTS: FLYING LEAVES ANIMATION & DOWNLOAD
          ========================================================================== -->
     <script>
         // ==========================================
-        // 1. CANVAS DAUN TERBANG BIASA (CUMAN DAUN TERBANG, TANPA APA-APA)
+        // 1. PURE FLYING LEAVES ANIMATION (NATURAL GUST ON START)
         // ==========================================
         const leafCanvas = document.getElementById('flyingLeavesCanvas');
         const leafCtx = leafCanvas.getContext('2d');
         let flyingLeaves = [];
-        let isAnimatingLeaves = false;
 
         function resizeCanvas() {
             leafCanvas.width = window.innerWidth;
@@ -1103,7 +1072,6 @@
         window.addEventListener('resize', resizeCanvas);
         resizeCanvas();
 
-        // Menggambar bentuk daun botanical hijau
         function drawSingleLeaf(ctx, x, y, size, angle, color) {
             ctx.save();
             ctx.translate(x, y);
@@ -1115,7 +1083,6 @@
             ctx.bezierCurveTo(-size * 0.75, size * 0.5, -size * 0.75, -size * 0.5, 0, -size);
             ctx.fill();
             
-            // Batang tulang daun halus
             ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
             ctx.lineWidth = size * 0.08;
             ctx.beginPath();
@@ -1125,18 +1092,23 @@
             ctx.restore();
         }
 
-        // Pemicu animasi daun terbang biasa ketika tombol START ditekan
         function launchWithFlyingLeaves(targetUrl) {
+            // Open new tab directly on click to ensure seamless browser compliance
+            try {
+                window.open(targetUrl, '_blank');
+            } catch (err) {
+                console.warn("Popup notice:", err);
+            }
+
             const colors = ['#22c55e', '#4ade80', '#10b981', '#15803d', '#34d399', '#86efac'];
             flyingLeaves = [];
 
-            // Spawn 45 helai daun yang berhamburan terbang melintasi layar
             for (let i = 0; i < 48; i++) {
                 flyingLeaves.push({
                     x: Math.random() * window.innerWidth * 0.8,
                     y: window.innerHeight + Math.random() * 80,
-                    vx: 4 + Math.random() * 9, // Melayang ditiup angin ke kanan
-                    vy: -(7 + Math.random() * 11), // Terbang ke atas
+                    vx: 4 + Math.random() * 9,
+                    vy: -(7 + Math.random() * 11),
                     size: 14 + Math.random() * 22,
                     angle: Math.random() * Math.PI * 2,
                     vAngle: (Math.random() - 0.5) * 0.12,
@@ -1146,7 +1118,6 @@
             }
 
             const startTime = performance.now();
-            isAnimatingLeaves = true;
 
             function animateLeaves(now) {
                 const elapsed = now - startTime;
@@ -1157,9 +1128,8 @@
                     leaf.y += leaf.vy;
                     leaf.angle += leaf.vAngle;
 
-                    // Efek hamburan angin sedikit bergoyang
                     leaf.vx += (Math.random() - 0.5) * 0.3;
-                    leaf.vy += 0.08; // Gravitasi alami
+                    leaf.vy += 0.08;
 
                     if (elapsed > 350) {
                         leaf.alpha = Math.max(0, leaf.alpha - 0.02);
@@ -1169,11 +1139,10 @@
                     drawSingleLeaf(leafCtx, leaf.x, leaf.y, leaf.size, leaf.angle, leaf.color);
                 });
 
-                if (elapsed < 600) {
+                if (elapsed < 700) {
                     requestAnimationFrame(animateLeaves);
                 } else {
                     leafCtx.clearRect(0, 0, leafCanvas.width, leafCanvas.height);
-                    window.location.href = targetUrl; // Menuju ke mp3.html
                 }
             }
 
@@ -1181,7 +1150,7 @@
         }
 
         // ==========================================
-        // 2. PENGUNDUHAN BERKAS SETUP KE PERANGKAT
+        // 2. FILE DOWNLOAD HANDLER
         // ==========================================
         function handleDeviceDownload(event, platform, fileUrl, filename) {
             const link = document.createElement('a');
@@ -1196,8 +1165,8 @@
             const toastTitle = document.getElementById('toastTitle');
             const toastMessage = document.getElementById('toastMessage');
 
-            toastTitle.textContent = `Berkas ${platform} Sedang Disimpan!`;
-            toastMessage.innerHTML = `Berkas <strong>${filename}</strong> telah tersimpan di folder <strong>Downloads</strong> perangkat Anda secara permanen.`;
+            toastTitle.textContent = `${platform} Package Saving!`;
+            toastMessage.innerHTML = `File <strong>${filename}</strong> has been saved directly to your <strong>Downloads</strong> folder.`;
             toast.classList.add('show');
 
             setTimeout(closeToast, 6500);

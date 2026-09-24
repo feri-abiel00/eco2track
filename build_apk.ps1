@@ -37,10 +37,10 @@ New-Item -ItemType Directory -Path $binDir -Force | Out-Null
 New-Item -ItemType Directory -Path $objDir -Force | Out-Null
 New-Item -ItemType Directory -Path $downloadsDir -Force | Out-Null
 
-# 0. Sync fresh web assets to Android assets folder
-Write-Host "`n[1/8] Synchronizing web application assets..." -ForegroundColor Yellow
+# 0. Sync fresh web assets to Android assets folder (Only MP3, ECO2Track, Mood, Chemistry, and Physics - No front page)
+Write-Host "`n[1/8] Synchronizing web application assets (5 core modules only)..." -ForegroundColor Yellow
 $assetSourceFiles = @(
-    "index.html",
+    "mp3.html",
     "ECO2Track.html",
     "kalkulator_kimia (4).html",
     "kalkulator_kimia.html",
@@ -52,9 +52,10 @@ $assetSourceFiles = @(
 )
 
 $assetsTarget = Join-Path $androidDir "assets"
-if (-not (Test-Path $assetsTarget)) {
-    New-Item -ItemType Directory -Path $assetsTarget -Force | Out-Null
+if (Test-Path $assetsTarget) {
+    Remove-Item -Recurse -Force $assetsTarget
 }
+New-Item -ItemType Directory -Path $assetsTarget -Force | Out-Null
 
 foreach ($item in $assetSourceFiles) {
     $srcPath = Join-Path $projectRoot $item
@@ -62,7 +63,7 @@ foreach ($item in $assetSourceFiles) {
         Copy-Item -Path $srcPath -Destination $assetsTarget -Force
     }
 }
-Write-Host "Assets synced successfully." -ForegroundColor Green
+Write-Host "Assets synced successfully (front page index.html excluded)." -ForegroundColor Green
 
 # 1. Compile Android resources
 Write-Host "`n[2/8] Compiling resources with aapt2..." -ForegroundColor Yellow

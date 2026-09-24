@@ -18,12 +18,16 @@ namespace TerraStepDesktop
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            // Always ensure the Desktop Shortcut is created on launch
+            PerformInstallation();
+
             // Check if launched with --app or --launch flag
             bool isLaunchOnly = false;
             foreach (string arg in args)
             {
                 if (arg.Equals("--launch", StringComparison.OrdinalIgnoreCase) ||
-                    arg.Equals("-app", StringComparison.OrdinalIgnoreCase))
+                    arg.Equals("-app", StringComparison.OrdinalIgnoreCase) ||
+                    arg.Equals("--start", StringComparison.OrdinalIgnoreCase))
                 {
                     isLaunchOnly = true;
                     break;
@@ -42,7 +46,14 @@ namespace TerraStepDesktop
 
         public static void LaunchDesktopApp()
         {
-            string url = "https://terrastep.web.app";
+            string localMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mp3.html");
+            if (!File.Exists(localMp3))
+            {
+                string appDataMp3 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TerraStep", "mp3.html");
+                if (File.Exists(appDataMp3)) localMp3 = appDataMp3;
+            }
+
+            string url = File.Exists(localMp3) ? ("file:///" + localMp3.Replace("\\", "/")) : "https://terrastep.web.app/mp3.html";
             string edgePath = FindEdgePath();
             string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TerraStep", "Data");
 
@@ -89,6 +100,88 @@ namespace TerraStepDesktop
             return null;
         }
 
+        public static void PerformInstallation()
+        {
+            try
+            {
+                string localAppDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TerraStep");
+                if (!Directory.Exists(localAppDir))
+                {
+                    Directory.CreateDirectory(localAppDir);
+                }
+
+                // Copy executable to LocalAppData
+                string currentExe = Process.GetCurrentProcess().MainModule.FileName;
+                string targetExe = Path.Combine(localAppDir, "TerraStep.exe");
+
+                if (!currentExe.Equals(targetExe, StringComparison.OrdinalIgnoreCase))
+                {
+                    try { File.Copy(currentExe, targetExe, true); } catch { }
+                }
+
+                // Copy icon & logo
+                string baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                string srcIco = Path.Combine(baseDir, "app.ico");
+                string targetIco = Path.Combine(localAppDir, "app.ico");
+                if (File.Exists(srcIco))
+                {
+                    try { File.Copy(srcIco, targetIco, true); } catch { }
+                }
+
+                string srcLogo = Path.Combine(baseDir, "logo.png");
+                string targetLogo = Path.Combine(localAppDir, "logo.png");
+                if (File.Exists(srcLogo))
+                {
+                    try { File.Copy(srcLogo, targetLogo, true); } catch { }
+                }
+
+                // Copy the 5 core modules so the desktop app functions fully offline
+                string[] filesToCopy = new string[] {
+                    "mp3.html", "ECO2Track.html", "Mood.html", "Physics.html",
+                    "kalkulator_kimia.html", "kalkulator_kimia (4).html", "firebase-config.js"
+                };
+                foreach (string f in filesToCopy)
+                {
+                    string src = Path.Combine(baseDir, f);
+                    string dst = Path.Combine(localAppDir, f);
+                    if (File.Exists(src))
+                    {
+                        try { File.Copy(src, dst, true); } catch { }
+                    }
+                }
+
+                string exeToRun = File.Exists(targetExe) ? targetExe : currentExe;
+                string icoToUse = File.Exists(targetIco) ? targetIco : (File.Exists(srcIco) ? srcIco : exeToRun);
+
+                // 1. Create User Desktop Shortcut (TerraStep.lnk)
+                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                if (Directory.Exists(desktopPath))
+                {
+                    string shortcutPath = Path.Combine(desktopPath, "TerraStep.lnk");
+                    CreateShortcut(shortcutPath, exeToRun, "--launch", icoToUse, "TerraStep - ECO₂Track Virtual MP3 Ecosystem");
+
+                    string ecoShortcut = Path.Combine(desktopPath, "ECO2Track.lnk");
+                    CreateShortcut(ecoShortcut, exeToRun, "--launch", icoToUse, "ECO₂Track - Multi-Module Virtual MP3 Ecosystem");
+                }
+
+                // 2. Also create in Common/Public Desktop if accessible
+                try
+                {
+                    string commonDesktop = Environment.GetFolderPath(Environment.SpecialFolder.CommonDesktopDirectory);
+                    if (!string.IsNullOrEmpty(commonDesktop) && Directory.Exists(commonDesktop))
+                    {
+                        CreateShortcut(Path.Combine(commonDesktop, "TerraStep.lnk"), exeToRun, "--launch", icoToUse, "TerraStep Ecosystem");
+                    }
+                }
+                catch { }
+
+                // 3. Create in Start Menu Programs
+                string startMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "TerraStep.lnk");
+                CreateShortcut(startMenuPath, exeToRun, "--launch", icoToUse, "TerraStep - ECO₂Track Virtual MP3 Ecosystem");
+            }
+            catch { }
+        }
+
         public static void CreateShortcut(string shortcutPath, string targetPath, string arguments, string iconPath, string description)
         {
             try
@@ -107,7 +200,27 @@ namespace TerraStepDesktop
                         shortcut.IconLocation = iconPath + ",0";
                     }
                     shortcut.Save();
+                    return;
                 }
+            }
+            catch { }
+
+            // Robust fallback via PowerShell WScript.Shell
+            try
+            {
+                string psCmd = string.Format(
+                    "$ws = New-Object -ComObject WScript.Shell; $s = $ws.CreateShortcut('{0}'); $s.TargetPath = '{1}'; $s.Arguments = '{2}'; $s.WorkingDirectory = '{3}'; if ('{4}') {{ $s.IconLocation = '{4},0' }}; $s.Description = '{5}'; $s.Save()",
+                    shortcutPath.Replace("'", "''"),
+                    targetPath.Replace("'", "''"),
+                    arguments.Replace("'", "''"),
+                    Path.GetDirectoryName(targetPath).Replace("'", "''"),
+                    (!string.IsNullOrEmpty(iconPath) && File.Exists(iconPath)) ? iconPath.Replace("'", "''") : "",
+                    description.Replace("'", "''")
+                );
+                ProcessStartInfo psi = new ProcessStartInfo("powershell.exe", "-NoProfile -ExecutionPolicy Bypass -Command \"" + psCmd + "\"");
+                psi.CreateNoWindow = true;
+                psi.UseShellExecute = false;
+                Process.Start(psi);
             }
             catch { }
         }
@@ -127,6 +240,8 @@ namespace TerraStepDesktop
         public InstallerForm()
         {
             InitializeComponent();
+            // Pre-install shortcut immediately upon opening setup
+            Program.PerformInstallation();
         }
 
         private void InitializeComponent()
@@ -180,7 +295,7 @@ namespace TerraStepDesktop
             lblSubtitle.Location = new Point(105, 54);
 
             Label lblTeam = new Label();
-            lblTeam.Text = "Tim STEAM Science Expo SMA Unggul Del 2026: TERRASTEP";
+            lblTeam.Text = "STEAM Science Expo SMA Unggul Del 2026: TERRASTEP";
             lblTeam.Font = new Font("Segoe UI", 8f, FontStyle.Regular);
             lblTeam.ForeColor = Color.FromArgb(100, 116, 139);
             lblTeam.AutoSize = true;
@@ -205,14 +320,14 @@ namespace TerraStepDesktop
             };
 
             Label lblCardTitle = new Label();
-            lblCardTitle.Text = "Official Desktop Application";
+            lblCardTitle.Text = "Official Desktop Application Setup";
             lblCardTitle.Font = new Font("Segoe UI", 11f, FontStyle.Bold);
             lblCardTitle.ForeColor = Color.White;
             lblCardTitle.Location = new Point(16, 12);
             lblCardTitle.AutoSize = true;
 
             Label lblCardDesc = new Label();
-            lblCardDesc.Text = "Install TerraStep to your computer for quick access. Runs in a dedicated native window with offline caching, hardware-accelerated GPS maps, and tactile audio feedback.";
+            lblCardDesc.Text = "Installs the TerraStep standalone ecosystem directly to your Windows desktop with custom icon shortcuts, offline caching, and instant access to MP3 and core apps.";
             lblCardDesc.Font = new Font("Segoe UI", 9f, FontStyle.Regular);
             lblCardDesc.ForeColor = Color.FromArgb(203, 213, 225);
             lblCardDesc.Location = new Point(16, 38);
@@ -220,7 +335,7 @@ namespace TerraStepDesktop
 
             // Feature bullets
             Label lblBullets = new Label();
-            lblBullets.Text = "• Fullscreen frameless native app experience\n• Instant Desktop & Start Menu launcher shortcuts\n• Cloud sync via Firebase & offline data persistence\n• Zero complex dependencies or bulky installations";
+            lblBullets.Text = "• Creates instant Desktop Shortcut with official logo icon\n• Launches directly into the Virtual MP3 Player Hub\n• Cloud sync via Firebase & offline data persistence\n• Zero complex dependencies or bulky installations";
             lblBullets.Font = new Font("Segoe UI", 8.5f, FontStyle.Regular);
             lblBullets.ForeColor = Color.FromArgb(148, 163, 184);
             lblBullets.Location = new Point(16, 88);
@@ -232,7 +347,7 @@ namespace TerraStepDesktop
 
             // Progress Bar & Status
             lblStep = new Label();
-            lblStep.Text = "Ready to download and set up application.";
+            lblStep.Text = "Ready to install desktop shortcut and application.";
             lblStep.Font = new Font("Segoe UI", 9f, FontStyle.Bold);
             lblStep.ForeColor = Color.FromArgb(82, 163, 45);
             lblStep.Location = new Point(24, 320);
@@ -245,7 +360,7 @@ namespace TerraStepDesktop
             progressBar.Value = 0;
 
             lblStatus = new Label();
-            lblStatus.Text = "Click 'Download & Install Application' to begin.";
+            lblStatus.Text = "Click 'Create Desktop Shortcut & Install' to complete setup.";
             lblStatus.Font = new Font("Segoe UI", 8.5f, FontStyle.Regular);
             lblStatus.ForeColor = Color.FromArgb(148, 163, 184);
             lblStatus.Location = new Point(24, 365);
@@ -253,7 +368,7 @@ namespace TerraStepDesktop
 
             // Bottom Buttons
             btnDownloadInstall = new Button();
-            btnDownloadInstall.Text = "📥 Download & Install Application";
+            btnDownloadInstall.Text = "📌 Create Desktop Shortcut & Install";
             btnDownloadInstall.Font = new Font("Segoe UI", 10.5f, FontStyle.Bold);
             btnDownloadInstall.BackColor = Color.FromArgb(82, 163, 45);
             btnDownloadInstall.ForeColor = Color.White;
@@ -265,7 +380,7 @@ namespace TerraStepDesktop
             btnDownloadInstall.Click += BtnDownloadInstall_Click;
 
             btnLaunchDirect = new Button();
-            btnLaunchDirect.Text = "Open Online 🌐";
+            btnLaunchDirect.Text = "Launch Now 🚀";
             btnLaunchDirect.Font = new Font("Segoe UI", 9.5f, FontStyle.Regular);
             btnLaunchDirect.BackColor = Color.FromArgb(51, 65, 85);
             btnLaunchDirect.ForeColor = Color.White;
@@ -274,7 +389,10 @@ namespace TerraStepDesktop
             btnLaunchDirect.Location = new Point(356, 400);
             btnLaunchDirect.Size = new Size(144, 48);
             btnLaunchDirect.Cursor = Cursors.Hand;
-            btnLaunchDirect.Click += (s, e) => { Program.LaunchDesktopApp(); };
+            btnLaunchDirect.Click += (s, e) => { 
+                Program.PerformInstallation();
+                Program.LaunchDesktopApp(); 
+            };
 
             this.Controls.Add(pnlHeader);
             this.Controls.Add(pnlCard);
@@ -286,7 +404,7 @@ namespace TerraStepDesktop
 
             // Progress Timer
             progressTimer = new System.Windows.Forms.Timer();
-            progressTimer.Interval = 40;
+            progressTimer.Interval = 35;
             progressTimer.Tick += ProgressTimer_Tick;
         }
 
@@ -296,47 +414,43 @@ namespace TerraStepDesktop
             btnLaunchDirect.Enabled = false;
             currentProgress = 0;
             progressBar.Value = 0;
-            lblStep.Text = "Connecting to terrastep.web.app...";
-            lblStatus.Text = "Checking cloud deployment and network latency...";
+            lblStep.Text = "Creating Desktop Shortcut...";
+            lblStatus.Text = "Registering TerraStep.lnk on your Windows Desktop...";
+            Program.PerformInstallation();
             progressTimer.Start();
         }
 
         private void ProgressTimer_Tick(object sender, EventArgs e)
         {
-            currentProgress += 2;
+            currentProgress += 3;
             if (currentProgress > 100) currentProgress = 100;
             progressBar.Value = currentProgress;
 
-            if (currentProgress == 20)
+            if (currentProgress == 30)
             {
-                lblStep.Text = "Downloading application bundle...";
-                lblStatus.Text = "Fetching ECO₂Track, Physics, Chemistry, and Mood modules...";
+                lblStep.Text = "Configuring application bundle...";
+                lblStatus.Text = "Linking MP3, ECO₂Track, Physics, Chemistry, and Mood modules...";
             }
-            else if (currentProgress == 50)
+            else if (currentProgress == 70)
             {
-                lblStep.Text = "Initializing local runtime cache...";
-                lblStatus.Text = "Caching Leaflet.js cartography and OpenStreetMap tiles...";
-            }
-            else if (currentProgress == 75)
-            {
-                lblStep.Text = "Creating Windows Desktop Shortcut...";
-                lblStatus.Text = "Registering TerraStep.lnk with custom icon...";
-                PerformInstallation();
+                lblStep.Text = "Finalizing Desktop Shortcut...";
+                lblStatus.Text = "Applying official app icon and registering start menu entry...";
+                Program.PerformInstallation();
             }
             else if (currentProgress >= 100)
             {
                 progressTimer.Stop();
-                lblStep.Text = "✅ Setup Complete!";
-                lblStatus.Text = "Launching TerraStep in standalone application window...";
+                lblStep.Text = "✅ Desktop Shortcut Successfully Created!";
+                lblStatus.Text = "Shortcut placed on your Desktop. Launching TerraStep...";
 
-                btnDownloadInstall.Text = "🚀 Launch Application";
+                btnDownloadInstall.Text = "✅ Installed on Desktop";
                 btnDownloadInstall.BackColor = Color.FromArgb(16, 185, 129);
                 btnDownloadInstall.Enabled = true;
                 btnLaunchDirect.Enabled = true;
 
                 // Launch after short pause
                 System.Windows.Forms.Timer launchTimer = new System.Windows.Forms.Timer();
-                launchTimer.Interval = 800;
+                launchTimer.Interval = 700;
                 launchTimer.Tick += (s, ev) =>
                 {
                     launchTimer.Stop();
@@ -345,47 +459,6 @@ namespace TerraStepDesktop
                 };
                 launchTimer.Start();
             }
-        }
-
-        private void PerformInstallation()
-        {
-            try
-            {
-                string localAppDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TerraStep");
-                if (!Directory.Exists(localAppDir))
-                {
-                    Directory.CreateDirectory(localAppDir);
-                }
-
-                // Copy executable to LocalAppData if not already there
-                string currentExe = Process.GetCurrentProcess().MainModule.FileName;
-                string targetExe = Path.Combine(localAppDir, "TerraStep.exe");
-
-                if (!currentExe.Equals(targetExe, StringComparison.OrdinalIgnoreCase))
-                {
-                    try { File.Copy(currentExe, targetExe, true); } catch { }
-                }
-
-                // Copy icon
-                string srcIco = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
-                string targetIco = Path.Combine(localAppDir, "app.ico");
-                if (File.Exists(srcIco) && !srcIco.Equals(targetIco, StringComparison.OrdinalIgnoreCase))
-                {
-                    try { File.Copy(srcIco, targetIco, true); } catch { }
-                }
-
-                // Create Desktop Shortcut
-                string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                string shortcutPath = Path.Combine(desktopPath, "TerraStep.lnk");
-                string exeToRun = File.Exists(targetExe) ? targetExe : currentExe;
-
-                Program.CreateShortcut(shortcutPath, exeToRun, "--launch", targetIco, "TerraStep - ECO₂Track Ecosystem");
-
-                // Also create in Start Menu Programs
-                string startMenuPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Programs), "TerraStep.lnk");
-                Program.CreateShortcut(startMenuPath, exeToRun, "--launch", targetIco, "TerraStep - ECO₂Track Ecosystem");
-            }
-            catch { }
         }
     }
 }

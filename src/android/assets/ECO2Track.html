@@ -1671,6 +1671,24 @@
 </head>
 <body>
 
+    
+    <!-- Leaf Transition Overlay -->
+    <div id="leafTransitionOverlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 999999; overflow: hidden; display: flex; align-items: center; justify-content: center; transition: opacity 0.4s ease;">
+        <div id="leafBackdrop" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(13, 31, 24, 0.96) 0%, rgba(5, 13, 9, 0.98) 100%); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); opacity: 0; transition: opacity 0.4s ease;"></div>
+        <div id="leafCenterContent" style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 14px; opacity: 0; transform: scale(0.9); transition: all 0.35s ease;">
+            <img src="logo.png" alt="Leaf" style="width: 70px; height: 70px; animation: spinLeaf 2s infinite linear; filter: drop-shadow(0 0 20px rgba(34,197,94,0.7));">
+            <div id="transitionLabel" style="font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 700; color: #4ade80;">Memuat...</div>
+        </div>
+        <canvas id="leafTransitionCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></canvas>
+    </div>
+    <style>
+        @keyframes spinLeaf {
+            0% { transform: rotate(0deg) scale(0.95); }
+            50% { transform: rotate(180deg) scale(1.08); }
+            100% { transform: rotate(360deg) scale(0.95); }
+        }
+    </style>
+
     <div class="container">
         <!-- Top Header -->
         <header class="header">
@@ -1697,14 +1715,9 @@
                     <div class="user-chevron">▼</div>
                 </div>
 
-                <a href="https://github.com/feri-abiel00/eco2track/raw/main/TerraStep_Setup.exe" class="nav-back nav-download" title="Download Windows Desktop App (.exe)" onclick="showToast('Downloading TerraStep_Setup.exe...', 'success')">
-                    <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    Download App (.exe)
-                </a>
-
-                <a href="index.html" class="nav-back">
+                <a href="mp3.html" class="nav-back" onclick="navigateWithLeaf(event, 'mp3.html')" title="Back to MP3 Hub">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                    Home
+                    🏠 MP3 Hub
                 </a>
             </div>
         </header>
@@ -2110,7 +2123,7 @@
             <p class="modal-subtitle" style="text-align: center;" id="modalSubtitle">Detailed precision activity summary and carbon footprint.</p>
 
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 12px; margin-bottom: 16px; font-size: 0.8rem; color: #166534;" id="modalSavePill">
-                ✅ Catatan otomatis tersimpan ke akun <strong>Tamu</strong>
+                ✅ Activity record automatically synced to account <strong>Guest</strong>
             </div>
 
             <div class="form-group">
@@ -2672,8 +2685,8 @@
 
         let totalDistance = 0;
         let positions = [];
-        let startAddress = 'Belum dimulai';
-        let currentAddress = 'Menunggu pergerakan...';
+        let startAddress = 'Not started';
+        let currentAddress = 'Awaiting movement...';
 
         let isSimulating = false;
         let simInterval = null;
@@ -3025,19 +3038,44 @@
                 lineJoin: 'round'
             }).addTo(map);
 
+            // Robust Geolocation Initializer with Fallback
             if ("geolocation" in navigator) {
+                const onInitialPos = (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    const acc = Math.round(pos.coords.accuracy || 10);
+                    map.setView([lat, lng], 16);
+
+                    const dot = document.getElementById('gpsDot');
+                    if (dot) dot.style.background = "#22c55e";
+                    const statusText = document.getElementById('gpsStatusText');
+                    if (statusText) statusText.innerText = `GPS Terhubung: Sinyal Siap! (±${acc}m)`;
+                    const coordText = document.getElementById('gpsCoordText');
+                    if (coordText) coordText.innerText = `Lat: ${lat.toFixed(4)}, Lon: ${lng.toFixed(4)}`;
+
+                    // Live marker indicator before activity start
+                    if (!currentMarker && map) {
+                        const pulseIcon = L.divIcon({ className: 'gps-pulse-marker', iconSize: [18, 18], iconAnchor: [9, 9] });
+                        currentMarker = L.marker([lat, lng], { icon: pulseIcon }).addTo(map);
+                    }
+                };
+
                 navigator.geolocation.getCurrentPosition(
-                    (pos) => {
-                        const lat = pos.coords.latitude;
-                        const lng = pos.coords.longitude;
-                        map.setView([lat, lng], 16);
-                        document.getElementById('gpsStatusText').innerText = "GPS Connected: Signal Ready!";
-                        document.getElementById('gpsCoordText').innerText = "Lat: " + lat.toFixed(4) + ", Lon: " + lng.toFixed(4);
-                    },
+                    onInitialPos,
                     (err) => {
-                        document.getElementById('gpsStatusText').innerText = "GPS Standby (Use Simulation Mode if indoors)";
+                        // If high accuracy fails/times out, try low accuracy (WiFi/cellular)
+                        navigator.geolocation.getCurrentPosition(
+                            onInitialPos,
+                            (fallbackErr) => {
+                                const dot = document.getElementById('gpsDot');
+                                if (dot) dot.style.background = "#f59e0b";
+                                const statusText = document.getElementById('gpsStatusText');
+                                if (statusText) statusText.innerText = "GPS Standby (Gunakan Mode Simulasi jika di dalam ruangan)";
+                            },
+                            { enableHighAccuracy: false, timeout: 8000 }
+                        );
                     },
-                    { enableHighAccuracy: true, timeout: 6000 }
+                    { enableHighAccuracy: true, timeout: 7000 }
                 );
             }
 
@@ -3302,17 +3340,56 @@
 
         function startGPSTracking() {
             if (!("geolocation" in navigator)) {
-                alert("Geolocation is not supported in this browser. Automatically switching to simulation mode.");
+                showToast("Fitur Geolocation tidak didukung pada browser ini. Beralih ke Mode Simulasi.", "warning");
                 toggleSimulationMode();
                 startSimulationTracking();
                 return;
             }
 
-            watchId = navigator.geolocation.watchPosition(
-                (pos) => recordCoordinate(pos.coords.latitude, pos.coords.longitude, false),
-                (err) => console.warn("GPS tracking error:", err),
-                { enableHighAccuracy: true, maximumAge: 1000, timeout: 10000 }
-            );
+            const dot = document.getElementById('gpsDot');
+            const statusText = document.getElementById('gpsStatusText');
+            if (dot) dot.style.background = "#f59e0b";
+            if (statusText) statusText.innerText = "Mencari sinyal GPS satelit...";
+
+            const onPosition = (pos) => {
+                if (dot) dot.style.background = "#22c55e";
+                const acc = Math.round(pos.coords.accuracy || 10);
+                if (statusText) statusText.innerText = `GPS Aktif: Akurasi ±${acc}m`;
+
+                recordCoordinate(
+                    pos.coords.latitude,
+                    pos.coords.longitude,
+                    false,
+                    pos.coords.accuracy,
+                    pos.coords.speed
+                );
+            };
+
+            const onError = (err) => {
+                console.warn("GPS Tracking Error:", err);
+                if (dot) dot.style.background = "#ef4444";
+
+                if (err.code === 1) { // PERMISSION_DENIED
+                    if (statusText) statusText.innerText = "Izin GPS ditolak. Silakan aktifkan akses lokasi di browser.";
+                    showToast("Izin GPS ditolak. Mengaktifkan Mode Simulasi agar aktivitas tetap dapat diuji.", "warning");
+                    if (!isSimulating) {
+                        toggleSimulationMode();
+                        startSimulationTracking();
+                    }
+                } else if (err.code === 2) { // POSITION_UNAVAILABLE
+                    if (statusText) statusText.innerText = "GPS signal weak / unavailable. Re-searching...";
+                } else if (err.code === 3) { // TIMEOUT
+                    if (statusText) statusText.innerText = "GPS Timeout: Reconnecting...";
+                    // Fallback attempt
+                    navigator.geolocation.getCurrentPosition(onPosition, null, { enableHighAccuracy: false, timeout: 8000 });
+                }
+            };
+
+            watchId = navigator.geolocation.watchPosition(onPosition, onError, {
+                enableHighAccuracy: true,
+                maximumAge: 1500,
+                timeout: 10000
+            });
         }
 
         function startSimulationTracking() {
@@ -3336,9 +3413,10 @@
             }, 600);
         }
 
-        function recordCoordinate(lat, lng, isSim) {
+        function recordCoordinate(lat, lng, isSim, accuracy = 10, speed = null) {
             const newPoint = [lat, lng];
-            document.getElementById('gpsCoordText').innerText = "Lat: " + lat.toFixed(5) + ", Lon: " + lng.toFixed(5);
+            const accTag = accuracy ? ` (±${Math.round(accuracy)}m)` : '';
+            document.getElementById('gpsCoordText').innerText = `Lat: ${lat.toFixed(5)}, Lon: ${lng.toFixed(5)}${accTag}`;
 
             if (positions.length === 0) {
                 positions.push(newPoint);
@@ -3346,9 +3424,11 @@
                 map.setView(newPoint, 16);
 
                 const startIcon = L.divIcon({ html: '🏁', iconSize: [26, 26], iconAnchor: [13, 13] });
+                if (startMarker && map) map.removeLayer(startMarker);
                 startMarker = L.marker(newPoint, { icon: startIcon }).addTo(map);
 
                 const pulseIcon = L.divIcon({ className: 'gps-pulse-marker', iconSize: [18, 18], iconAnchor: [9, 9] });
+                if (currentMarker && map) map.removeLayer(currentMarker);
                 currentMarker = L.marker(newPoint, { icon: pulseIcon }).addTo(map);
 
                 startAddress = `Lat ${lat.toFixed(4)}, Lon ${lng.toFixed(4)}`;
@@ -3356,16 +3436,25 @@
             } else {
                 const lastPoint = positions[positions.length - 1];
                 const d = getDistanceInKm(lastPoint[0], lastPoint[1], lat, lng);
-                if (!isSim && d > 0.001) totalDistance += d;
 
-                if (d > 0.0005) {
-                    positions.push(newPoint);
-                    routePolyline.setLatLngs(positions);
-                    if (currentMarker) currentMarker.setLatLng(newPoint);
-                    map.panTo(newPoint);
+                // GPS Jitter & Teleport Spike Filter:
+                // 1. Tolak lonjakan tak realistis (> 0.5 km dalam 1 detik)
+                // 2. Tolak jitter diam jika akurasi lemah (> 60m) dan jarak < 4 meter
+                const isSpike = d > 0.5;
+                const isJitter = (!isSim && accuracy > 60 && d < 0.004);
 
-                    currentAddress = `Current Position (${totalDistance.toFixed(2)} km)`;
-                    document.getElementById('currentLocationText').innerText = currentAddress;
+                if (!isSpike && !isJitter) {
+                    if (!isSim && d > 0.002) totalDistance += d;
+
+                    if (d > 0.002 || isSim) {
+                        positions.push(newPoint);
+                        routePolyline.setLatLngs(positions);
+                        if (currentMarker) currentMarker.setLatLng(newPoint);
+                        map.panTo(newPoint);
+
+                        currentAddress = `Posisi Terkini (${totalDistance.toFixed(2)} km)`;
+                        document.getElementById('currentLocationText').innerText = currentAddress;
+                    }
                 }
             }
 
@@ -4101,5 +4190,37 @@
             renderHistorySection();
         });
     </script>
+<script>
+
+        // Leaf Swirl Animation Handler
+        function navigateWithLeaf(e, url) {
+            if (e && (e.ctrlKey || e.metaKey || e.shiftKey)) return;
+            if (e) e.preventDefault();
+            const ov = document.getElementById('leafTransitionOverlay');
+            const bd = document.getElementById('leafBackdrop');
+            const cc = document.getElementById('leafCenterContent');
+            const lbl = document.getElementById('transitionLabel');
+            if (!ov) { window.location.href = url; return; }
+            ov.style.display = 'flex';
+            ov.style.pointerEvents = 'auto';
+            bd.style.opacity = '1';
+            cc.style.opacity = '1';
+            cc.style.transform = 'scale(1)';
+            lbl.textContent = url.includes('mp3') ? 'Returning to MP3 Hub...' : 'Opening Page...';
+            setTimeout(() => { window.location.href = url; }, 500);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const ov = document.getElementById('leafTransitionOverlay');
+            const bd = document.getElementById('leafBackdrop');
+            if (ov && bd) {
+                setTimeout(() => {
+                    bd.style.opacity = '0';
+                    setTimeout(() => { ov.style.display = 'none'; }, 350);
+                }, 150);
+            }
+        });
+
+</script>
 </body>
 </html>

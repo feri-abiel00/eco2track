@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Today's Feeling - Curhat & Mood Art AI</title>
+    <title>Today's Feeling - Emotional Journaling & Mood Art AI</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
     <!-- Firebase SDK v10 (Compat) -->
@@ -602,47 +602,47 @@
             </div>
             <a href="mp3.html" class="nav-back">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-                Kembali ke Beranda
+                Back to MP3 Hub
             </a>
         </header>
 
         <!-- Intro -->
         <div class="intro-banner">
-            <h1 class="intro-title">Bagaimana Harimu Berjalan?</h1>
-            <p class="intro-desc">Luapkan beban atau kebahagiaanmu lewat kata-kata di ruang curhat, dan goreskan ekspresi bebasmu di kanvas kosong. AI kami akan membaca harmoni emosimu dan memberikan refleksi mendalam.</p>
+            <h1 class="intro-title">How Is Your Day Unfolding?</h1>
+            <p class="intro-desc">Unburden your thoughts or celebrate joyful moments in the emotional journaling lounge, and express freely on the open canvas. Our AI reflects upon your inner harmony to offer empathetic guidance and nature-inspired therapy.</p>
         </div>
 
-        <!-- Dual Workstation Grid (Curhat + Kanvas) -->
+        <!-- Dual Workstation Grid (Journaling + Canvas) -->
         <div class="workstation-grid">
-            <!-- Left: Curhat Lounge -->
+            <!-- Left: Journaling Lounge -->
             <div class="card-panel">
                 <div class="panel-header">
                     <div>
-                        <div class="panel-title">📝 Ruang Curhat & Refleksi</div>
-                        <div class="panel-desc">Tuliskan apa saja yang kamu rasakan tanpa ragu</div>
+                        <div class="panel-title">📝 Emotional Journaling & Reflection</div>
+                        <div class="panel-desc">Write down whatever you feel with complete freedom</div>
                     </div>
                     <button class="voice-btn" id="btnVoice" onclick="toggleVoiceInput()">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-                        <span id="voiceBtnText">Rekam Suara</span>
+                        <span id="voiceBtnText">Voice Input</span>
                     </button>
                 </div>
 
                 <div class="curhat-wrapper">
-                    <textarea class="curhat-textarea" id="curhatText" placeholder="Contoh: Hari ini aku merasa cukup lelah karena deadline tugas yang menumpuk, tapi ada rasa tenang saat melihat hujan sore tadi..."></textarea>
+                    <textarea class="curhat-textarea" id="curhatText" placeholder="Example: Today I felt worn out by upcoming deadlines, yet found unexpected serenity watching the evening rain..."></textarea>
                     <div class="curhat-footer">
-                        <span id="charCount">0 karakter</span>
-                        <span>Privasi Terjaga 🔒</span>
+                        <span id="charCount">0 characters</span>
+                        <span>Privacy Preserved 🔒</span>
                     </div>
                 </div>
 
                 <div>
-                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Pemicu Cepat (Klik untuk menyisipkan):</div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Quick Reflection Prompts (Click to insert):</div>
                     <div class="chips-container">
-                        <span class="mood-chip" onclick="insertMoodChip('Hari ini aku merasa bersyukur atas hal kecil')">🌱 Bersyukur</span>
-                        <span class="mood-chip" onclick="insertMoodChip('Pikiranku sedikit berisik dan cemas soal masa depan')">🌧️ Cemas / Overthinking</span>
-                        <span class="mood-chip" onclick="insertMoodChip('Tubuhku butuh istirahat sejenak dari hiruk-pikuk')">☕ Lelah & Butuh Jeda</span>
-                        <span class="mood-chip" onclick="insertMoodChip('Aku merasa berenergi dan penuh inspirasi hari ini!')">☀️ Bersemangat</span>
-                        <span class="mood-chip" onclick="insertMoodChip('Aku sedang merasa tenang dan damai dengan diriku sendiri')">🍃 Damai & Tenang</span>
+                        <span class="mood-chip" onclick="insertMoodChip('Today I feel genuinely grateful for small everyday moments')">🌱 Grateful</span>
+                        <span class="mood-chip" onclick="insertMoodChip('My thoughts feel a bit noisy and anxious about the future')">🌧️ Anxious / Overthinking</span>
+                        <span class="mood-chip" onclick="insertMoodChip('My mind and body need a gentle rest from the bustle')">☕ Fatigued & Need Rest</span>
+                        <span class="mood-chip" onclick="insertMoodChip('I feel energetic, vibrant, and inspired today!')">☀️ Energized</span>
+                        <span class="mood-chip" onclick="insertMoodChip('I am feeling quiet peace and harmony within myself')">🍃 Calm & At Peace</span>
                     </div>
                 </div>
             </div>
@@ -651,12 +651,12 @@
             <div class="card-panel">
                 <div class="panel-header">
                     <div>
-                        <div class="panel-title">🎨 Kanvas Ekspresi Bebas</div>
-                        <div class="panel-desc">Goreskan warna dan garis sesuai denyut hatimu</div>
+                        <div class="panel-title">🎨 Expressive Art Canvas</div>
+                        <div class="panel-desc">Paint colors and brushstrokes mirroring your heartbeat</div>
                     </div>
                     <button class="action-tool-btn" onclick="clearCanvas()">
                         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                        Hapus Kanvas
+                        Clear Canvas
                     </button>
                 </div>
 
@@ -667,17 +667,17 @@
                 <!-- Canvas Toolbar -->
                 <div class="drawing-tools">
                     <div class="palette-group">
-                        <div class="color-dot active" style="background: #3b82f6;" onclick="setColor('#3b82f6', this)" title="Biru (Ketenangan)"></div>
-                        <div class="color-dot" style="background: #10b981;" onclick="setColor('#10b981', this)" title="Hijau (Penyembuhan/Alami)"></div>
-                        <div class="color-dot" style="background: #f59e0b;" onclick="setColor('#f59e0b', this)" title="Kuning (Energi & Ceria)"></div>
-                        <div class="color-dot" style="background: #ef4444;" onclick="setColor('#ef4444', this)" title="Merah (Gairah/Intensitas)"></div>
-                        <div class="color-dot" style="background: #8b5cf6;" onclick="setColor('#8b5cf6', this)" title="Ungu (Refleksi)"></div>
-                        <div class="color-dot" style="background: #0f172a;" onclick="setColor('#0f172a', this)" title="Hitam (Kedalaman)"></div>
-                        <input type="color" id="customColor" class="custom-color-input" value="#6366f1" onchange="setColor(this.value)" title="Pilih Warna Bebas">
+                        <div class="color-dot active" style="background: #3b82f6;" onclick="setColor('#3b82f6', this)" title="Blue (Serenity & Depth)"></div>
+                        <div class="color-dot" style="background: #10b981;" onclick="setColor('#10b981', this)" title="Green (Healing & Nature)"></div>
+                        <div class="color-dot" style="background: #f59e0b;" onclick="setColor('#f59e0b', this)" title="Yellow (Energy & Joy)"></div>
+                        <div class="color-dot" style="background: #ef4444;" onclick="setColor('#ef4444', this)" title="Red (Passion & Intensity)"></div>
+                        <div class="color-dot" style="background: #8b5cf6;" onclick="setColor('#8b5cf6', this)" title="Purple (Intuition & Reflection)"></div>
+                        <div class="color-dot" style="background: #0f172a;" onclick="setColor('#0f172a', this)" title="Slate (Grounding & Focus)"></div>
+                        <input type="color" id="customColor" class="custom-color-input" value="#6366f1" onchange="setColor(this.value)" title="Choose Custom Color">
                     </div>
 
                     <div style="display: flex; align-items: center; gap: 8px;">
-                        <button class="action-tool-btn eraser" id="btnEraser" onclick="toggleEraser()">🧽 Penghapus</button>
+                        <button class="action-tool-btn eraser" id="btnEraser" onclick="toggleEraser()">🧽 Eraser</button>
                         <button class="action-tool-btn" onclick="undoCanvas()">↩️ Undo</button>
                     </div>
                 </div>
@@ -687,44 +687,44 @@
         <!-- AI Call to Action -->
         <div class="ai-cta-card">
             <div class="ai-cta-title">
-                <span>🤖</span> Analisis Emosi Multimodal AI
+                <span>🤖</span> Multimodal AI Emotion Engine
             </div>
-            <p class="ai-cta-desc">Kecerdasan buatan akan memadukan nuansa kata-kata curhatmu dan dinamika sapuan warna pada kanvas untuk membaca keadaan psikologismu saat ini.</p>
+            <p class="ai-cta-desc">Artificial intelligence integrates the nuances of your reflections and the kinetic dynamics of your canvas colors to perceive your present psychological equilibrium.</p>
             <button class="btn-ai-analyze" onclick="startAIAnalysis()">
                 <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
-                ✨ Analisis Emosiku Sekarang
+                ✨ Analyze My Emotion Now
             </button>
         </div>
 
         <!-- AI Analysis Results Display -->
         <div class="ai-result-section" id="aiResultSection">
-            <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--dark); margin-bottom: 12px;">Hasil Diagnosis Emosional AI ✨</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--dark); margin-bottom: 12px;">AI Emotional Insights & Assessment ✨</h3>
             
             <div class="ai-badge-row">
-                <div class="emotion-pill" id="emotionMainBadge">Tenang & Reflektif 🍃</div>
-                <div class="intensity-tag" id="emotionIntensity">Tingkat Keselarasan: 92%</div>
-                <div class="intensity-tag" id="emotionVisualTag">Dinamika Visual: Lembut & Seimbang</div>
+                <div class="emotion-pill" id="emotionMainBadge">Calm & Reflective 🍃</div>
+                <div class="intensity-tag" id="emotionIntensity">Harmony Score: 92%</div>
+                <div class="intensity-tag" id="emotionVisualTag">Visual Dynamics: Gentle & Balanced</div>
             </div>
 
             <div class="result-content-grid">
                 <div class="insight-card">
-                    <h4>💭 Refleksi Emosi & Pesan AI</h4>
-                    <p id="aiInsightText">Berdasarkan curahan hatimu dan sapuan kuas pada kanvas...</p>
+                    <h4>💭 Emotional Reflection & Mindful Guidance</h4>
+                    <p id="aiInsightText">Based on your written expressions and artistic brushstrokes...</p>
                 </div>
                 <div class="eco-therapy-card">
-                    <h4>🌱 Terapi Alam & Eco-Wellness</h4>
-                    <p style="font-size: 0.8rem; margin-bottom: 10px; color: #047857;">Saran aktivitas hijau untuk memulihkan energimu:</p>
+                    <h4>🌱 Nature Therapy & Eco-Wellness</h4>
+                    <p style="font-size: 0.8rem; margin-bottom: 10px; color: #047857;">Green wellness activities to replenish your vitality:</p>
                     <ul id="ecoTherapyList">
-                        <li>Jalan kaki 15 menit tanpa gadget di sekitar pepohonan hijau.</li>
-                        <li>Minum air putih hangat sambil latihan pernapasan 4-7-8.</li>
-                        <li>Merawat tanaman hias pembersih udara di meja kerjamu.</li>
+                        <li>Take a 15-minute screen-free mindful walk under green tree canopies.</li>
+                        <li>Sip warm water or herbal tea while practicing 4-7-8 breathing cycles.</li>
+                        <li>Care for an air-purifying desk plant to bring nature closer to your workspace.</li>
                     </ul>
                 </div>
             </div>
 
             <div class="ai-result-actions">
-                <button class="action-tool-btn" onclick="shareMoodResult()">📋 Salin Ringkasan</button>
-                <a href="hasil.html" class="action-tool-btn" style="text-decoration: none; background: #0f172a; color: white;">Lihat di Halaman Hasil Lengkap →</a>
+                <button class="action-tool-btn" onclick="shareMoodResult()">📋 Copy Summary</button>
+                <a href="mp3.html" class="action-tool-btn" style="text-decoration: none; background: #0f172a; color: white;">Return to MP3 Hub →</a>
             </div>
         </div>
     </div>
@@ -733,8 +733,8 @@
     <div class="loading-overlay" id="loadingOverlay">
         <div class="loading-box">
             <div class="ai-scanner-sphere">✨</div>
-            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--dark); margin-bottom: 8px;">AI Sedang Membaca...</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted);" id="loadingStatus">Menganalisis getaran kata & harmoni warna kanvasmu...</p>
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--dark); margin-bottom: 8px;">AI Is Reflecting...</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);" id="loadingStatus">Analyzing semantic nuances and canvas color harmony...</p>
         </div>
     </div>
 
@@ -878,7 +878,7 @@
         function toggleVoiceInput() {
             const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
             if (!SpeechRec) {
-                alert("Fitur rekam suara belum didukung di browser ini. Kamu tetap bisa mengetikkan curhatanmu!");
+                alert("Voice recognition is not supported in this browser. You can still type your reflections freely!");
                 return;
             }
 
@@ -887,7 +887,7 @@
 
             if (!recognition) {
                 recognition = new SpeechRec();
-                recognition.lang = 'id-ID';
+                recognition.lang = 'en-US';
                 recognition.continuous = true;
                 recognition.interimResults = true;
 
@@ -917,7 +917,7 @@
                     recognition.start();
                     isRecording = true;
                     btn.classList.add('recording');
-                    btnText.innerText = 'Merekam... (Klik Stop)';
+                    btnText.innerText = 'Listening... (Click to Stop)';
                 } catch (e) {
                     console.warn(e);
                 }
@@ -934,7 +934,7 @@
             const btn = document.getElementById('btnVoice');
             const btnText = document.getElementById('voiceBtnText');
             btn.classList.remove('recording');
-            btnText.innerText = 'Rekam Suara';
+            btnText.innerText = 'Voice Input';
         }
 
         // Multimodal AI Emotion Analysis Engine
@@ -943,7 +943,7 @@
             const canvasData = canvas.toDataURL();
 
             if (text === '' && strokeCount === 0) {
-                alert("Silakan ketikkan curhatan atau buat sedikit goresan di kanvas agar AI dapat membaca emosimu.");
+                alert("Please write down your thoughts or make a few brushstrokes on the canvas so AI can read your emotional state.");
                 return;
             }
 
@@ -953,11 +953,11 @@
 
             // Multi-phase simulated AI thinking
             setTimeout(() => {
-                document.getElementById('loadingStatus').innerText = "Mendeteksi sentimen teks & spektrum psikologis warna...";
+                document.getElementById('loadingStatus').innerText = "Detecting textual sentiment & canvas color spectrum...";
             }, 800);
 
             setTimeout(() => {
-                document.getElementById('loadingStatus').innerText = "Merumuskan wawasan & rekomendasi kesehatan mental...";
+                document.getElementById('loadingStatus').innerText = "Formulating mindful insights & eco-wellness advice...";
             }, 1600);
 
             setTimeout(() => {
@@ -972,80 +972,80 @@
             // Emotion Knowledge Archetypes
             let detectedEmotion = null;
 
-            if (lower.includes('lelah') || lower.includes('capek') || lower.includes('letih') || lower.includes('pusing') || lower.includes('beban')) {
+            if (lower.includes('tired') || lower.includes('fatigue') || lower.includes('exhausted') || lower.includes('burnout') || lower.includes('heavy') || lower.includes('lelah') || lower.includes('capek')) {
                 detectedEmotion = {
-                    name: "Kelelahan Mental & Butuh Jeda ☕",
+                    name: "Mental Fatigue & Need Rest ☕",
                     color: "#d97706",
                     bg: "#fef3c7",
                     border: "#fde68a",
                     intensity: "88%",
-                    visual: "Energi Rendah & Membutuhkan Pemulihan",
-                    insight: "AI menangkap adanya sinyal kelelahan dan tekanan aktivitas yang menuntut energi batinmu. Curhatanmu menunjukkan bahwa tubuh dan pikiranmu sedang meminta jeda untuk bernapas. Goresan di kanvas mencerminkan keinginanmu untuk menemukan ruang yang hening dan teratur.",
+                    visual: "Low Energy & Recovery Needed",
+                    insight: "AI perceives signals of mental depletion and cognitive weight. Your words and canvas strokes indicate that both mind and body are yearning for a quiet moment to breathe. The deliberate brushwork reflects a deep desire for gentle stillness and order.",
                     ecoTherapy: [
-                        "Lakukan 'Digital Detox' selama 30 menit malam ini dan nikmati secangkir teh herbal hangat.",
-                        "Dengarkan suara gemercik air atau desau angin dedaunan di teras rumah.",
-                        "Luangkan waktu 10 menit tanpa layar sebelum tidur untuk relaksasi otot."
+                        "Practice a 30-minute 'Digital Detox' tonight with a warm mug of herbal chamomile tea.",
+                        "Listen attentively to rainfall sounds or the breeze flowing through trees on your balcony.",
+                        "Spend 10 screen-free minutes stretching and relaxing your neck and shoulders before sleep."
                     ]
                 };
-            } else if (lower.includes('cemas') || lower.includes('takut') || lower.includes('bingung') || lower.includes('overthinking') || lower.includes('khawatir')) {
+            } else if (lower.includes('anxious') || lower.includes('afraid') || lower.includes('worried') || lower.includes('overthinking') || lower.includes('panic') || lower.includes('cemas') || lower.includes('takut')) {
                 detectedEmotion = {
-                    name: "Cemas & Overthinking 🌧️",
+                    name: "Anxious & Overthinking 🌧️",
                     color: "#2563eb",
                     bg: "#dbeafe",
                     border: "#bfdbfe",
                     intensity: "91%",
-                    visual: "Pola Gelombang & Dinamika Intens",
-                    insight: "Kata-katamu memancarkan kekhawatiran tentang hal-hal yang berada di luar kendalimu saat ini. Namun, menyadari dan menuliskannya di sini adalah langkah berani untuk melepaskan beban tersebut. Sadarilah bahwa kamu tidak harus menyelesaikan semua masalah dalam satu hari.",
+                    visual: "Wavelength Patterns & High Kinetic Energy",
+                    insight: "Your words radiate apprehension regarding matters currently outside your immediate control. Acknowledging and expressing them here is a courageous step in untangling that tension. Remember: you are not required to solve every future riddle today.",
                     ecoTherapy: [
-                        "Lakukan teknik *Grounding 5-4-3-2-1* di taman: sentuh daun, rasakan angin, dan cium aroma tanah.",
-                        "Berjalan kaki santai tanpa tujuan terburu-buru selama 15 menit.",
-                        "Tuliskan 3 hal yang bisa kamu syukuri saat ini untuk mengalihkan fokus pikiran."
+                        "Perform the 5-4-3-2-1 Grounding Technique in a garden: touch leaves, feel the breeze, and smell natural soil.",
+                        "Take a 15-minute gentle stroll outdoors without rushing toward any specific destination.",
+                        "Jot down 3 concrete things you appreciate right this second to gently redirect overactive thoughts."
                     ]
                 };
-            } else if (lower.includes('syukur') || lower.includes('senang') || lower.includes('bahagia') || lower.includes('alhamdulillah') || lower.includes('semangat') || lower.includes('cinta')) {
+            } else if (lower.includes('grateful') || lower.includes('happy') || lower.includes('joy') || lower.includes('excited') || lower.includes('blessed') || lower.includes('love') || lower.includes('syukur') || lower.includes('senang')) {
                 detectedEmotion = {
-                    name: "Bahagia, Penuh Syukur & Berenergi ☀️",
+                    name: "Joyful, Grateful & Energized ☀️",
                     color: "#059669",
                     bg: "#d1fae5",
                     border: "#a7f3d0",
                     intensity: "95%",
-                    visual: "Goresan Harmonis & Dinamis Penuh Cahaya",
-                    insight: "Pikiranmu sedang diselimuti energi positif dan optimisme yang luar biasa! Kata-kata dan goresanmu menunjukkan rasa syukur dan kehangatan jiwa yang tinggi. Energi ini sangat menyehatkan bagi kesehatan tubuh dan lingkungan sekitarmu.",
+                    visual: "Harmonious & Radiant Dynamic Strokes",
+                    insight: "Your mindset is glowing with uplifting optimism and authentic gratitude! Your expressions convey heartfelt inner warmth and creative vitality. This positive state naturally enhances your physiological well-being and elevates those around you.",
                     ecoTherapy: [
-                        "Bagikan energi positif ini dengan menyiram tanaman di rumah atau memberi makan hewan liar.",
-                        "Abadikan momen menyenangkan ini dengan jurnal terima kasih.",
-                        "Gunakan energimu untuk berolahraga ringan seperti bersepeda atau berjalan santai di alam terbuka."
+                        "Channel this radiant energy outward by watering indoor plants or tending to community greens.",
+                        "Capture this feeling in a short gratitude note to revisit on challenging days.",
+                        "Enjoy a refreshing brisk walk or outdoor cycling session in fresh morning air."
                     ]
                 };
-            } else if (lower.includes('marah') || lower.includes('kesal') || lower.includes('kecewa') || lower.includes('benci')) {
+            } else if (lower.includes('angry') || lower.includes('mad') || lower.includes('upset') || lower.includes('frustrated') || lower.includes('hate') || lower.includes('marah') || lower.includes('kesal')) {
                 detectedEmotion = {
-                    name: "Kecewa & Emosi Intens 🔥",
+                    name: "Frustrated & Intense Tension 🔥",
                     color: "#dc2626",
                     bg: "#fee2e2",
                     border: "#fca5a5",
                     intensity: "89%",
-                    visual: "Sapuan Kuat & Kontras Tegas",
-                    insight: "AI mendeteksi adanya gejolak kekecewaan atau rasa frustrasi yang tertahan. Mengeluarkan emosi lewat tulisan dan seni adalah katarsis yang sangat sehat dibanding memendamnya. Emosi ini valid, namun jangan biarkan membakar kedamaian batinmu.",
+                    visual: "Bold Strokes & High Contrast Expression",
+                    insight: "AI detects turbulent frustration or bottled-up friction. Channeling raw intensity through expressive writing and art is an exceptionally healthy catharsis. Your feelings are completely valid; honor them without allowing them to consume your inner sanctuary.",
                     ecoTherapy: [
-                        "Tarik napas dalam-dalam (Inhale 4 detik, tahan 4 detik, buang perlahan 6 detik) sebanyak 5 siklus.",
-                        "Lakukan aktivitas fisik ringan untuk melepaskan hormon endorfin dan meredakan ketegangan.",
-                        "Basuh wajah dengan air dingin mengalir untuk menyejukkan sistem saraf."
+                        "Practice Box Breathing (Inhale 4s, Hold 4s, Exhale slowly 6s) for 5 consecutive rounds.",
+                        "Engage in moderate physical exercise to release built-up tension and stimulate endorphins.",
+                        "Splash cool running water over your face and wrists to soothe your autonomic nervous system."
                     ]
                 };
             } else {
                 // Default Balanced / Peaceful
                 detectedEmotion = {
-                    name: "Tenang, Damai & Reflektif 🍃",
+                    name: "Calm, Centered & Reflective 🍃",
                     color: "#4f46e5",
                     bg: "#e0e7ff",
                     border: "#c7d2fe",
                     intensity: "87%",
-                    visual: "Aliran Garis Tenang & Harmonis",
-                    insight: "AI melihat kondisi pikiranmu saat ini dalam keadaan tenang, reflektif, dan cukup stabil. Kamu mampu mengamati perasaanmu dengan bijak tanpa terburu-buru menghakimi. Ini adalah saat yang ideal untuk merencanakan langkah-langkah baik ke depan.",
+                    visual: "Smooth Flow & Balanced Rhythm",
+                    insight: "AI observes a calm, grounded, and emotionally stable presence. You are observing your inner state with mindfulness rather than hasty judgment. This is an ideal headspace for setting deliberate intentions and clear goals.",
                     ecoTherapy: [
-                        "Duduk santai di bawah pohon rindang dan rasakan hembusan udara segar (Shinrin-yoku).",
-                        "Rawat tanaman lidah mertua (Sansevieria) untuk menyaring udara di sekitarmu.",
-                        "Lanjutkan kebiasaan journaling ini secara berkala untuk menjaga kebersihan pikiran."
+                        "Sit comfortably under a shade tree for a short forest-bathing (Shinrin-yoku) pause.",
+                        "Care for an air-purifying plant (like Snake Plant or Peace Lily) to improve indoor air quality.",
+                        "Maintain this journaling ritual regularly to preserve mental clarity and serenity."
                     ]
                 };
             }
@@ -1057,8 +1057,8 @@
             badge.style.background = detectedEmotion.bg;
             badge.style.border = `1.5px solid ${detectedEmotion.border}`;
 
-            document.getElementById('emotionIntensity').innerText = `Skor Keselarasan: ${detectedEmotion.intensity}`;
-            document.getElementById('emotionVisualTag').innerText = `Dinamika: ${detectedEmotion.visual}`;
+            document.getElementById('emotionIntensity').innerText = `Harmony Score: ${detectedEmotion.intensity}`;
+            document.getElementById('emotionVisualTag').innerText = `Dynamics: ${detectedEmotion.visual}`;
             document.getElementById('aiInsightText').innerText = detectedEmotion.insight;
 
             const therapyList = document.getElementById('ecoTherapyList');
@@ -1069,7 +1069,7 @@
             section.style.display = 'block';
             section.scrollIntoView({ behavior: 'smooth' });
 
-            // Store in LocalStorage for sync with hasil.html
+            // Store in LocalStorage for sync
             localStorage.setItem('savedCurhatText', text);
             localStorage.setItem('savedMoodCanvas', canvasData);
             localStorage.setItem('savedEmotionResult', JSON.stringify(detectedEmotion));
@@ -1089,10 +1089,10 @@
 
         function shareMoodResult() {
             const badge = document.getElementById('emotionMainBadge').innerText;
-            const text = `Hasil Analisis Emosi AI EcoTrack:\nStatus: ${badge}\nCatatan: ${document.getElementById('aiInsightText').innerText}`;
+            const text = `EcoTrack AI Emotion Analysis:\nStatus: ${badge}\nInsights: ${document.getElementById('aiInsightText').innerText}`;
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text);
-                alert("Ringkasan analisis emosi berhasil disalin ke clipboard!");
+                alert("Emotional summary copied to clipboard successfully!");
             }
         }
 

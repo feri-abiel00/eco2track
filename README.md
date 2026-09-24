@@ -1,53 +1,53 @@
 # TerraStep & ECO₂Track Ecosystem
 
-Platform Ekosistem Mobilitas Cerdas, Pelacakan Jejak Karbon Real-Time, dan Simulasi Emisi Multi-Platform.
+Intelligent Mobility Ecosystem Platform, Real-Time Carbon Footprint Tracking, and Multi-Platform Scientific Simulation.
 
-Di dalam website **TerraStep**, terdapat modul utama yang bernama **ECO₂Track**.
+Inside the **TerraStep** platform, the core environmental tracking module is **ECO₂Track**.
 
 ---
 
-## 👥 Tim Pembuat
-Proyek inovasi ramah lingkungan ini diciptakan dan dikembangkan oleh:
+## 👥 Creators
+This eco-friendly innovation project was created and developed by:
 1. **CHARISSA LIONI CLAUDIA NAPITUPULU**
 2. **FERI ABIEL SIMAMORA**
 3. **YOBEL TARIAS TONGGO SINAMBELA**
 
 ---
 
-## 📱 Pusat Unduhan Resmi Multi-Platform (Tanpa ZIP)
-Empat berkas mandiri resmi yang langsung tersimpan di media penyimpanan lokal (folder Downloads) perangkat pengguna:
+## 📱 Official Multi-Platform Downloads (Direct Installers, No ZIP)
+Four dedicated, standalone native packages saved permanently to the device's local Downloads folder:
 
-| Sistem Operasi | Format Berkas | Path Berkas | Deskripsi |
+| Operating System | File Format | File Path | Description |
 | :--- | :--- | :--- | :--- |
-| **Windows (WinOS)** | `.exe` | [`downloads/ECO2Track_Windows_Setup.exe`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_Windows_Setup.exe) | Installer 64-bit untuk Windows 10 & 11 |
-| **macOS (Apple)** | `.dmg` | [`downloads/ECO2Track_macOS.dmg`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_macOS.dmg) | Apple Disk Image Universal (M1/M2/M3 & Intel) |
-| **Android** | `.apk` | [`downloads/ECO2Track_Android.apk`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_Android.apk) | Paket APK native dengan sensor TerraStep |
-| **iOS (iPhone/iPad)** | `.ipa` | [`downloads/ECO2Track_iOS.ipa`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_iOS.ipa) | Paket arsip IPA untuk AltStore/Sideload |
+| **Windows (WinOS)** | `.exe` | [`downloads/ECO2Track_Windows_Setup.exe`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_Windows_Setup.exe) | 64-bit Native Setup for Windows 10 & 11 |
+| **macOS (Apple)** | `.dmg` | [`downloads/ECO2Track_macOS.dmg`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_macOS.dmg) | Universal Apple Disk Image (M1/M2/M3 & Intel) |
+| **Android** | `.apk` | [`downloads/ECO2Track_Android.apk`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_Android.apk) | Signed Android APK with TerraStep sensors |
+| **iOS (iPhone/iPad)** | `.ipa` | [`downloads/ECO2Track_iOS.ipa`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/ECO2Track_iOS.ipa) | Sideloadable IPA Package for AltStore / Sideloadly |
 
 ---
 
-## 🗂️ Struktur Organisasi Repositori
-Repositori ini dikelompokkan ke dalam folder terpisah dengan tetap mempertahankan kelancaran fungsi aplikasi:
+## 🗂️ Repository Folder Organization
+The project codebase is organized into cleanly partitioned subdirectories while preserving full functional runtime:
 
-- **[`documentation/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/documentation/)**: Berisi seluruh dokumentasi arsitektur, panduan multi-platform, dan ringkasan proyek.
-- **[`javascript/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/javascript/)**: Modul skrip JavaScript (`firebase-config.js`).
-- **[`firebase/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/firebase/)**: Konfigurasi deployment hosting, Cloud Firestore (`firestore.rules`), dan Cloud Storage (`storage.rules`).
-- **[`setup/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/setup/)**: Skrip pembangun installer (`TerraStep_Setup.cs`, `make_packages.ps1`, `build_apk.ps1`).
-- **[`json/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/json/)**: Konfigurasi berbasis JSON (`package.json`, `firebase.json`, `.firebaserc`).
-- **[`downloads/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/)**: Tempat penyimpanan 4 berkas binary installer OS.
-
----
-
-## 🌐 Alur Penggunaan & Aplikasi Web
-1. **Halaman Depan TerraStep** (`index.html`): Penjelasan ringkas, nama pembuat, berkas setup 4 OS, cara kerja, dan tombol Start menuju MP3 Player dengan animasi daun terbang alami.
-2. **Virtual MP3 Player Portal** (`mp3.html`): Portal interaktif bergaya perangkat retro MP3 untuk meluncurkan modul aplikasi.
-3. **ECO₂Track Web App** (`ECO2Track.html`): Aplikasi pelacak emisi mobilitas real-time dengan integrasi GPS Leaflet, kalori langkah TerraStep, dan sinkronisasi Firebase.
-4. **Simulator Kimia** (`kalkulator_kimia (4).html` / `kalkulator_kimia.html`): Perhitungan stoikiometri pembakaran hidrokarbon.
-5. **Simulator Fisika** (`Physics.html`): Analisis mekanika gaya gesek dan efisiensi energi kendaraan.
-6. **Eco-Mood Tracker** (`Mood.html`): Pemantauan kebugaran dan kebiasaan ramah lingkungan.
+- **[`documentation/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/documentation/)**: System architecture specifications, multi-platform deployment guides, and project overviews.
+- **[`javascript/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/javascript/)**: Modular JavaScript implementations (`firebase-config.js`).
+- **[`firebase/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/firebase/)**: Hosting configurations, Cloud Firestore security rules (`firestore.rules`), and Cloud Storage rules (`storage.rules`).
+- **[`setup/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/setup/)**: Multi-platform installer compilers and packaging scripts (`TerraStep_Setup.cs`, `make_packages.ps1`, `build_apk.ps1`).
+- **[`json/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/json/)**: Machine-readable configurations (`package.json`, `firebase.json`, `.firebaserc`).
+- **[`downloads/`](file:///d:/Webtest%20HTML-AI/ECO(2)Track%20(html%20website%20test)/ECO2TRACK%20NEW/downloads/)**: Storage directory for all standalone OS binaries.
 
 ---
 
-## 🚀 Deployment & Integrasi
+## 🌐 Application Architecture & User Flow
+1. **TerraStep Landing Page** (`index.html`): Concise overview, creators list, 4 OS setup files, How It Works guide, and a prominent START button with a natural flying leaves transition leading to the MP3 hub in a new tab.
+2. **Virtual MP3 Player Hub** (`mp3.html`): Interactive retro tactile digital audio player that serves as the central launcher for all core applications.
+3. **ECO₂Track Web App** (`ECO2Track.html`): Real-time mobility emissions tracking with precision GPS filtering, step-to-calorie calculations, and cloud sync.
+4. **Chemistry Reaction Balancer** (`kalkulator_kimia (4).html` / `kalkulator_kimia.html`): Automated balancing of complex chemical equations with subatomic and molar mass balance proof.
+5. **Physics & Scientific Calculator** (`Physics.html`): Scientific calculation engine with trigonometric and exponential capabilities.
+6. **AI Emotional Journaling & Canvas Therapy** (`Mood.html`): Expressive art and journaling lounge with multimodal AI emotion detection and nature-based wellness recommendations.
+
+---
+
+## 🚀 Deployment & Live Endpoints
 - **GitHub Repository**: [https://github.com/feri-abiel00/eco2track](https://github.com/feri-abiel00/eco2track)
-- **Firebase Web App**: [https://eco2track-new.web.app](https://eco2track-new.web.app)
+- **Firebase Web App**: [https://terrastep.web.app](https://terrastep.web.app) / [https://eco2track-new.web.app](https://eco2track-new.web.app)

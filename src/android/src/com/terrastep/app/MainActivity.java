@@ -79,7 +79,7 @@ public class MainActivity extends Activity {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 // When offline, gracefully switch to bundled offline asset
                 if (!failingUrl.startsWith("file:///android_asset/")) {
-                    view.loadUrl("file:///android_asset/index.html");
+                    view.loadUrl("file:///android_asset/mp3.html");
                 }
             }
         });
@@ -97,9 +97,9 @@ public class MainActivity extends Activity {
 
     private void loadApplication() {
         if (isNetworkAvailable()) {
-            webView.loadUrl("https://terrastep.web.app");
+            webView.loadUrl("https://terrastep.web.app/mp3.html");
         } else {
-            webView.loadUrl("file:///android_asset/index.html");
+            webView.loadUrl("file:///android_asset/mp3.html");
         }
     }
 

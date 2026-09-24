@@ -40,15 +40,21 @@ $infoPlist = @'
 '@
 [System.IO.File]::WriteAllText((Join-Path $payloadApp "Info.plist"), $infoPlist, [System.Text.Encoding]::UTF8)
 
+# Copy the 5 core modules into iOS payload (MP3, ECO2Track, Mood, Chemistry, Physics)
+$coreWebFiles = @("mp3.html", "ECO2Track.html", "Mood.html", "Physics.html", "kalkulator_kimia.html", "firebase-config.js")
+foreach ($f in $coreWebFiles) {
+    if (Test-Path $f) { Copy-Item $f (Join-Path $payloadApp $f) }
+}
 if (Test-Path "logo.png") {
     Copy-Item "logo.png" (Join-Path $payloadApp "AppIcon60x60@2x.png")
     Copy-Item "logo.png" (Join-Path $payloadApp "AppIcon76x76@2x~ipad.png")
 }
-[System.IO.File]::WriteAllText((Join-Path $payloadApp "ECO2Track"), "#!/bin/sh`necho Starting ECO2Track iOS Ecosystem`n")
+[System.IO.File]::WriteAllText((Join-Path $payloadApp "ECO2Track"), "#!/bin/sh`necho Starting ECO2Track Virtual MP3 Ecosystem`nopen mp3.html`n")
 
 $ipaDest = "downloads\ECO2Track_iOS.ipa"
 if (Test-Path $ipaDest) { Remove-Item -Force $ipaDest }
 [System.IO.Compression.ZipFile]::CreateFromDirectory($ipaTemp, $ipaDest)
+Copy-Item $ipaDest (Join-Path $projectRoot "ECO2Track_iOS.ipa") -Force -ErrorAction SilentlyContinue
 Remove-Item -Recurse -Force $ipaTemp
 Write-Host "Created iOS .ipa file successfully:" (Get-Item $ipaDest).Length "bytes"
 
@@ -93,7 +99,7 @@ $macPlist = @'
 '@
 [System.IO.File]::WriteAllText((Join-Path $macApp "Info.plist"), $macPlist, [System.Text.Encoding]::UTF8)
 
-$macScript = "#!/bin/bash`nopen 'https://eco2track-new.web.app'`n"
+$macScript = "#!/bin/bash`nopen 'https://terrastep.web.app/mp3.html'`n"
 [System.IO.File]::WriteAllText((Join-Path $macApp "MacOS\ECO2Track"), $macScript)
 
 if (Test-Path "app.ico") {
@@ -102,7 +108,11 @@ if (Test-Path "app.ico") {
 if (Test-Path "logo.png") {
     Copy-Item "logo.png" (Join-Path $macApp "Resources\logo.png")
 }
-Copy-Item "ECO2Track.html" (Join-Path $macApp "Resources\index.html")
+
+# Copy the 5 core modules to macOS Resources
+foreach ($f in $coreWebFiles) {
+    if (Test-Path $f) { Copy-Item $f (Join-Path $macApp "Resources\$f") }
+}
 
 $dmgZip = "scratch_dmg.zip"
 if (Test-Path $dmgZip) { Remove-Item -Force $dmgZip }

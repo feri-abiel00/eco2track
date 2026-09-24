@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECO₂Track Calculator Digital</title>
+    <title>ECO₂Track - Physics & Scientific Digital Calculator</title>
     <!-- Firebase SDK v10 (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
@@ -160,7 +160,7 @@
 
     <div class="calculator-container">
         <h1>ECO₂Track</h1>
-        <div class="subtitle">Calculator Digital</div>
+        <div class="subtitle">Physics & Scientific Digital Calculator</div>
 
         <div class="display-screen">
             <div class="history-expr" id="history"></div>
@@ -168,43 +168,43 @@
         </div>
 
         <div class="grid-container">
-            <!-- Baris 1: Sains -->
+            <!-- Row 1: Science -->
             <button class="btn-sci" onclick="appendFunc('sin')">sin</button>
             <button class="btn-sci" onclick="appendFunc('cos')">cos</button>
             <button class="btn-sci" onclick="appendFunc('tan')">tan</button>
             <button class="btn-sci" onclick="appendFunc('sqrt')">√</button>
 
-            <!-- Baris 2: Sains & Clear -->
+            <!-- Row 2: Science & Clear -->
             <button class="btn-sci" onclick="appendOp('^')">^</button>
             <button class="btn-sci" onclick="appendConst('π')">π</button>
             <button class="btn-clear" onclick="clearDisplay()">AC</button>
             <button class="btn-op" onclick="appendOp('/')">÷</button>
 
-            <!-- Baris 3: Angka & Op -->
+            <!-- Row 3: Numbers & Op -->
             <button onclick="appendNum('7')">7</button>
             <button onclick="appendNum('8')">8</button>
             <button onclick="appendNum('9')">9</button>
             <button class="btn-op" onclick="appendOp('*')">×</button>
 
-            <!-- Baris 4: Angka & Op -->
+            <!-- Row 4: Numbers & Op -->
             <button onclick="appendNum('4')">4</button>
             <button onclick="appendNum('5')">5</button>
             <button onclick="appendNum('6')">6</button>
             <button class="btn-op" onclick="appendOp('-')">-</button>
 
-            <!-- Baris 5: Angka & Op -->
+            <!-- Row 5: Numbers & Op -->
             <button onclick="appendNum('1')">1</button>
             <button onclick="appendNum('2')">2</button>
             <button onclick="appendNum('3')">3</button>
             <button class="btn-op" onclick="appendOp('+')">+</button>
 
-            <!-- Baris 6: Nol, Titik, Sama Dengan -->
+            <!-- Row 6: Zero, Dot, Equals -->
             <button style="grid-column: span 2;" onclick="appendNum('0')">0</button>
             <button onclick="appendNum('.')">.</button>
             <button class="btn-equal" onclick="calculate()">=</button>
         </div>
 
-        <a href="index.html" class="back-link">← Kembali ke Menu Utama</a>
+        <a href="mp3.html" class="back-link">← Back to MP3 Hub</a>
     </div>
 
     <script>

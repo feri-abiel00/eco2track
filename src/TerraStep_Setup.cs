@@ -46,6 +46,11 @@ namespace TerraStepDesktop
 
         public static void LaunchDesktopApp()
         {
+            // Prefer the ONLINE (HTTPS) origin so browser geolocation is allowed.
+            // Edge on Windows then uses the Windows Location Provider, which includes
+            // the physical device GPS sensor (GPS Perangkat) + Google Location sources.
+            // Geolocation is blocked by Chromium for file:// pages, so we only fall
+            // back to the offline local copy when the host is unreachable.
             string localMp3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "mp3.html");
             if (!File.Exists(localMp3))
             {
@@ -53,7 +58,13 @@ namespace TerraStepDesktop
                 if (File.Exists(appDataMp3)) localMp3 = appDataMp3;
             }
 
-            string url = File.Exists(localMp3) ? ("file:///" + localMp3.Replace("\\", "/")) : "https://terrastep.web.app/mp3.html";
+            string url = "https://terrastep.web.app/mp3.html";
+            bool online = IsOnline();
+            if (!online && File.Exists(localMp3))
+            {
+                url = "file:///" + localMp3.Replace("\\", "/");
+            }
+
             string edgePath = FindEdgePath();
             string dataDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TerraStep", "Data");
 
@@ -66,7 +77,9 @@ namespace TerraStepDesktop
             {
                 ProcessStartInfo psi = new ProcessStartInfo();
                 psi.FileName = edgePath;
-                psi.Arguments = string.Format("--app=\"{0}\" --user-data-dir=\"{1}\" --window-size=1200,850", url, dataDir);
+                // Keep the GPS/location permission grant persistent in the dedicated
+                // user-data-dir so the device GPS works immediately on later launches.
+                psi.Arguments = string.Format("--app=\"{0}\" --user-data-dir=\"{1}\" --window-size=1250,860", url, dataDir);
                 psi.UseShellExecute = false;
                 try
                 {
@@ -82,6 +95,18 @@ namespace TerraStepDesktop
                 Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
             }
             catch { }
+        }
+
+        private static bool IsOnline()
+        {
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create("https://terrastep.web.app/");
+                req.Method = "HEAD";
+                req.Timeout = 5000;
+                using (WebResponse resp = req.GetResponse()) { return true; }
+            }
+            catch { return false; }
         }
 
         public static string FindEdgePath()
@@ -138,7 +163,8 @@ namespace TerraStepDesktop
                 // Copy the 5 core modules so the desktop app functions fully offline
                 string[] filesToCopy = new string[] {
                     "mp3.html", "ECO2Track.html", "Mood.html", "Physics.html",
-                    "kalkulator_kimia.html", "kalkulator_kimia (4).html", "firebase-config.js"
+                    "kalkulator_kimia.html", "kalkulator_kimia (4).html", "firebase-config.js",
+                    "leaflet.js", "leaflet.css"
                 };
                 foreach (string f in filesToCopy)
                 {

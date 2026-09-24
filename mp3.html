@@ -519,56 +519,6 @@
 </head>
 <body>
 
-    <!-- Back to TerraStep Landing Page (Top Left) -->
-    <div style="position: fixed; top: 18px; left: 24px; z-index: 100;">
-        <a href="index.html" style="display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 9999px; font-size: 13px; font-weight: 700; background: rgba(15, 23, 42, 0.85); color: #f8fafc; border: 1px solid rgba(255, 255, 255, 0.15); text-decoration: none; backdrop-filter: blur(12px); box-shadow: 0 4px 16px rgba(0,0,0,0.3); transition: all 0.2s ease;">
-            🏠 Beranda TerraStep
-        </a>
-    </div>
-
-    <!-- Desktop App Download Button (Top Right) -->
-    <div class="desktop-app-widget">
-        <button class="btn-download-app" id="btnOpenDlModal" onclick="openDownloadModal()" title="Download TerraStep Desktop App (.exe)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-            <span>Download Windows App (.exe)</span>
-        </button>
-    </div>
-
-    <!-- Download Modal Dialog -->
-    <div class="download-modal-overlay" id="downloadModal" onclick="handleModalBackdropClick(event)">
-        <div class="download-modal-card">
-            <div class="download-modal-icon">
-                <img src="logo.png" alt="TerraStep Logo">
-            </div>
-            <h3 class="download-modal-title">TerraStep for Windows</h3>
-            <p class="download-modal-sub">
-                Transform this web portal into a standalone desktop application with high-speed performance, desktop shortcuts, and offline caching.
-            </p>
-
-            <div class="download-feature-list">
-                <div>🖥️ <span>Dedicated frameless window without browser clutter</span></div>
-                <div>⚡ <span>Hardware-accelerated GPS maps & audio feedback</span></div>
-                <div>📁 <span>Desktop & Start Menu shortcut integration</span></div>
-                <div>📦 <span>Lightweight installer (.exe) • Safe & Fast</span></div>
-            </div>
-
-            <a href="https://github.com/feri-abiel00/eco2track/raw/main/TerraStep_Setup.exe" class="btn-modal-action-dl" id="btnDownloadExeAction" onclick="onDownloadTriggered()">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                <span>Download TerraStep_Setup.exe</span>
-            </a>
-
-            <div style="margin-top: 10px; font-size: 12px; color: #64748b;">
-                Alternative: <a href="TerraStep_Windows.zip" download="TerraStep_Windows.zip" style="color: #10b981; font-weight: 700; text-decoration: underline;">Download .ZIP Package</a>
-            </div>
-
-            <div id="dlNotification" style="display: none; margin-top: 12px; font-size: 12px; color: #10b981; font-weight: 700;">
-                ✅ Downloading... Open TerraStep_Setup.exe to start setup!
-            </div>
-
-            <button class="btn-modal-cancel" onclick="closeDownloadModal()">Close</button>
-        </div>
-    </div>
-
     <!-- MP3 Player Virtual Device -->
     <main class="mp3-player" id="mp3Player">
         <div class="mp3-top-details">
@@ -768,26 +718,6 @@
                 setTimeout(() => btnOk.classList.remove('pressed'), 150);
             }
         });
-
-        // Download Modal Functions
-        function openDownloadModal() {
-            document.getElementById('downloadModal').classList.add('active');
-        }
-
-        function closeDownloadModal() {
-            document.getElementById('downloadModal').classList.remove('active');
-        }
-
-        function handleModalBackdropClick(e) {
-            if (e.target.id === 'downloadModal') {
-                closeDownloadModal();
-            }
-        }
-
-        function onDownloadTriggered() {
-            const notif = document.getElementById('dlNotification');
-            if (notif) notif.style.display = 'block';
-        }
     </script>
 </body>
 </html>

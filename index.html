@@ -8,7 +8,7 @@
     
     <!-- Open Graph / Meta -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://eco2track-new.web.app/">
+    <meta property="og:url" content="https://terrastep.web.app/">
     <meta property="og:title" content="TerraStep - Smart Mobility & ECO₂Track Ecosystem">
     <meta property="og:description" content="Created by Charissa Lioni Claudia Napitupulu, Feri Abiel Simamora, and Yobel Tarias Tonggo Sinambela.">
     <meta property="og:image" content="hero-mockup.jpg">
@@ -1153,8 +1153,13 @@
         // 2. FILE DOWNLOAD HANDLER
         // ==========================================
         function handleDeviceDownload(event, platform, fileUrl, filename) {
+            let actualUrl = fileUrl;
+            if (window.location.protocol.startsWith('http')) {
+                actualUrl = `https://github.com/feri-abiel00/eco2track/raw/main/downloads/${filename}`;
+            }
+
             const link = document.createElement('a');
-            link.href = fileUrl;
+            link.href = actualUrl;
             link.download = filename;
             link.target = '_blank';
             document.body.appendChild(link);

@@ -1,0 +1,25 @@
+{
+  "name": "eco2track-new",
+  "version": "1.0.0",
+  "description": "ECO2Track Carbon & Emission Tracking Web App with Firebase Integration",
+  "main": "index.html",
+  "scripts": {
+    "login": "npx firebase-tools login",
+    "deploy": "npx firebase-tools deploy",
+    "deploy:hosting": "npx firebase-tools deploy --only hosting",
+    "deploy:storage": "npx firebase-tools deploy --only storage",
+    "deploy:firestore": "npx firebase-tools deploy --only firestore",
+    "serve": "npx firebase-tools serve"
+  },
+  "keywords": [
+    "eco2track",
+    "firebase",
+    "carbon-footprint",
+    "storage"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "firebase-tools": "^13.31.0"
+  }
+}

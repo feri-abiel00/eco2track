@@ -1,785 +1,1215 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TerraStep - Virtual MP3 Player</title>
-    <meta name="description" content="Virtual MP3 Player Portal - ECO₂Track Ecosystem">
+    <title>TerraStep - Ekosistem Mobilitas Cerdas & ECO₂Track</title>
+    <meta name="description" content="TerraStep adalah ekosistem mobilitas cerdas ramah lingkungan yang memuat ECO₂Track, pelacak emisi karbon, dan simulator sains multi-platform.">
+    
+    <!-- Open Graph / Meta -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://eco2track-new.web.app/">
+    <meta property="og:title" content="TerraStep - Ekosistem Mobilitas Cerdas & ECO₂Track">
+    <meta property="og:description" content="Karya Charissa Lioni Claudia Napitupulu, Feri Abiel Simamora, dan Yobel Tarias Tonggo Sinambela.">
+    <meta property="og:image" content="hero-mockup.jpg">
+
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&family=VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --body-bg: #e2e8f0;
-            --mp3-chassis: #1e293b;
-            --mp3-chassis-dark: #0f172a;
-            --screen-bg: #091a13;
-            --screen-text: #22c55e;
-            --screen-text-dim: #155e34;
-            --screen-highlight: #4ade80;
-            --screen-glow: rgba(34, 197, 94, 0.4);
-            --btn-metal: #334155;
-            --btn-metal-hover: #475569;
-            --btn-metal-active: #1e293b;
-            --btn-text: #f8fafc;
-            --accent-orange: #f97316;
+            --bg-dark: #070d12;
+            --bg-card: rgba(13, 25, 35, 0.82);
+            --bg-card-hover: rgba(18, 38, 52, 0.95);
+            --border-card: rgba(34, 197, 94, 0.22);
+            --border-card-hover: rgba(74, 222, 128, 0.5);
+            
+            --eco-green: #22c55e;
+            --eco-green-glow: rgba(34, 197, 94, 0.5);
+            --eco-emerald: #10b981;
+            --eco-cyan: #38bdf8;
+            --eco-gold: #f59e0b;
+            
+            --btn-green: #22c55e;
+            --btn-green-shadow: #15803d;
+            --btn-blue: #0284c7;
+            --btn-blue-shadow: #0369a1;
+            --btn-dark: #1e293b;
+            --btn-dark-shadow: #0f172a;
+
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
+            scroll-behavior: smooth;
         }
 
-        body {
+        html, body {
+            width: 100%;
             min-height: 100vh;
-            width: 100vw;
-            background: radial-gradient(circle at center, #f8fafc 0%, #cbd5e1 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            overflow-x: hidden;
+            overflow-y: auto !important; /* Halaman sepenuhnya bisa di-scroll */
             font-family: 'Plus Jakarta Sans', sans-serif;
-            overflow: hidden;
-            padding: 20px;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            position: relative;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(34, 197, 94, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 65%, rgba(56, 189, 248, 0.08) 0%, transparent 40%),
+                linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 48px 48px, 48px 48px;
         }
 
-        /* MP3 Device Chassis */
-        .mp3-player {
-            position: relative;
-            width: 320px;
-            background: linear-gradient(145deg, #2a374a, #111827);
-            border-radius: 36px;
-            padding: 28px 24px 34px 24px;
-            box-shadow: 
-                0 25px 50px -12px rgba(15, 23, 42, 0.45),
-                0 0 0 2px rgba(255, 255, 255, 0.1) inset,
-                0 8px 16px rgba(0, 0, 0, 0.3);
+        /* Ambient Glowing Background Orbs */
+        .ambient-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .ambient-orb-1 {
+            width: 500px;
+            height: 500px;
+            background: rgba(34, 197, 94, 0.14);
+            top: -100px;
+            left: 15%;
+            animation: pulseOrb 12s ease-in-out infinite alternate;
+        }
+        .ambient-orb-2 {
+            width: 450px;
+            height: 450px;
+            background: rgba(56, 189, 248, 0.1);
+            top: 50%;
+            right: -100px;
+            animation: pulseOrb 10s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes pulseOrb {
+            0% { transform: scale(1) translate(0, 0); opacity: 0.6; }
+            100% { transform: scale(1.2) translate(40px, 30px); opacity: 0.9; }
+        }
+
+        /* ==========================================================================
+           ANIMASI DAUN TERBANG BIASA (CUMAN DAUN TERBANG, TANPA APA-APA)
+           ========================================================================== */
+        #flyingLeavesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999999; /* Terbang di atas konten secara transparan */
+        }
+
+        /* ==========================================================================
+           HEADER / NAVBAR (Tanpa tombol Start di pojok kanan atas)
+           ========================================================================== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 16px 36px;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background: rgba(7, 13, 18, 0.85);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 24px;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--text-primary);
+        }
+
+        .nav-logo {
+            width: 44px;
+            height: 44px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(34, 197, 94, 0.5));
             transition: transform 0.3s ease;
         }
 
-        /* Lanyard hole & jack decorative details */
-        .mp3-top-details {
-            position: absolute;
-            top: -6px;
-            display: flex;
-            gap: 20px;
-            align-items: center;
+        .nav-brand:hover .nav-logo {
+            transform: rotate(15deg) scale(1.08);
         }
 
-        .jack-port {
-            width: 14px;
-            height: 6px;
-            background: #0b0f19;
-            border-radius: 3px 3px 0 0;
-            border: 1px solid #475569;
+        .brand-text {
+            font-family: 'Fredoka', 'Outfit', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 40%, #4ade80 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* MP3 Digital LCD Screen */
-        .screen-bezel {
-            width: 100%;
-            background: #050d09;
-            border-radius: 18px;
-            padding: 10px;
-            box-shadow: 
-                0 4px 8px rgba(0, 0, 0, 0.6) inset,
-                0 0 0 1px rgba(255, 255, 255, 0.08);
-        }
-
-        .screen {
-            width: 100%;
-            height: 160px;
-            background: var(--screen-bg);
-            border-radius: 12px;
-            padding: 12px 14px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid rgba(34, 197, 94, 0.25);
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.15) inset;
-        }
-
-        /* Scanline CRT overlay */
-        .screen::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px;
-            pointer-events: none;
-            opacity: 0.6;
-        }
-
-        /* Screen Top Status Bar */
-        .screen-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'VT323', monospace;
-            font-size: 16px;
-            color: var(--screen-text);
-            text-shadow: 0 0 6px var(--screen-glow);
-            letter-spacing: 1px;
-            border-bottom: 1px dashed var(--screen-text-dim);
-            padding-bottom: 4px;
-        }
-
-        .status-left {
-            display: flex;
+        .status-badge {
+            display: inline-flex;
             align-items: center;
             gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: 700;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+            margin-left: 8px;
         }
 
-        .play-icon {
-            display: inline-block;
-            width: 0;
-            height: 0;
-            border-top: 4px solid transparent;
-            border-bottom: 4px solid transparent;
-            border-left: 7px solid var(--screen-text);
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #22c55e;
+            animation: pulseDot 2s infinite;
         }
 
-        /* Equalizer Animation */
-        .eq-container {
-            display: flex;
-            align-items: flex-end;
-            gap: 2px;
-            height: 10px;
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
         }
 
-        .eq-bar {
-            width: 2px;
-            background: var(--screen-text);
-            border-radius: 1px;
-            animation: eqBounce 1s ease-in-out infinite alternate;
-        }
-
-        .eq-bar:nth-child(1) { height: 4px; animation-duration: 0.8s; }
-        .eq-bar:nth-child(2) { height: 9px; animation-duration: 0.6s; animation-delay: 0.2s; }
-        .eq-bar:nth-child(3) { height: 6px; animation-duration: 1.1s; animation-delay: 0.4s; }
-        .eq-bar:nth-child(4) { height: 8px; animation-duration: 0.7s; animation-delay: 0.1s; }
-
-        @keyframes eqBounce {
-            0% { height: 2px; }
-            100% { height: 10px; }
-        }
-
-        /* Screen Menu Track List */
-        .menu-list {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin: 4px 0;
-        }
-
-        .menu-item {
+        .nav-menu {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-family: 'Chakra Petch', sans-serif;
+            gap: 28px;
+            list-style: none;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-size: 14.5px;
+            font-weight: 600;
+            transition: color 0.2s ease;
+            position: relative;
+        }
+
+        .nav-link:hover {
+            color: #4ade80;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: #22c55e;
+            transition: width 0.25s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* ==========================================================================
+           3D TACTILE BUTTONS (SACRED OCTAGON STYLE)
+           ========================================================================== */
+        .btn-game {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 14px 28px;
+            border-radius: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            border: none;
+            outline: none;
+            user-select: none;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.2s ease;
+            position: relative;
+        }
+
+        .btn-green-3d {
+            background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+            color: #032e12;
+            box-shadow: 0 6px 0 var(--btn-green-shadow), 0 10px 20px rgba(34, 197, 94, 0.35);
+        }
+
+        .btn-green-3d:hover {
+            filter: brightness(1.06);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 var(--btn-green-shadow), 0 14px 25px rgba(34, 197, 94, 0.45);
+        }
+
+        .btn-green-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--btn-green-shadow), 0 4px 10px rgba(34, 197, 94, 0.2);
+        }
+
+        .btn-blue-3d {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            color: #022030;
+            box-shadow: 0 6px 0 var(--btn-blue-shadow), 0 10px 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .btn-blue-3d:hover {
+            filter: brightness(1.06);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 var(--btn-blue-shadow), 0 14px 25px rgba(56, 189, 248, 0.4);
+        }
+
+        .btn-blue-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--btn-blue-shadow), 0 4px 10px rgba(56, 189, 248, 0.2);
+        }
+
+        .btn-dark-3d {
+            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+            color: #f8fafc;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 6px 0 var(--btn-dark-shadow), 0 10px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .btn-dark-3d:hover {
+            border-color: rgba(74, 222, 128, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 var(--btn-dark-shadow), 0 14px 25px rgba(0, 0, 0, 0.45);
+        }
+
+        .btn-dark-3d:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--btn-dark-shadow), 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Mega Start Button (Di Halaman Tersebut) */
+        .btn-mega-start {
+            padding: 22px 64px;
+            font-size: 26px;
+            border-radius: 26px;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 0 #15803d, 0 20px 45px rgba(34, 197, 94, 0.5);
+            animation: pulseStartBtn 3s infinite alternate;
+        }
+
+        @keyframes pulseStartBtn {
+            0% { transform: scale(1); box-shadow: 0 10px 0 #15803d, 0 20px 45px rgba(34, 197, 94, 0.45); }
+            100% { transform: scale(1.03); box-shadow: 0 12px 0 #15803d, 0 26px 55px rgba(34, 197, 94, 0.65); }
+        }
+
+        /* ==========================================================================
+           MAIN CONTENT & SECTIONS
+           ========================================================================== */
+        main {
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-wrapper {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 16px;
+            border-radius: 9999px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #4ade80;
             font-size: 13px;
             font-weight: 700;
-            color: var(--screen-text-dim);
-            transition: all 0.15s ease;
-            letter-spacing: 0.5px;
-        }
-
-        .menu-item.active {
-            background: var(--screen-text);
-            color: #05140b;
-            text-shadow: none;
-            box-shadow: 0 0 10px var(--screen-glow);
-        }
-
-        .menu-item .track-num {
-            font-size: 11px;
-            opacity: 0.8;
-            font-family: 'VT323', monospace;
-        }
-
-        /* Screen Footer Info */
-        .screen-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-family: 'VT323', monospace;
-            font-size: 14px;
-            color: var(--screen-text);
-            border-top: 1px dashed var(--screen-text-dim);
-            padding-top: 3px;
-            text-shadow: 0 0 5px var(--screen-glow);
-        }
-
-        /* Physical Controls Section */
-        .controls {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 8px;
-            gap: 16px;
-        }
-
-        /* Push Buttons (-, +, OK) */
-        .mp3-btn {
-            background: linear-gradient(145deg, #38465c, #202b3c);
-            color: var(--btn-text);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            cursor: pointer;
-            outline: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 
-                0 6px 12px rgba(0, 0, 0, 0.4),
-                0 1px 1px rgba(255, 255, 255, 0.2) inset;
-            transition: all 0.1s ease;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .btn-prev, .btn-next {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 26px;
-            font-weight: 800;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-
-        .btn-ok {
-            width: 82px;
-            height: 82px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #10b981, #047857);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            font-size: 20px;
-            font-weight: 800;
-            font-family: 'Chakra Petch', sans-serif;
-            letter-spacing: 1px;
-            box-shadow: 
-                0 8px 18px rgba(16, 185, 129, 0.35),
-                0 2px 2px rgba(255, 255, 255, 0.4) inset;
-        }
-
-        /* Button Press Feedback */
-        .mp3-btn:hover {
-            filter: brightness(1.1);
-        }
-
-        .mp3-btn:active, .mp3-btn.pressed {
-            transform: scale(0.92) translateY(3px);
-            box-shadow: 
-                0 2px 4px rgba(0, 0, 0, 0.5),
-                0 1px 2px rgba(0, 0, 0, 0.4) inset;
-        }
-
-        /* Branding Logo at Bottom */
-        .device-brand {
-            font-family: 'Chakra Petch', sans-serif;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 3px;
-            color: #64748b;
             text-transform: uppercase;
-            text-align: center;
-            margin-top: -6px;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
         }
 
-        /* Keyboard Hint */
-        .key-hint {
-            position: absolute;
-            bottom: 16px;
-            color: #64748b;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            display: flex;
-            gap: 12px;
-        }
-
-        .key-hint span {
-            background: rgba(255, 255, 255, 0.6);
-            padding: 3px 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(0,0,0,0.08);
-            color: #334155;
-            font-family: monospace;
+        .section-title {
+            font-family: 'Fredoka', 'Outfit', sans-serif;
+            font-size: 40px;
             font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 14px;
+            color: #ffffff;
         }
 
-        /* Page Loading Transition */
-        .fade-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #091a13;
-            z-index: 9999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
+        .section-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 660px;
+            margin: 0 auto;
         }
 
-        .fade-overlay.active {
-            opacity: 1;
-            pointer-events: all;
+        /* ==========================================================================
+           1. HERO & PENJELASAN SINGKAT (TERRASTEP DENGAN ECO2TRACK DI DALAMNYA)
+           ========================================================================== */
+        .hero-section {
+            padding: 140px 0 70px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
         }
 
-        /* Top Desktop App Download Widget */
-        .desktop-app-widget {
-            position: absolute;
-            top: 20px;
-            right: 24px;
-            z-index: 100;
-        }
-
-        .btn-download-app {
+        .hero-pill-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1px solid rgba(0, 0, 0, 0.1);
-            color: #0f172a;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
+            padding: 7px 18px;
+            border-radius: 9999px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(74, 222, 128, 0.35);
+            color: #4ade80;
+            font-size: 13.5px;
             font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.2s ease;
-            text-decoration: none;
-            outline: none;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.15);
         }
 
-        .btn-download-app:hover {
-            background: #10b981;
-            color: #ffffff;
-            border-color: #10b981;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+        .hero-title {
+            font-family: 'Fredoka', 'Outfit', sans-serif;
+            font-size: 56px;
+            line-height: 1.15;
+            font-weight: 700;
+            max-width: 950px;
+            margin-bottom: 22px;
+            letter-spacing: -1px;
         }
 
-        .btn-download-app svg {
-            width: 16px;
-            height: 16px;
+        .hero-title .gradient-text {
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 50%, #38bdf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
         }
 
-        /* Download Modal */
-        .download-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
-            padding: 20px;
-        }
-
-        .download-modal-overlay.active {
-            display: flex;
-        }
-
-        .download-modal-card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 440px;
+        /* Penjelasan Singkat */
+        .brief-box {
+            background: linear-gradient(135deg, rgba(13, 25, 35, 0.85) 0%, rgba(6, 17, 24, 0.9) 100%);
+            border: 1px solid rgba(74, 222, 128, 0.35);
             border-radius: 24px;
-            padding: 28px 24px;
-            box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.3);
+            padding: 32px 36px;
+            max-width: 880px;
+            margin: 0 auto 35px auto;
+            text-align: left;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(34, 197, 94, 0.12);
+        }
+
+        .brief-box h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 24px;
+            color: #4ade80;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brief-box p {
+            font-size: 16.5px;
+            color: #cbd5e1;
+            line-height: 1.7;
+            margin-bottom: 14px;
+        }
+
+        .brief-box p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Hero Image Mockup */
+        .hero-mockup-wrapper {
+            width: 100%;
+            max-width: 1020px;
+            margin: 15px auto 40px auto;
+            border-radius: 24px;
+            padding: 10px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.3) 0%, rgba(56, 189, 248, 0.15) 50%, rgba(255, 255, 255, 0.05) 100%);
+            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(34, 197, 94, 0.25);
+            overflow: hidden;
+        }
+
+        .hero-mockup-img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 18px;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+        }
+
+        /* ==========================================================================
+           2. PEMBUATNYA (CUMAN NAMA SAJA, TANPA FOTO DAN DESKRIPSI)
+           ========================================================================== */
+        .creators-section {
+            padding: 70px 0;
+            position: relative;
+        }
+
+        .creators-name-container {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .creator-name-card {
+            background: linear-gradient(135deg, rgba(15, 28, 38, 0.85) 0%, rgba(9, 18, 24, 0.9) 100%);
+            border: 1px solid rgba(74, 222, 128, 0.3);
+            border-radius: 20px;
+            padding: 22px 32px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            transition: all 0.25s ease;
+        }
+
+        .creator-name-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(74, 222, 128, 0.6);
+            background: linear-gradient(135deg, rgba(20, 36, 48, 0.95) 0%, rgba(12, 24, 32, 0.95) 100%);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6), 0 0 25px rgba(34, 197, 94, 0.25);
+        }
+
+        .creator-dot {
+            width: 12px;
+            height: 12px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #22c55e;
+            flex-shrink: 0;
+        }
+
+        .creator-pure-name {
+            font-family: 'Fredoka', 'Outfit', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        /* ==========================================================================
+           3. FILE SETUPNYA (4 NATIVE OS DOWNLOADS)
+           ========================================================================== */
+        .setup-section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            margin-bottom: 35px;
+        }
+
+        .platform-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 22px;
+            padding: 28px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             text-align: center;
             position: relative;
-            animation: modalFadeIn 0.25s ease;
+            backdrop-filter: blur(14px);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        .platform-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-card-hover);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(34, 197, 94, 0.2);
+            background: var(--bg-card-hover);
         }
 
-        .download-modal-icon {
-            width: 64px;
-            height: 64px;
+        .platform-tag {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+
+        .tag-win { background: rgba(56, 189, 248, 0.15); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+        .tag-mac { background: rgba(226, 232, 240, 0.15); color: #e2e8f0; border: 1px solid rgba(226, 232, 240, 0.3); }
+        .tag-apk { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .tag-ios { background: rgba(244, 114, 182, 0.15); color: #f472b6; border: 1px solid rgba(244, 114, 182, 0.3); }
+
+        .platform-icon-circle {
+            width: 68px;
+            height: 68px;
             border-radius: 18px;
-            background: #f0fdf4;
-            border: 1.5px solid #bbf7d0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            margin-top: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .icon-win { background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); }
+        .icon-mac { background: linear-gradient(135deg, #475569 0%, #1e293b 100%); }
+        .icon-apk { background: linear-gradient(135deg, #22c55e 0%, #15803d 100%); }
+        .icon-ios { background: linear-gradient(135deg, #ec4899 0%, #9d174d 100%); }
+
+        .platform-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 21px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 6px;
+        }
+
+        .platform-filename {
+            font-family: monospace;
+            font-size: 12px;
+            color: #38bdf8;
+            background: rgba(15, 23, 42, 0.65);
+            padding: 3px 8px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            word-break: break-all;
+        }
+
+        .platform-specs {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 18px;
+            line-height: 1.5;
+            min-height: 52px;
+        }
+
+        .platform-card .btn-game {
+            width: 100%;
+            margin-top: auto;
+            padding: 12px 14px;
+            font-size: 14px;
+        }
+
+        .storage-notice-bar {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(56, 189, 248, 0.05) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 18px;
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        /* ==========================================================================
+           4. CARA KERJA (HOW IT WORKS)
+           ========================================================================== */
+        .how-section {
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .how-steps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+            margin-bottom: 30px;
+        }
+
+        .step-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(14px);
+            transition: transform 0.25s ease;
+        }
+
+        .step-box:hover {
+            transform: translateY(-6px);
+            border-color: var(--border-card-hover);
+        }
+
+        .step-badge-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #22c55e;
+            color: #032e12;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 16px auto;
-            box-shadow: 0 8px 16px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 18px rgba(34, 197, 94, 0.5);
         }
 
-        .download-modal-icon img {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
+        .step-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 19px;
+            color: #ffffff;
+            margin-bottom: 10px;
         }
 
-        .download-modal-title {
-            font-size: 20px;
-            font-weight: 800;
-            color: #0f172a;
-            margin-bottom: 6px;
+        .step-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
         }
 
-        .download-modal-sub {
-            font-size: 13px;
-            color: #64748b;
-            line-height: 1.5;
-            margin-bottom: 20px;
+        /* ==========================================================================
+           5. BARU START (DI HALAMAN TERSEBUT, MENUJU KE MP3)
+           ========================================================================== */
+        .start-grand-section {
+            padding: 70px 0 110px 0;
+            position: relative;
         }
 
-        .download-feature-list {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px 16px;
-            text-align: left;
-            margin-bottom: 22px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            font-size: 12.5px;
-            color: #334155;
-            font-weight: 600;
+        .start-grand-box {
+            background: linear-gradient(135deg, rgba(13, 31, 24, 0.95) 0%, rgba(6, 17, 24, 0.98) 100%);
+            border: 2px solid rgba(74, 222, 128, 0.45);
+            border-radius: 32px;
+            padding: 56px 32px;
+            text-align: center;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 0 0 60px rgba(34, 197, 94, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .download-feature-list div {
+        .start-grand-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 300px;
+            background: radial-gradient(ellipse, rgba(34, 197, 94, 0.25) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .start-grand-title {
+            font-family: 'Fredoka', 'Outfit', sans-serif;
+            font-size: 44px;
+            color: #ffffff;
+            margin-bottom: 14px;
+            letter-spacing: -0.5px;
+        }
+
+        .start-grand-desc {
+            font-size: 17.5px;
+            color: #cbd5e1;
+            max-width: 620px;
+            margin: 0 auto 36px auto;
+            line-height: 1.6;
+        }
+
+        /* Download Toast Confirmation */
+        .download-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #0d1f18;
+            border: 2px solid #22c55e;
+            border-radius: 18px;
+            padding: 18px 24px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px rgba(34, 197, 94, 0.4);
+            z-index: 10000;
+            max-width: 440px;
+            transform: translateY(120px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+            pointer-events: none;
         }
 
-        .btn-modal-action-dl {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            width: 100%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            padding: 14px 20px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 800;
-            text-decoration: none;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.4);
-            transition: all 0.2s ease;
+        .download-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
         }
 
-        .btn-modal-action-dl:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 14px 24px -5px rgba(16, 185, 129, 0.5);
+        .toast-icon { font-size: 32px; flex-shrink: 0; }
+        .toast-content h5 { font-family: 'Fredoka', sans-serif; font-size: 17px; color: #4ade80; margin-bottom: 4px; }
+        .toast-content p { font-size: 13px; color: #e2e8f0; line-height: 1.4; }
+        .toast-close { background: transparent; border: none; color: #94a3b8; font-size: 20px; cursor: pointer; margin-left: auto; }
+
+        /* Footer */
+        footer {
+            background: #03080c;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 35px 0;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
         }
 
-        .btn-modal-cancel {
-            margin-top: 12px;
-            background: transparent;
-            border: none;
-            color: #64748b;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 6px 14px;
-            border-radius: 8px;
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-title { font-size: 42px; }
+            .download-grid { grid-template-columns: repeat(2, 1fr); }
+            .how-steps-grid { grid-template-columns: repeat(2, 1fr); }
         }
 
-        .btn-modal-cancel:hover {
-            color: #0f172a;
-            background: #f1f5f9;
+        @media (max-width: 768px) {
+            .navbar { padding: 14px 20px; }
+            .nav-menu { display: none; }
+            .hero-title { font-size: 32px; }
+            .download-grid { grid-template-columns: 1fr; }
+            .how-steps-grid { grid-template-columns: 1fr; }
+            .start-grand-title { font-size: 30px; }
+            .btn-mega-start { font-size: 20px; padding: 18px 40px; }
+            .creator-pure-name { font-size: 18px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Desktop App Download Button (Top Right) -->
-    <div class="desktop-app-widget">
-        <button class="btn-download-app" id="btnOpenDlModal" onclick="openDownloadModal()" title="Download TerraStep Desktop App (.exe)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-            <span>Download Windows App (.exe)</span>
-        </button>
-    </div>
+    <!-- Ambient Glowing Orbs -->
+    <div class="ambient-orb ambient-orb-1"></div>
+    <div class="ambient-orb ambient-orb-2"></div>
 
-    <!-- Download Modal Dialog -->
-    <div class="download-modal-overlay" id="downloadModal" onclick="handleModalBackdropClick(event)">
-        <div class="download-modal-card">
-            <div class="download-modal-icon">
-                <img src="logo.png" alt="TerraStep Logo">
-            </div>
-            <h3 class="download-modal-title">TerraStep for Windows</h3>
-            <p class="download-modal-sub">
-                Transform this web portal into a standalone desktop application with high-speed performance, desktop shortcuts, and offline caching.
-            </p>
+    <!-- Canvas Khusus Daun Terbang Biasa (Transparan di atas layar) -->
+    <canvas id="flyingLeavesCanvas"></canvas>
 
-            <div class="download-feature-list">
-                <div>🖥️ <span>Dedicated frameless window without browser clutter</span></div>
-                <div>⚡ <span>Hardware-accelerated GPS maps & audio feedback</span></div>
-                <div>📁 <span>Desktop & Start Menu shortcut integration</span></div>
-                <div>📦 <span>Lightweight installer (.exe) • Safe & Fast</span></div>
-            </div>
-
-            <a href="https://github.com/feri-abiel00/eco2track/raw/main/TerraStep_Setup.exe" class="btn-modal-action-dl" id="btnDownloadExeAction" onclick="onDownloadTriggered()">
-                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                <span>Download TerraStep_Setup.exe</span>
+    <!-- ==========================================================================
+         HEADER / NAVBAR (Tanpa tombol Start di pojok kanan atas)
+         ========================================================================== -->
+    <header class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">
+                <img src="logo.png" alt="TerraStep Logo" class="nav-logo">
+                <span class="brand-text">TerraStep</span>
+                <span class="status-badge"><span class="status-dot"></span> ECO₂Track Inside</span>
             </a>
 
-            <div style="margin-top: 10px; font-size: 12px; color: #64748b;">
-                Alternative: <a href="TerraStep_Windows.zip" download="TerraStep_Windows.zip" style="color: #10b981; font-weight: 700; text-decoration: underline;">Download .ZIP Package</a>
+            <ul class="nav-menu">
+                <li><a href="#penjelasan" class="nav-link">Tentang</a></li>
+                <li><a href="#pembuat" class="nav-link">Pembuat</a></li>
+                <li><a href="#setup" class="nav-link">File Setup</a></li>
+                <li><a href="#cara-kerja" class="nav-link">Cara Kerja</a></li>
+                <li><a href="#mulai" class="nav-link" style="color: #4ade80; font-weight: 700;">Start</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <main>
+        <!-- ==========================================================================
+             1. HERO & PENJELASAN SINGKAT (TERRASTEP DENGAN ECO2TRACK)
+             ========================================================================== -->
+        <section class="section-wrapper hero-section" id="penjelasan">
+            <div class="hero-pill-badge">
+                <span>🌱</span> Ekosistem Mobilitas Cerdas & Jejak Karbon
             </div>
 
-            <div id="dlNotification" style="display: none; margin-top: 12px; font-size: 12px; color: #10b981; font-weight: 700;">
-                ✅ Downloading... Open TerraStep_Setup.exe to start setup!
+            <h1 class="hero-title">
+                Selamat Datang di <span class="gradient-text">TerraStep</span>
+            </h1>
+
+            <!-- Penjelasan Singkat -->
+            <div class="brief-box">
+                <h3><span>🌿</span> Tentang TerraStep & ECO₂Track</h3>
+                <p>
+                    <strong>TerraStep</strong> adalah portal ekosistem terpadu yang mewadahi berbagai inovasi mobilitas cerdas dan kelestarian lingkungan. Di dalam website TerraStep, terdapat modul inti yang bernama <strong>ECO₂Track</strong>.
+                </p>
+                <p>
+                    <strong>ECO₂Track</strong> bertugas melacak emisi mobilitas harian secara real-time, mengonversi langkah kaki dan kayuhan sepeda menjadi kompensasi emisi karbon yang terverifikasi, serta memadukan kalkulator stoikiometri kimia dan dinamika energi fisika untuk mewujudkan bumi yang lebih hijau.
+                </p>
             </div>
 
-            <button class="btn-modal-cancel" onclick="closeDownloadModal()">Close</button>
-        </div>
-    </div>
-
-    <!-- MP3 Player Virtual Device -->
-    <main class="mp3-player" id="mp3Player">
-        <div class="mp3-top-details">
-            <div class="jack-port" title="Headphone Jack"></div>
-            <div class="jack-port" style="width: 22px;" title="USB Port"></div>
-        </div>
-
-        <!-- LCD Screen -->
-        <div class="screen-bezel">
-            <div class="screen" id="mp3Screen">
-                <!-- Status Header -->
-                <div class="screen-header">
-                    <div class="status-left">
-                        <span class="play-icon"></span>
-                        <span id="headerMode">TERRA-MP3</span>
-                    </div>
-                    <div class="eq-container">
-                        <div class="eq-bar"></div>
-                        <div class="eq-bar"></div>
-                        <div class="eq-bar"></div>
-                        <div class="eq-bar"></div>
-                    </div>
-                    <div class="battery">BAT 100%</div>
-                </div>
-
-                <!-- Track Menu List (The 4 Files) -->
-                <div class="menu-list" id="menuList">
-                    <div class="menu-item active" data-index="0" data-url="ECO2Track.html">
-                        <span>▶ ECO₂Track</span>
-                        <span class="track-num">[01/04]</span>
-                    </div>
-                    <div class="menu-item" data-index="1" data-url="kalkulator_kimia (4).html">
-                        <span>▶ Chemistry</span>
-                        <span class="track-num">[02/04]</span>
-                    </div>
-                    <div class="menu-item" data-index="2" data-url="Mood.html">
-                        <span>▶ Mood</span>
-                        <span class="track-num">[03/04]</span>
-                    </div>
-                    <div class="menu-item" data-index="3" data-url="Physics.html">
-                        <span>▶ Physics</span>
-                        <span class="track-num">[04/04]</span>
-                    </div>
-                </div>
-
-                <!-- Footer Status Bar -->
-                <div class="screen-footer">
-                    <span id="trackStatus">PRESS [OK] TO OPEN</span>
-                    <span id="volumeStatus">VOL 100%</span>
-                </div>
+            <!-- Hero Image Preview -->
+            <div class="hero-mockup-wrapper">
+                <img src="hero-mockup.jpg" alt="TerraStep & ECO₂Track Platform Preview" class="hero-mockup-img">
             </div>
-        </div>
-
-        <!-- Controls: [-] [OK] [+] -->
-        <section class="controls" aria-label="MP3 Controls">
-            <!-- Minus / Previous Button -->
-            <button class="mp3-btn btn-prev" id="btnMinus" aria-label="Previous Track (-)" title="Previous (-)">
-                -
-            </button>
-
-            <!-- OK / Action Button -->
-            <button class="mp3-btn btn-ok" id="btnOk" aria-label="Play / Open (OK)" title="Open File (OK)">
-                OK
-            </button>
-
-            <!-- Plus / Next Button -->
-            <button class="mp3-btn btn-next" id="btnPlus" aria-label="Next Track (+)" title="Next (+)">
-                +
-            </button>
         </section>
 
-        <!-- Brand Title -->
-        <div class="device-brand">TerraStep Digital Audio</div>
+        <!-- ==========================================================================
+             2. PEMBUATNYA (CUMAN NAMA SAJA, TANPA FOTO DAN TANPA DESKRIPSI)
+             ========================================================================== -->
+        <section class="section-wrapper creators-section" id="pembuat">
+            <div class="section-header">
+                <div class="section-badge">Pengembang Proyek</div>
+                <h2 class="section-title">Pembuat</h2>
+                <p class="section-desc">
+                    Inovasi TerraStep & ECO₂Track ini diciptakan oleh:
+                </p>
+            </div>
+
+            <div class="creators-name-container">
+                <div class="creator-name-card">
+                    <div class="creator-dot"></div>
+                    <div class="creator-pure-name">CHARISSA LIONI CLAUDIA NAPITUPULU</div>
+                </div>
+
+                <div class="creator-name-card">
+                    <div class="creator-dot"></div>
+                    <div class="creator-pure-name">FERI ABIEL SIMAMORA</div>
+                </div>
+
+                <div class="creator-name-card">
+                    <div class="creator-dot"></div>
+                    <div class="creator-pure-name">YOBEL TARIAS TONGGO SINAMBELA</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+             3. FILE SETUPNYA (4 FILE OS DOWNLOAD LANGSUNG KE PERANGKAT, TANPA ZIP)
+             ========================================================================== -->
+        <section class="section-wrapper setup-section" id="setup">
+            <div class="section-header">
+                <div class="section-badge">Pusat Berkas Unduhan</div>
+                <h2 class="section-title">File Setup</h2>
+                <p class="section-desc">
+                    Unduh langsung empat berkas setup mandiri di bawah ini. Berkas akan langsung tersimpan di media penyimpanan (folder Downloads) perangkat Anda secara permanen.
+                </p>
+            </div>
+
+            <div class="download-grid">
+                <!-- 1. WinOS Card -->
+                <div class="platform-card">
+                    <span class="platform-tag tag-win">WinOS</span>
+                    <div class="platform-icon-circle icon-win">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-13.051-1.802"/>
+                        </svg>
+                    </div>
+                    <h3 class="platform-name">WinOS</h3>
+                    <div class="platform-filename">ECO2Track_Windows_Setup.exe</div>
+                    <p class="platform-specs">
+                        Aplikasi desktop untuk Windows 10 & 11.
+                        <br><strong style="color: #4ade80;">Setup Mandiri • 26.6 KB</strong>
+                    </p>
+                    <a href="downloads/ECO2Track_Windows_Setup.exe" 
+                       download="ECO2Track_Windows_Setup.exe" 
+                       class="btn-game btn-blue-3d" 
+                       onclick="handleDeviceDownload(event, 'WinOS', 'downloads/ECO2Track_Windows_Setup.exe', 'ECO2Track_Windows_Setup.exe')">
+                        <span>⬇ Unduh WinOS</span>
+                    </a>
+                </div>
+
+                <!-- 2. MacOS Card -->
+                <div class="platform-card">
+                    <span class="platform-tag tag-mac">MacOS</span>
+                    <div class="platform-icon-circle icon-mac">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.61 1.34-.55.63-1.03 1.67-.9 2.68 1 .08 2.02-.49 2.59-1.17z"/>
+                        </svg>
+                    </div>
+                    <h3 class="platform-name">MacOS</h3>
+                    <div class="platform-filename">ECO2Track_macOS.dmg</div>
+                    <p class="platform-specs">
+                        Apple Disk Image untuk Mac (Apple Silicon & Intel).
+                        <br><strong style="color: #4ade80;">Paket .dmg • 167 KB</strong>
+                    </p>
+                    <a href="downloads/ECO2Track_macOS.dmg" 
+                       download="ECO2Track_macOS.dmg" 
+                       class="btn-game btn-dark-3d" 
+                       onclick="handleDeviceDownload(event, 'MacOS', 'downloads/ECO2Track_macOS.dmg', 'ECO2Track_macOS.dmg')">
+                        <span>⬇ Unduh MacOS</span>
+                    </a>
+                </div>
+
+                <!-- 3. Android Card -->
+                <div class="platform-card">
+                    <span class="platform-tag tag-apk">Android</span>
+                    <div class="platform-icon-circle icon-apk">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M17.523 15.3414c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.551 0 .9993.4482.9993.9993.0001.5511-.4482.9997-.9993.9997m-11.046 0c-.5511 0-.9993-.4486-.9993-.9997s.4482-.9993.9993-.9993c.5511 0 .9993.4482.9993.9993 0 .5511-.4482.9997-.9993.9997m11.4045-6.02l1.996-3.4572c.156-.2703.0634-.616-.2069-.772-.2704-.156-.6161-.0634-.772.2069l-2.0227 3.5034C15.349 8.1678 13.7225 7.8 12 7.8s-3.349.3678-4.8729 1.0025L5.1044 5.2991c-.156-.2703-.5016-.3629-.772-.2069-.2703.156-.3629.5017-.2069.772l1.996 3.4572C2.7937 11.2331.5 15.195.5 19.8h23c0-4.605-2.2937-8.5669-5.6185-10.4786"/>
+                        </svg>
+                    </div>
+                    <h3 class="platform-name">Android</h3>
+                    <div class="platform-filename">ECO2Track_Android.apk</div>
+                    <p class="platform-specs">
+                        Paket instalasi APK native smartphone Android.
+                        <br><strong style="color: #4ade80;">Paket .apk • 304 KB</strong>
+                    </p>
+                    <a href="downloads/ECO2Track_Android.apk" 
+                       download="ECO2Track_Android.apk" 
+                       class="btn-game btn-green-3d" 
+                       onclick="handleDeviceDownload(event, 'Android', 'downloads/ECO2Track_Android.apk', 'ECO2Track_Android.apk')">
+                        <span>⬇ Unduh Android</span>
+                    </a>
+                </div>
+
+                <!-- 4. iOS Card -->
+                <div class="platform-card">
+                    <span class="platform-tag tag-ios">iOS</span>
+                    <div class="platform-icon-circle icon-ios">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="#ffffff">
+                            <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.164 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.464-1.11-1.464-.908-.62.069-.608.069-.608 1.003.07 1.53 1.03 1.53 1.03.892 1.529 2.341 1.087 2.91.831.092-.646.35-1.086.636-1.336-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.115 2.504.337 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.579.688.481C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+                        </svg>
+                    </div>
+                    <h3 class="platform-name">iOS</h3>
+                    <div class="platform-filename">ECO2Track_iOS.ipa</div>
+                    <p class="platform-specs">
+                        Paket aplikasi iOS untuk iPhone dan iPad.
+                        <br><strong style="color: #4ade80;">Berkas .ipa • 269 KB</strong>
+                    </p>
+                    <a href="downloads/ECO2Track_iOS.ipa" 
+                       download="ECO2Track_iOS.ipa" 
+                       class="btn-game btn-dark-3d" 
+                       onclick="handleDeviceDownload(event, 'iOS', 'downloads/ECO2Track_iOS.ipa', 'ECO2Track_iOS.ipa')">
+                        <span>⬇ Unduh iOS</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="storage-notice-bar">
+                <span style="font-size: 26px;">💾</span>
+                <div style="font-size: 14px; color: #cbd5e1;">
+                    <strong>Penyimpanan Permanen di Perangkat:</strong> Tidak menggunakan arsip ZIP. Keempat berkas di atas disimpan secara langsung ke folder <em>Downloads / Unduhan</em> di perangkat Anda.
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+             4. CARA KERJA (HOW IT WORKS)
+             ========================================================================== -->
+        <section class="section-wrapper how-section" id="cara-kerja">
+            <div class="section-header">
+                <div class="section-badge">Panduan Operasional</div>
+                <h2 class="section-title">Cara Kerja</h2>
+                <p class="section-desc">
+                    Empat tahapan mudah dalam ekosistem TerraStep & ECO₂Track:
+                </p>
+            </div>
+
+            <div class="how-steps-grid">
+                <div class="step-box">
+                    <div class="step-badge-num">1</div>
+                    <h3 class="step-title">Pilih Moda</h3>
+                    <p class="step-desc">Tentukan aktivitas Anda: berjalan kaki, bersepeda, motor, mobil, bus, atau kereta.</p>
+                </div>
+
+                <div class="step-box">
+                    <div class="step-badge-num">2</div>
+                    <h3 class="step-title">Lacak Mobilitas</h3>
+                    <p class="step-desc">Sensor TerraStep dan GPS mencatat jarak perjalanan serta ritme langkah secara otomatis.</p>
+                </div>
+
+                <div class="step-box">
+                    <div class="step-badge-num">3</div>
+                    <h3 class="step-title">Hitung Emisi</h3>
+                    <p class="step-desc">Algoritma menghitung gram emisi CO₂ atau jumlah jejak karbon yang berhasil dihemat.</p>
+                </div>
+
+                <div class="step-box">
+                    <div class="step-badge-num">4</div>
+                    <h3 class="step-title">Raih Poin Hijau</h3>
+                    <p class="step-desc">Kumpulkan skor TerraStep, buka lencana kebanggaan, dan sinkronkan riwayat Anda.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==========================================================================
+             5. BARU START (TOMBOL START DI HALAMAN MENUJU KE MP3 DENGAN DAUN TERBANG)
+             ========================================================================== -->
+        <section class="section-wrapper start-grand-section" id="mulai">
+            <div class="start-grand-box">
+                <div class="section-badge" style="margin-bottom: 18px;">🚀 Peluncuran Portal</div>
+                <h2 class="start-grand-title">Mulai Petualangan Anda</h2>
+                <p class="start-grand-desc">
+                    Tekan tombol start di bawah ini untuk membuka portal perangkat interaktif TerraStep dan menjelajahi seluruh aplikasi di dalamnya.
+                </p>
+
+                <!-- Tombol START di halaman ini: menuju ke mp3.html dengan animasi daun terbang biasa -->
+                <div>
+                    <button class="btn-game btn-green-3d btn-mega-start" id="btnStartAction" onclick="launchWithFlyingLeaves('mp3.html')">
+                        <span>▶ START</span>
+                    </button>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <!-- Key Navigation Hint -->
-    <div class="key-hint">
-        <div>Navigation: <span>-</span> <span>+</span> or <span>▲</span> <span>▼</span></div>
-        <div>Select: <span>OK</span> or <span>Enter</span></div>
+    <!-- ==========================================================================
+         FOOTER
+         ========================================================================== -->
+    <footer>
+        <div class="section-wrapper">
+            <p style="margin-bottom: 6px;">
+                TerraStep Platform • Dibuat oleh: <strong>Charissa Lioni Claudia Napitupulu</strong> • <strong>Feri Abiel Simamora</strong> • <strong>Yobel Tarias Tonggo Sinambela</strong>
+            </p>
+            <p style="color: var(--text-muted); font-size: 13px;">
+                © 2026 <strong>TerraStep</strong> Ecosystem. Hak Cipta Dilindungi.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ==========================================================================
+         DOWNLOAD NOTIFICATION TOAST
+         ========================================================================== -->
+    <div class="download-toast" id="downloadToast">
+        <div class="toast-icon">💾</div>
+        <div class="toast-content">
+            <h5 id="toastTitle">Berkas Sedang Disimpan!</h5>
+            <p id="toastMessage">Berkas telah tersimpan permanen di folder Downloads perangkat Anda.</p>
+        </div>
+        <button class="toast-close" onclick="closeToast()">×</button>
     </div>
 
-    <!-- Transition Overlay -->
-    <div class="fade-overlay" id="fadeOverlay"></div>
-
+    <!-- ==========================================================================
+         SCRIPTS: ANIMASI DAUN TERBANG BIASA & DOWNLOAD
+         ========================================================================== -->
     <script>
-        // Track list data
-        const tracks = [
-            { name: "ECO₂Track", url: "ECO2Track.html" },
-            { name: "Chemistry", url: "kalkulator_kimia (4).html" },
-            { name: "Mood", url: "Mood.html" },
-            { name: "Physics", url: "Physics.html" }
-        ];
+        // ==========================================
+        // 1. CANVAS DAUN TERBANG BIASA (CUMAN DAUN TERBANG, TANPA APA-APA)
+        // ==========================================
+        const leafCanvas = document.getElementById('flyingLeavesCanvas');
+        const leafCtx = leafCanvas.getContext('2d');
+        let flyingLeaves = [];
+        let isAnimatingLeaves = false;
 
-        let currentIndex = 0;
-        const menuItems = document.querySelectorAll('.menu-item');
-        const btnMinus = document.getElementById('btnMinus');
-        const btnPlus = document.getElementById('btnPlus');
-        const btnOk = document.getElementById('btnOk');
-        const fadeOverlay = document.getElementById('fadeOverlay');
-        const trackStatus = document.getElementById('trackStatus');
+        function resizeCanvas() {
+            leafCanvas.width = window.innerWidth;
+            leafCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
 
-        // Web Audio Synthesizer for tactile feedback
-        let audioCtx = null;
-        function getAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            return audioCtx;
+        // Menggambar bentuk daun botanical hijau
+        function drawSingleLeaf(ctx, x, y, size, angle, color) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.moveTo(0, -size);
+            ctx.bezierCurveTo(size * 0.75, -size * 0.5, size * 0.75, size * 0.5, 0, size);
+            ctx.bezierCurveTo(-size * 0.75, size * 0.5, -size * 0.75, -size * 0.5, 0, -size);
+            ctx.fill();
+            
+            // Batang tulang daun halus
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+            ctx.lineWidth = size * 0.08;
+            ctx.beginPath();
+            ctx.moveTo(0, -size * 0.8);
+            ctx.lineTo(0, size * 0.8);
+            ctx.stroke();
+            ctx.restore();
         }
 
-        function playClickSound(freq = 800, type = 'sine', duration = 0.04) {
-            try {
-                const ctx = getAudioContext();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, ctx.currentTime);
-                gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + duration);
-            } catch (e) {}
-        }
+        // Pemicu animasi daun terbang biasa ketika tombol START ditekan
+        function launchWithFlyingLeaves(targetUrl) {
+            const colors = ['#22c55e', '#4ade80', '#10b981', '#15803d', '#34d399', '#86efac'];
+            flyingLeaves = [];
 
-        function updateSelection(newIndex) {
-            if (newIndex < 0) newIndex = tracks.length - 1;
-            if (newIndex >= tracks.length) newIndex = 0;
+            // Spawn 45 helai daun yang berhamburan terbang melintasi layar
+            for (let i = 0; i < 48; i++) {
+                flyingLeaves.push({
+                    x: Math.random() * window.innerWidth * 0.8,
+                    y: window.innerHeight + Math.random() * 80,
+                    vx: 4 + Math.random() * 9, // Melayang ditiup angin ke kanan
+                    vy: -(7 + Math.random() * 11), // Terbang ke atas
+                    size: 14 + Math.random() * 22,
+                    angle: Math.random() * Math.PI * 2,
+                    vAngle: (Math.random() - 0.5) * 0.12,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    alpha: 1
+                });
+            }
 
-            currentIndex = newIndex;
+            const startTime = performance.now();
+            isAnimatingLeaves = true;
 
-            menuItems.forEach((item, idx) => {
-                if (idx === currentIndex) {
-                    item.classList.add('active');
+            function animateLeaves(now) {
+                const elapsed = now - startTime;
+                leafCtx.clearRect(0, 0, leafCanvas.width, leafCanvas.height);
+
+                flyingLeaves.forEach(leaf => {
+                    leaf.x += leaf.vx;
+                    leaf.y += leaf.vy;
+                    leaf.angle += leaf.vAngle;
+
+                    // Efek hamburan angin sedikit bergoyang
+                    leaf.vx += (Math.random() - 0.5) * 0.3;
+                    leaf.vy += 0.08; // Gravitasi alami
+
+                    if (elapsed > 350) {
+                        leaf.alpha = Math.max(0, leaf.alpha - 0.02);
+                    }
+
+                    leafCtx.globalAlpha = leaf.alpha;
+                    drawSingleLeaf(leafCtx, leaf.x, leaf.y, leaf.size, leaf.angle, leaf.color);
+                });
+
+                if (elapsed < 600) {
+                    requestAnimationFrame(animateLeaves);
                 } else {
-                    item.classList.remove('active');
+                    leafCtx.clearRect(0, 0, leafCanvas.width, leafCanvas.height);
+                    window.location.href = targetUrl; // Menuju ke mp3.html
                 }
-            });
-
-            trackStatus.textContent = `OPEN [${tracks[currentIndex].name}]`;
-            playClickSound(950, 'triangle', 0.035);
-        }
-
-        function openSelectedFile() {
-            const selected = tracks[currentIndex];
-            playClickSound(1400, 'square', 0.08);
-            trackStatus.textContent = `LOADING...`;
-
-            fadeOverlay.classList.add('active');
-            setTimeout(() => {
-                window.location.href = selected.url;
-            }, 250);
-        }
-
-        // Button Click Handlers
-        btnMinus.addEventListener('click', () => {
-            updateSelection(currentIndex - 1);
-        });
-
-        btnPlus.addEventListener('click', () => {
-            updateSelection(currentIndex + 1);
-        });
-
-        btnOk.addEventListener('click', openSelectedFile);
-
-        // Click directly on menu items
-        menuItems.forEach((item, idx) => {
-            item.addEventListener('click', () => {
-                if (currentIndex === idx) {
-                    openSelectedFile();
-                } else {
-                    updateSelection(idx);
-                }
-            });
-        });
-
-        // Keyboard Controls (+, -, Arrow keys, Enter, Space)
-        window.addEventListener('keydown', (e) => {
-            if (e.key === '-' || e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                e.preventDefault();
-                btnMinus.classList.add('pressed');
-                updateSelection(currentIndex - 1);
-                setTimeout(() => btnMinus.classList.remove('pressed'), 100);
-            } else if (e.key === '+' || e.key === '=' || e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                btnPlus.classList.add('pressed');
-                updateSelection(currentIndex + 1);
-                setTimeout(() => btnPlus.classList.remove('pressed'), 100);
-            } else if (e.key === 'Enter' || e.key === ' ' || e.key.toLowerCase() === 'k') {
-                e.preventDefault();
-                btnOk.classList.add('pressed');
-                openSelectedFile();
-                setTimeout(() => btnOk.classList.remove('pressed'), 150);
             }
-        });
 
-        // Download Modal Functions
-        function openDownloadModal() {
-            document.getElementById('downloadModal').classList.add('active');
+            requestAnimationFrame(animateLeaves);
         }
 
-        function closeDownloadModal() {
-            document.getElementById('downloadModal').classList.remove('active');
+        // ==========================================
+        // 2. PENGUNDUHAN BERKAS SETUP KE PERANGKAT
+        // ==========================================
+        function handleDeviceDownload(event, platform, fileUrl, filename) {
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = filename;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            const toast = document.getElementById('downloadToast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastTitle.textContent = `Berkas ${platform} Sedang Disimpan!`;
+            toastMessage.innerHTML = `Berkas <strong>${filename}</strong> telah tersimpan di folder <strong>Downloads</strong> perangkat Anda secara permanen.`;
+            toast.classList.add('show');
+
+            setTimeout(closeToast, 6500);
         }
 
-        function handleModalBackdropClick(e) {
-            if (e.target.id === 'downloadModal') {
-                closeDownloadModal();
-            }
-        }
-
-        function onDownloadTriggered() {
-            const notif = document.getElementById('dlNotification');
-            if (notif) notif.style.display = 'block';
+        function closeToast() {
+            document.getElementById('downloadToast').classList.remove('show');
         }
     </script>
 </body>

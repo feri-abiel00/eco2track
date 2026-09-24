@@ -1,0 +1,11 @@
+rules_version = '2';
+
+// Craft rules based on data in a request or allow read/write for all users
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /{allPaths=**} {
+      // Allow read and write for app users
+      allow read, write: if true;
+    }
+  }
+}

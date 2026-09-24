@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECO₂Track Chemistry's Calc</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- Firebase SDK v10 (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <style>
+        :root {
+            --primary: #059669;
+            --primary-glow: rgba(5, 150, 105, 0.4);
+            --secondary: #2563eb;
+            --bg-dark: #090d16;
+            --card-bg: rgba(17, 24, 39, 0.85);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent-orange: #f59e0b;
+            --glass-border: rgba(255, 255, 255, 0.07);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(5, 150, 105, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.15) 0px, transparent 50%),
+                linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 20px;
+        }
+
+        .btn-home {
+            background-color: rgba(255, 255, 255, 0.03);
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .btn-home:hover {
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            background-color: rgba(5, 150, 105, 0.1);
+        }
+
+        .engine-tag {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        h1 { 
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem; 
+            margin: 0 0 8px 0; 
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 40%, var(--text-muted));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle { 
+            color: var(--text-muted); 
+            font-size: 0.95rem; 
+            margin-bottom: 35px;
+        }
+
+        .input-group { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 30px; 
+        }
+        
+        input[type="text"] {
+            flex: 1; 
+            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid var(--glass-border);
+            padding: 16px 20px; 
+            border-radius: 14px; 
+            color: white; 
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus { 
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        button.btn-calc {
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, var(--primary), #047857); 
+            color: white; 
+            border: none;
+            padding: 16px 32px; 
+            border-radius: 14px; 
+            cursor: pointer;
+            font-weight: 700; 
+            transition: all 0.3s ease;
+        }
+        
+        button.btn-calc:hover { 
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .section-title { 
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem; 
+            margin: 35px 0 15px 0; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            color: #60a5fa;
+        }
+        
+        .result-box {
+            background: rgba(15, 23, 42, 0.8); 
+            padding: 20px; 
+            border-radius: 14px;
+            font-size: 1.5rem; 
+            font-weight: 700; 
+            border-left: 5px solid var(--primary); 
+            margin-bottom: 25px;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0;
+            margin-top: 10px; 
+            background: rgba(15, 23, 42, 0.4); 
+            border-radius: 14px; 
+            overflow: hidden; 
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        th, td { padding: 16px; text-align: left; }
+        th { 
+            font-family: 'Orbitron', sans-serif;
+            background: rgba(30, 41, 59, 0.8); 
+            color: var(--text-muted); 
+            font-size: 0.75rem; 
+            text-transform: uppercase; 
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        td { border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 0.95rem; }
+        
+        .status-badge { 
+            background: rgba(16, 185, 129, 0.15); 
+            color: #34d399; 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            font-size: 0.75rem; 
+            font-weight: 700; 
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .mass-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .mass-card {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 14px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .mass-card h4 {
+            margin: 0 0 10px 0;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .mass-val {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #34d399;
+            font-family: 'Orbitron', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="top-nav">
+            <a href="index.html" class="btn-home">← Kembali ke Beranda</a>
+            <a href="chemistry-2.html" class="btn-home">Khusus unsur/senyawa</a>
+            <div class="engine-tag">X-5/X-6 SUD 26/27</div>
+        </div>
+
+        <h1>ECO₂Track Chemistry's Calc</h1>
+        <div class="subtitle">Make your problem solve</div>
+
+        <div class="input-group">
+            <input type="text" id="chemical-input" placeholder="Masukkan persamaan kimia (contoh: KMnO4 + HCl -> KCl + MnCl2 + H2O + Cl2)">
+            <button class="btn-calc" onclick="prosesKalkulasi()">Kalkulasikan</button>
+        </div>
+
+        <div class="section-title">✦ Persamaan Kimia Setara</div>
+        <div class="result-box" id="eq-result">Invalid Result</div>
+
+        <div class="section-title">✦ Langkah Penyetaraan & Bukti Keseimbangan</div>
+
+        <h4>Tabel Verifikasi Jumlah Unsur:</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>Unsur</th>
+                    <th>Jumlah di Reaktan (Kiri)</th>
+                    <th>Status</th>
+                    <th>Jumlah di Produk (Kanan)</th>
+                </tr>
+            </thead>
+            <tbody id="element-table-body">
+                <tr><td colspan="4" style="text-align: center; color: var(--text-muted); padding: 20px;">Data belum tersedia</td></tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">✦ Karakteristik Ion & Subatomik Total</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sisi</th>
+                    <th>Status Muatan / Ion</th>
+                    <th>Total Proton (p⁺)</th>
+                    <th>Total Neutron (n⁰)</th>
+                    <th>Total Elektron (e⁻)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Kiri (Reaktan)</td>
+                    <td>Netral</td>
+                    <td id="p-left">0</td>
+                    <td id="n-left">0</td>
+                    <td id="e-left">0</td>
+                </tr>
+                <tr>
+                    <td>Kanan (Produk)</td>
+                    <td>Netral</td>
+                    <td id="p-right">0</td>
+                    <td id="n-right">0</td>
+                    <td id="e-right">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">✦ Analisis Massa Molar Total</div>
+        <div class="mass-container">
+            <div class="mass-card">
+                <h4>Massa Total Reaktan</h4>
+                <div class="mass-val" id="mass-left">0 g/mol</div>
+            </div>
+            <div class="mass-card">
+                <h4>Massa Total Produk</h4>
+                <div class="mass-val" id="mass-right">0 g/mol</div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const databaseUnsur = {
+        'H':  { z: 1,  p: 1,  n: 0,  e: 1,  w: 1.008 },
+        'He': { z: 2,  p: 2,  n: 2,  e: 2,  w: 4.003 },
+        'Li': { z: 3,  p: 3,  n: 4,  e: 3,  w: 6.94 },
+        'Be': { z: 4,  p: 4,  n: 5,  e: 4,  w: 9.012 },
+        'B':  { z: 5,  p: 5,  n: 6,  e: 5,  w: 10.81 },
+        'C':  { z: 6,  p: 6,  n: 6,  e: 6,  w: 12.011 },
+        'N':  { z: 7,  p: 7,  n: 7,  e: 7,  w: 14.007 },
+        'O':  { z: 8,  p: 8,  n: 8,  e: 8,  w: 15.999 },
+        'F':  { z: 9,  p: 9,  n: 10, e: 9,  w: 18.998 },
+        'Ne': { z: 10, p: 10, n: 10, e: 10, w: 20.180 },
+        'Na': { z: 11, p: 11, n: 12, e: 11, w: 22.990 },
+        'Mg': { z: 12, p: 12, n: 12, e: 12, w: 24.305 },
+        'Al': { z: 13, p: 13, n: 14, e: 13, w: 26.982 },
+        'Si': { z: 14, p: 14, n: 14, e: 14, w: 28.085 },
+        'P':  { z: 15, p: 15, n: 16, e: 15, w: 30.974 },
+        'S':  { z: 16, p: 16, n: 16, e: 16, w: 32.06 },
+        'Cl': { z: 17, p: 17, n: 18, e: 17, w: 35.45 },
+        'K':  { z: 19, p: 19, n: 20, e: 19, w: 39.098 },
+        'Ca': { z: 20, p: 20, n: 20, e: 20, w: 40.078 },
+        'Mn': { z: 25, p: 25, n: 30, e: 25, w: 54.938 },
+        'Fe': { z: 26, p: 26, n: 30, e: 26, w: 55.845 },
+        'Cu': { z: 29, p: 29, n: 35, e: 29, w: 63.546 },
+        'Zn': { z: 30, p: 30, n: 35, e: 30, w: 65.38 }
+    };
+
+    function parseKomponen(teksSenyawa) {
+        let hasil = {};
+        let regex = /([A-Z][a-z]*)([0-9]*)/g;
+        let cocok;
+        let teksBersih = teksSenyawa.replace(/^[0-9]+/, '');
+        while ((cocok = regex.exec(teksBersih)) !== null) {
+            let unsur = cocok[1];
+            let jumlah = cocok[2] ? parseInt(cocok[2]) : 1;
+            hasil[unsur] = (hasil[unsur] || 0) + jumlah;
+        }
+        return hasil;
+    }
+
+    function prosesKalkulasi() {
+        const input = document.getElementById('chemical-input').value.trim();
+        if (!input) return alert('Silakan masukkan persamaan reaksi kimia!');
+
+        let pemisah = input.split('->');
+        if (pemisah.length !== 2) pemisah = input.split('→');
+        if (pemisah.length !== 2) return alert('Format salah. Harap gunakan pemisah panah "->"');
+
+        let bagianKiri = pemisah[0].split('+').map(s => s.trim()).filter(s => s !== "");
+        let bagianKanan = pemisah[1].split('+').map(s => s.trim()).filter(s => s !== "");
+
+        let gabunganSemuaSenyawa = [...bagianKiri, ...bagianKanan];
+        let daftarUnsurUnik = new Set();
+        
+        gabunganSemuaSenyawa.forEach(senyawa => {
+            Object.keys(parseKomponen(senyawa)).forEach(u => daftarUnsurUnik.add(u));
+        });
+        
+        let arrayUnsur = Array.from(daftarUnsurUnik);
+        
+        let matriks = [];
+        for (let i = 0; i < arrayUnsur.length; i++) {
+            let unsur = arrayUnsur[i];
+            let baris = [];
+            
+            bagianKiri.forEach(senyawa => {
+                let atom = parseKomponen(senyawa);
+                baris.push(atom[unsur] || 0);
+            });
+            bagianKanan.forEach(senyawa => {
+                let atom = parseKomponen(senyawa);
+                baris.push(-(atom[unsur] || 0));
+            });
+            matriks.push(baris);
+        }
+
+        let jumlahKolom = gabunganSemuaSenyawa.length;
+        let jumlahBaris = matriks.length;
+        let pivot = 0;
+
+        for (let k = 0; k < jumlahKolom && pivot < jumlahBaris; k++) {
+            let i_max = pivot;
+            for (let i = pivot + 1; i < jumlahBaris; i++) {
+                if (Math.abs(matriks[i][k]) > Math.abs(matriks[i_max][k])) i_max = i;
+            }
+            if (Math.abs(matriks[i_max][k]) < 1e-9) continue;
+
+            let temp = matriks[pivot];
+            matriks[pivot] = matriks[i_max];
+            matriks[i_max] = temp;
+
+            for (let i = 0; i < jumlahBaris; i++) {
+                if (i !== pivot) {
+                    let faktor = matriks[i][k] / matriks[pivot][k];
+                    for (let j = k; j < jumlahKolom; j++) {
+                        matriks[i][j] -= matriks[pivot][j] * faktor;
+                    }
+                }
+            }
+            pivot++;
+        }
+
+        let koefisienMentah = Array(jumlahKolom).fill(1);
+        try {
+            koefisienMentah[jumlahKolom - 1] = 1;
+            for (let i = pivot - 1; i >= 0; i--) {
+                let indeksUtama = -1;
+                for (let j = 0; j < jumlahKolom; j++) {
+                    if (Math.abs(matriks[i][j]) > 1e-9) { indeksUtama = j; break; }
+                }
+                if (indeksUtama !== -1 && indeksUtama < jumlahKolom - 1) {
+                    let totalNilai = 0;
+                    for (let j = indeksUtama + 1; j < jumlahKolom; j++) {
+                        totalNilai += matriks[i][j] * koefisienMentah[j];
+                    }
+                    koefisienMentah[indeksUtama] = -totalNilai / matriks[i][indeksUtama];
+                }
+            }
+        } catch(e) {
+            return alert('Reaksi kimia tidak dapat disetarakan secara matematis.');
+        }
+
+        let pengaliBiasa = 1;
+        for (let iterasi = 0; iterasi < 50; iterasi++) {
+            let semuaBulat = true;
+            for (let i = 0; i < koefisienMentah.length; i++) {
+                let uji = koefisienMentah[i] * pengaliBiasa;
+                if (Math.abs(uji - Math.round(uji)) > 1e-3) {
+                    semuaBulat = false;
+                    pengaliBiasa++;
+                    break;
+                }
+            }
+            if (semuaBulat) break;
+        }
+
+        let koefisienFinal = koefisienMentah.map(v => Math.round(v * pengaliBiasa));
+
+        if(koefisienFinal.some(k => k <= 0 || isNaN(k))) {
+            return alert('Persamaan tidak valid. Pastikan semua unsur di reaktan memiliki pasangannya di produk.');
+        }
+
+        let indeksKoef = 0;
+        let sStrKiri = bagianKiri.map(s => {
+            let k = koefisienFinal[indeksKoef++];
+            return `${k === 1 ? '' : k}${s}`;
+        }).join(' + ');
+
+        let sStrKanan = bagianKanan.map(s => {
+            let k = koefisienFinal[indeksKoef++];
+            return `${k === 1 ? '' : k}${s}`;
+        }).join(' + ');
+
+        document.getElementById('eq-result').innerHTML = `${sStrKiri} → ${sStrKanan}`;
+
+        let totalAtomKiri = {};
+        let totalAtomKanan = {};
+        
+        indeksKoef = 0;
+        bagianKiri.forEach(s => {
+            let atom = parseKomponen(s);
+            let k = koefisienFinal[indeksKoef++];
+            Object.keys(atom).forEach(u => {
+                totalAtomKiri[u] = (totalAtomKiri[u] || 0) + (atom[u] * k);
+            });
+        });
+
+        bagianKanan.forEach(s => {
+            let atom = parseKomponen(s);
+            let k = koefisienFinal[indeksKoef++];
+            Object.keys(atom).forEach(u => {
+                totalAtomKanan[u] = (totalAtomKanan[u] || 0) + (atom[u] * k);
+            });
+        });
+
+        let templateTabel = "";
+        arrayUnsur.forEach(unsur => {
+            let tKiri = totalAtomKiri[unsur] || 0;
+            let tKanan = totalAtomKanan[unsur] || 0;
+            templateTabel += `<tr>
+                <td><b style="color:#60a5fa">${unsur}</b></td>
+                <td>${tKiri}</td>
+                <td><span class="status-badge">SETARA</span></td>
+                <td>${tKanan}</td>
+            </tr>`;
+        });
+        document.getElementById('element-table-body').innerHTML = templateTabel;
+
+        let pLeft = 0, nLeft = 0, eLeft = 0, mLeft = 0;
+        let pRight = 0, nRight = 0, eRight = 0, mRight = 0;
+
+        arrayUnsur.forEach(u => {
+            let db = databaseUnsur[u] || { z: 0, p: 0, n: 0, e: 0, w: 0 };
+            pLeft += db.p * (totalAtomKiri[u] || 0);
+            nLeft += db.n * (totalAtomKiri[u] || 0);
+            eLeft += db.e * (totalAtomKiri[u] || 0);
+            mLeft += db.w * (totalAtomKiri[u] || 0);
+
+            pRight += db.p * (totalAtomKanan[u] || 0);
+            nRight += db.n * (totalAtomKanan[u] || 0);
+            eRight += db.e * (totalAtomKanan[u] || 0);
+            mRight += db.w * (totalAtomKanan[u] || 0);
+        });
+
+        document.getElementById('p-left').innerText = pLeft;
+        document.getElementById('n-left').innerText = nLeft;
+        document.getElementById('e-left').innerText = eLeft;
+        document.getElementById('mass-left').innerText = mLeft.toFixed(3) + " g/mol";
+
+        document.getElementById('p-right').innerText = pRight;
+        document.getElementById('n-right').innerText = nRight;
+        document.getElementById('e-right').innerText = eRight;
+        document.getElementById('mass-right').innerText = mRight.toFixed(3) + " g/mol";
+
+        // Record calculation to Firebase Firestore
+        if (window.EcoTrackFirebase && window.EcoTrackFirebase.isInitialized) {
+            window.EcoTrackFirebase.recordCalculation({
+                type: 'chemistry_equation',
+                input: rawInput,
+                balancedEquation: `${sStrKiri} → ${sStrKanan}`,
+                timestamp: new Date().toISOString()
+            });
+        }
+    }
+</script>
+
+</body>
+</html>

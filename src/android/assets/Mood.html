@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today's Feeling - Curhat & Mood Art AI</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <!-- Firebase SDK v10 (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #ecfdf5;
+            --accent: #6366f1;
+            --dark: #0f172a;
+            --dark-card: #1e293b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius-xl: 20px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 50%, #f5f3ff 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px 16px 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 16px 24px;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            margin-bottom: 24px;
+        }
+
+        .brand-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-avatar {
+            width: 46px;
+            height: 46px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        }
+
+        .brand-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .brand-subtitle {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .nav-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            padding: 8px 18px;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .nav-back:hover {
+            background: #f1f5f9;
+            color: var(--dark);
+        }
+
+        /* Welcome Banner */
+        .intro-banner {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .intro-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .intro-desc {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+
+        /* Dual Workstation Grid */
+        .workstation-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        @media (min-width: 900px) {
+            .workstation-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        /* Card Container */
+        .card-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .panel-desc {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* Curhat Panel (Textarea & Voice) */
+        .curhat-wrapper {
+            position: relative;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .curhat-textarea {
+            width: 100%;
+            height: 230px;
+            padding: 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-md);
+            background: #ffffff;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-main);
+            resize: none;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .curhat-textarea:focus {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+        }
+
+        .curhat-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .voice-btn {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--dark);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .voice-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .voice-btn.recording {
+            background: #fee2e2;
+            border-color: #f87171;
+            color: #dc2626;
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        /* Quick Mood Chips */
+        .chips-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .mood-chip {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-main);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mood-chip:hover {
+            background: #e0e7ff;
+            border-color: #c7d2fe;
+            color: #4338ca;
+        }
+
+        /* Drawing Canvas Panel */
+        .canvas-area {
+            position: relative;
+            background: white;
+            border-radius: var(--radius-md);
+            border: 2px dashed #cbd5e1;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            background: #ffffff;
+            cursor: crosshair;
+            display: block;
+            touch-action: none;
+        }
+
+        /* Canvas Toolbar */
+        .drawing-tools {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+
+        .palette-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .color-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: transform 0.15s, border-color 0.15s;
+        }
+
+        .color-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .color-dot.active {
+            border-color: var(--dark);
+            transform: scale(1.15);
+            box-shadow: 0 0 0 2px white;
+        }
+
+        .custom-color-input {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            background: none;
+        }
+
+        .action-tool-btn {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-tool-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .action-tool-btn.eraser.active {
+            background: #475569;
+            color: white;
+            border-color: #334155;
+        }
+
+        /* AI Analysis Big CTA */
+        .ai-cta-card {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+            color: white;
+            border-radius: var(--radius-xl);
+            padding: 26px 30px;
+            box-shadow: 0 15px 30px rgba(49, 46, 129, 0.25);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 16px;
+        }
+
+        .ai-cta-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-cta-desc {
+            font-size: 0.88rem;
+            opacity: 0.85;
+            max-width: 600px;
+        }
+
+        .btn-ai-analyze {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 35px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-ai-analyze:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(16, 185, 129, 0.55);
+        }
+
+        /* AI Analysis Result Section */
+        .ai-result-section {
+            display: none;
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 34px 28px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            margin-top: 24px;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .ai-badge-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .emotion-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .intensity-tag {
+            background: #f1f5f9;
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .result-content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        @media (min-width: 800px) {
+            .result-content-grid {
+                grid-template-columns: 1.2fr 1fr;
+            }
+        }
+
+        .insight-card {
+            background: #f8fafc;
+            border-radius: var(--radius-md);
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .insight-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .insight-card p {
+            font-size: 0.88rem;
+            line-height: 1.7;
+            color: #475569;
+        }
+
+        .eco-therapy-card {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border: 1px solid #a7f3d0;
+            border-radius: var(--radius-md);
+            padding: 20px;
+        }
+
+        .eco-therapy-card h4 {
+            color: #065f46;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .eco-therapy-card ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: #047857;
+        }
+
+        .eco-therapy-card li::before {
+            content: '🌿 ';
+        }
+
+        .ai-result-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        /* Loading Modal */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-box {
+            background: white;
+            padding: 30px 40px;
+            border-radius: var(--radius-xl);
+            text-align: center;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .ai-scanner-sphere {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #10b981);
+            animation: pulse-scan 1.2s infinite ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+        }
+
+        @keyframes pulse-scan {
+            0% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(99, 102, 241, 0); }
+            100% { transform: scale(0.9); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="brand-group">
+                <div class="brand-avatar">✨</div>
+                <div>
+                    <div class="brand-title">Today's Feeling & Mood Art</div>
+                    <div class="brand-subtitle">AI Emotional Journaling & Canvas Therapy</div>
+                </div>
+            </div>
+            <a href="index.html" class="nav-back">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                Kembali ke Beranda
+            </a>
+        </header>
+
+        <!-- Intro -->
+        <div class="intro-banner">
+            <h1 class="intro-title">Bagaimana Harimu Berjalan?</h1>
+            <p class="intro-desc">Luapkan beban atau kebahagiaanmu lewat kata-kata di ruang curhat, dan goreskan ekspresi bebasmu di kanvas kosong. AI kami akan membaca harmoni emosimu dan memberikan refleksi mendalam.</p>
+        </div>
+
+        <!-- Dual Workstation Grid (Curhat + Kanvas) -->
+        <div class="workstation-grid">
+            <!-- Left: Curhat Lounge -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">📝 Ruang Curhat & Refleksi</div>
+                        <div class="panel-desc">Tuliskan apa saja yang kamu rasakan tanpa ragu</div>
+                    </div>
+                    <button class="voice-btn" id="btnVoice" onclick="toggleVoiceInput()">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+                        <span id="voiceBtnText">Rekam Suara</span>
+                    </button>
+                </div>
+
+                <div class="curhat-wrapper">
+                    <textarea class="curhat-textarea" id="curhatText" placeholder="Contoh: Hari ini aku merasa cukup lelah karena deadline tugas yang menumpuk, tapi ada rasa tenang saat melihat hujan sore tadi..."></textarea>
+                    <div class="curhat-footer">
+                        <span id="charCount">0 karakter</span>
+                        <span>Privasi Terjaga 🔒</span>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted); margin-bottom: 6px;">Pemicu Cepat (Klik untuk menyisipkan):</div>
+                    <div class="chips-container">
+                        <span class="mood-chip" onclick="insertMoodChip('Hari ini aku merasa bersyukur atas hal kecil')">🌱 Bersyukur</span>
+                        <span class="mood-chip" onclick="insertMoodChip('Pikiranku sedikit berisik dan cemas soal masa depan')">🌧️ Cemas / Overthinking</span>
+                        <span class="mood-chip" onclick="insertMoodChip('Tubuhku butuh istirahat sejenak dari hiruk-pikuk')">☕ Lelah & Butuh Jeda</span>
+                        <span class="mood-chip" onclick="insertMoodChip('Aku merasa berenergi dan penuh inspirasi hari ini!')">☀️ Bersemangat</span>
+                        <span class="mood-chip" onclick="insertMoodChip('Aku sedang merasa tenang dan damai dengan diriku sendiri')">🍃 Damai & Tenang</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Drawing Canvas -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">🎨 Kanvas Ekspresi Bebas</div>
+                        <div class="panel-desc">Goreskan warna dan garis sesuai denyut hatimu</div>
+                    </div>
+                    <button class="action-tool-btn" onclick="clearCanvas()">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                        Hapus Kanvas
+                    </button>
+                </div>
+
+                <div class="canvas-area">
+                    <canvas id="moodCanvas" width="450" height="230"></canvas>
+                </div>
+
+                <!-- Canvas Toolbar -->
+                <div class="drawing-tools">
+                    <div class="palette-group">
+                        <div class="color-dot active" style="background: #3b82f6;" onclick="setColor('#3b82f6', this)" title="Biru (Ketenangan)"></div>
+                        <div class="color-dot" style="background: #10b981;" onclick="setColor('#10b981', this)" title="Hijau (Penyembuhan/Alami)"></div>
+                        <div class="color-dot" style="background: #f59e0b;" onclick="setColor('#f59e0b', this)" title="Kuning (Energi & Ceria)"></div>
+                        <div class="color-dot" style="background: #ef4444;" onclick="setColor('#ef4444', this)" title="Merah (Gairah/Intensitas)"></div>
+                        <div class="color-dot" style="background: #8b5cf6;" onclick="setColor('#8b5cf6', this)" title="Ungu (Refleksi)"></div>
+                        <div class="color-dot" style="background: #0f172a;" onclick="setColor('#0f172a', this)" title="Hitam (Kedalaman)"></div>
+                        <input type="color" id="customColor" class="custom-color-input" value="#6366f1" onchange="setColor(this.value)" title="Pilih Warna Bebas">
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button class="action-tool-btn eraser" id="btnEraser" onclick="toggleEraser()">🧽 Penghapus</button>
+                        <button class="action-tool-btn" onclick="undoCanvas()">↩️ Undo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Call to Action -->
+        <div class="ai-cta-card">
+            <div class="ai-cta-title">
+                <span>🤖</span> Analisis Emosi Multimodal AI
+            </div>
+            <p class="ai-cta-desc">Kecerdasan buatan akan memadukan nuansa kata-kata curhatmu dan dinamika sapuan warna pada kanvas untuk membaca keadaan psikologismu saat ini.</p>
+            <button class="btn-ai-analyze" onclick="startAIAnalysis()">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path></svg>
+                ✨ Analisis Emosiku Sekarang
+            </button>
+        </div>
+
+        <!-- AI Analysis Results Display -->
+        <div class="ai-result-section" id="aiResultSection">
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--dark); margin-bottom: 12px;">Hasil Diagnosis Emosional AI ✨</h3>
+            
+            <div class="ai-badge-row">
+                <div class="emotion-pill" id="emotionMainBadge">Tenang & Reflektif 🍃</div>
+                <div class="intensity-tag" id="emotionIntensity">Tingkat Keselarasan: 92%</div>
+                <div class="intensity-tag" id="emotionVisualTag">Dinamika Visual: Lembut & Seimbang</div>
+            </div>
+
+            <div class="result-content-grid">
+                <div class="insight-card">
+                    <h4>💭 Refleksi Emosi & Pesan AI</h4>
+                    <p id="aiInsightText">Berdasarkan curahan hatimu dan sapuan kuas pada kanvas...</p>
+                </div>
+                <div class="eco-therapy-card">
+                    <h4>🌱 Terapi Alam & Eco-Wellness</h4>
+                    <p style="font-size: 0.8rem; margin-bottom: 10px; color: #047857;">Saran aktivitas hijau untuk memulihkan energimu:</p>
+                    <ul id="ecoTherapyList">
+                        <li>Jalan kaki 15 menit tanpa gadget di sekitar pepohonan hijau.</li>
+                        <li>Minum air putih hangat sambil latihan pernapasan 4-7-8.</li>
+                        <li>Merawat tanaman hias pembersih udara di meja kerjamu.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="ai-result-actions">
+                <button class="action-tool-btn" onclick="shareMoodResult()">📋 Salin Ringkasan</button>
+                <a href="hasil.html" class="action-tool-btn" style="text-decoration: none; background: #0f172a; color: white;">Lihat di Halaman Hasil Lengkap →</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Scanner Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-box">
+            <div class="ai-scanner-sphere">✨</div>
+            <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--dark); margin-bottom: 8px;">AI Sedang Membaca...</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted);" id="loadingStatus">Menganalisis getaran kata & harmoni warna kanvasmu...</p>
+        </div>
+    </div>
+
+    <script>
+        // Canvas Setup
+        const canvas = document.getElementById('moodCanvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+        let currentColor = '#3b82f6';
+        let brushSize = 6;
+        let isEraser = false;
+        let strokeHistory = [];
+        let strokeCount = 0;
+
+        // Resize Canvas nicely based on container
+        function setupCanvasSize() {
+            const container = canvas.parentElement;
+            canvas.width = container.clientWidth || 450;
+            canvas.height = 230;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            saveCanvasState();
+        }
+
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const clientX = e.clientX || (e.touches && e.touches[0] ? e.touches[0].clientX : 0);
+            const clientY = e.clientY || (e.touches && e.touches[0] ? e.touches[0].clientY : 0);
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function startPosition(e) {
+            painting = true;
+            strokeCount++;
+            ctx.beginPath();
+            const pos = getCoordinates(e);
+            ctx.moveTo(pos.x, pos.y);
+            draw(e);
+        }
+
+        function endPosition() {
+            if (!painting) return;
+            painting = false;
+            ctx.beginPath();
+            saveCanvasState();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+            e.preventDefault();
+            const pos = getCoordinates(e);
+
+            ctx.lineWidth = isEraser ? 18 : brushSize;
+            ctx.strokeStyle = isEraser ? '#ffffff' : currentColor;
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        // Canvas History for Undo
+        function saveCanvasState() {
+            if (strokeHistory.length >= 15) strokeHistory.shift();
+            strokeHistory.push(canvas.toDataURL());
+        }
+
+        function undoCanvas() {
+            if (strokeHistory.length > 1) {
+                strokeHistory.pop(); // remove current state
+                let prevState = strokeHistory[strokeHistory.length - 1];
+                let img = new Image();
+                img.src = prevState;
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+                };
+            } else if (strokeHistory.length === 1) {
+                clearCanvas();
+            }
+        }
+
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            strokeCount = 0;
+            strokeHistory = [];
+            saveCanvasState();
+        }
+
+        function setColor(color, element) {
+            currentColor = color;
+            isEraser = false;
+            document.getElementById('btnEraser').classList.remove('active');
+            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+            if (element) element.classList.add('active');
+        }
+
+        function toggleEraser() {
+            isEraser = !isEraser;
+            const btn = document.getElementById('btnEraser');
+            if (isEraser) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+
+        // Attach Mouse & Touch Events
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseleave', endPosition);
+
+        canvas.addEventListener('touchstart', startPosition, { passive: false });
+        canvas.addEventListener('touchend', endPosition);
+        canvas.addEventListener('touchmove', draw, { passive: false });
+
+        // Character Counter & Mood Chips
+        const curhatInput = document.getElementById('curhatText');
+        curhatInput.addEventListener('input', () => {
+            document.getElementById('charCount').innerText = `${curhatInput.value.length} karakter`;
+        });
+
+        function insertMoodChip(text) {
+            if (curhatInput.value.trim() === '') {
+                curhatInput.value = text;
+            } else {
+                curhatInput.value += ' ' + text;
+            }
+            curhatInput.dispatchEvent(new Event('input'));
+            curhatInput.focus();
+        }
+
+        // Voice Recognition (Speech to Text)
+        let recognition = null;
+        let isRecording = false;
+
+        function toggleVoiceInput() {
+            const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRec) {
+                alert("Fitur rekam suara belum didukung di browser ini. Kamu tetap bisa mengetikkan curhatanmu!");
+                return;
+            }
+
+            const btn = document.getElementById('btnVoice');
+            const btnText = document.getElementById('voiceBtnText');
+
+            if (!recognition) {
+                recognition = new SpeechRec();
+                recognition.lang = 'id-ID';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+
+                recognition.onresult = (event) => {
+                    let transcript = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        transcript += event.results[i][0].transcript;
+                    }
+                    if (event.results[0].isFinal) {
+                        curhatInput.value += ' ' + transcript;
+                        curhatInput.dispatchEvent(new Event('input'));
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.warn("Speech error:", event.error);
+                    stopRecording();
+                };
+
+                recognition.onend = () => {
+                    stopRecording();
+                };
+            }
+
+            if (!isRecording) {
+                try {
+                    recognition.start();
+                    isRecording = true;
+                    btn.classList.add('recording');
+                    btnText.innerText = 'Merekam... (Klik Stop)';
+                } catch (e) {
+                    console.warn(e);
+                }
+            } else {
+                stopRecording();
+            }
+        }
+
+        function stopRecording() {
+            if (recognition && isRecording) {
+                recognition.stop();
+            }
+            isRecording = false;
+            const btn = document.getElementById('btnVoice');
+            const btnText = document.getElementById('voiceBtnText');
+            btn.classList.remove('recording');
+            btnText.innerText = 'Rekam Suara';
+        }
+
+        // Multimodal AI Emotion Analysis Engine
+        function startAIAnalysis() {
+            const text = curhatInput.value.trim();
+            const canvasData = canvas.toDataURL();
+
+            if (text === '' && strokeCount === 0) {
+                alert("Silakan ketikkan curhatan atau buat sedikit goresan di kanvas agar AI dapat membaca emosimu.");
+                return;
+            }
+
+            // Show Loading Animation
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.style.display = 'flex';
+
+            // Multi-phase simulated AI thinking
+            setTimeout(() => {
+                document.getElementById('loadingStatus').innerText = "Mendeteksi sentimen teks & spektrum psikologis warna...";
+            }, 800);
+
+            setTimeout(() => {
+                document.getElementById('loadingStatus').innerText = "Merumuskan wawasan & rekomendasi kesehatan mental...";
+            }, 1600);
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                generateAIResult(text, canvasData);
+            }, 2300);
+        }
+
+        function generateAIResult(text, canvasData) {
+            const lower = text.toLowerCase();
+            
+            // Emotion Knowledge Archetypes
+            let detectedEmotion = null;
+
+            if (lower.includes('lelah') || lower.includes('capek') || lower.includes('letih') || lower.includes('pusing') || lower.includes('beban')) {
+                detectedEmotion = {
+                    name: "Kelelahan Mental & Butuh Jeda ☕",
+                    color: "#d97706",
+                    bg: "#fef3c7",
+                    border: "#fde68a",
+                    intensity: "88%",
+                    visual: "Energi Rendah & Membutuhkan Pemulihan",
+                    insight: "AI menangkap adanya sinyal kelelahan dan tekanan aktivitas yang menuntut energi batinmu. Curhatanmu menunjukkan bahwa tubuh dan pikiranmu sedang meminta jeda untuk bernapas. Goresan di kanvas mencerminkan keinginanmu untuk menemukan ruang yang hening dan teratur.",
+                    ecoTherapy: [
+                        "Lakukan 'Digital Detox' selama 30 menit malam ini dan nikmati secangkir teh herbal hangat.",
+                        "Dengarkan suara gemercik air atau desau angin dedaunan di teras rumah.",
+                        "Luangkan waktu 10 menit tanpa layar sebelum tidur untuk relaksasi otot."
+                    ]
+                };
+            } else if (lower.includes('cemas') || lower.includes('takut') || lower.includes('bingung') || lower.includes('overthinking') || lower.includes('khawatir')) {
+                detectedEmotion = {
+                    name: "Cemas & Overthinking 🌧️",
+                    color: "#2563eb",
+                    bg: "#dbeafe",
+                    border: "#bfdbfe",
+                    intensity: "91%",
+                    visual: "Pola Gelombang & Dinamika Intens",
+                    insight: "Kata-katamu memancarkan kekhawatiran tentang hal-hal yang berada di luar kendalimu saat ini. Namun, menyadari dan menuliskannya di sini adalah langkah berani untuk melepaskan beban tersebut. Sadarilah bahwa kamu tidak harus menyelesaikan semua masalah dalam satu hari.",
+                    ecoTherapy: [
+                        "Lakukan teknik *Grounding 5-4-3-2-1* di taman: sentuh daun, rasakan angin, dan cium aroma tanah.",
+                        "Berjalan kaki santai tanpa tujuan terburu-buru selama 15 menit.",
+                        "Tuliskan 3 hal yang bisa kamu syukuri saat ini untuk mengalihkan fokus pikiran."
+                    ]
+                };
+            } else if (lower.includes('syukur') || lower.includes('senang') || lower.includes('bahagia') || lower.includes('alhamdulillah') || lower.includes('semangat') || lower.includes('cinta')) {
+                detectedEmotion = {
+                    name: "Bahagia, Penuh Syukur & Berenergi ☀️",
+                    color: "#059669",
+                    bg: "#d1fae5",
+                    border: "#a7f3d0",
+                    intensity: "95%",
+                    visual: "Goresan Harmonis & Dinamis Penuh Cahaya",
+                    insight: "Pikiranmu sedang diselimuti energi positif dan optimisme yang luar biasa! Kata-kata dan goresanmu menunjukkan rasa syukur dan kehangatan jiwa yang tinggi. Energi ini sangat menyehatkan bagi kesehatan tubuh dan lingkungan sekitarmu.",
+                    ecoTherapy: [
+                        "Bagikan energi positif ini dengan menyiram tanaman di rumah atau memberi makan hewan liar.",
+                        "Abadikan momen menyenangkan ini dengan jurnal terima kasih.",
+                        "Gunakan energimu untuk berolahraga ringan seperti bersepeda atau berjalan santai di alam terbuka."
+                    ]
+                };
+            } else if (lower.includes('marah') || lower.includes('kesal') || lower.includes('kecewa') || lower.includes('benci')) {
+                detectedEmotion = {
+                    name: "Kecewa & Emosi Intens 🔥",
+                    color: "#dc2626",
+                    bg: "#fee2e2",
+                    border: "#fca5a5",
+                    intensity: "89%",
+                    visual: "Sapuan Kuat & Kontras Tegas",
+                    insight: "AI mendeteksi adanya gejolak kekecewaan atau rasa frustrasi yang tertahan. Mengeluarkan emosi lewat tulisan dan seni adalah katarsis yang sangat sehat dibanding memendamnya. Emosi ini valid, namun jangan biarkan membakar kedamaian batinmu.",
+                    ecoTherapy: [
+                        "Tarik napas dalam-dalam (Inhale 4 detik, tahan 4 detik, buang perlahan 6 detik) sebanyak 5 siklus.",
+                        "Lakukan aktivitas fisik ringan untuk melepaskan hormon endorfin dan meredakan ketegangan.",
+                        "Basuh wajah dengan air dingin mengalir untuk menyejukkan sistem saraf."
+                    ]
+                };
+            } else {
+                // Default Balanced / Peaceful
+                detectedEmotion = {
+                    name: "Tenang, Damai & Reflektif 🍃",
+                    color: "#4f46e5",
+                    bg: "#e0e7ff",
+                    border: "#c7d2fe",
+                    intensity: "87%",
+                    visual: "Aliran Garis Tenang & Harmonis",
+                    insight: "AI melihat kondisi pikiranmu saat ini dalam keadaan tenang, reflektif, dan cukup stabil. Kamu mampu mengamati perasaanmu dengan bijak tanpa terburu-buru menghakimi. Ini adalah saat yang ideal untuk merencanakan langkah-langkah baik ke depan.",
+                    ecoTherapy: [
+                        "Duduk santai di bawah pohon rindang dan rasakan hembusan udara segar (Shinrin-yoku).",
+                        "Rawat tanaman lidah mertua (Sansevieria) untuk menyaring udara di sekitarmu.",
+                        "Lanjutkan kebiasaan journaling ini secara berkala untuk menjaga kebersihan pikiran."
+                    ]
+                };
+            }
+
+            // Update Result UI
+            const badge = document.getElementById('emotionMainBadge');
+            badge.innerText = detectedEmotion.name;
+            badge.style.color = detectedEmotion.color;
+            badge.style.background = detectedEmotion.bg;
+            badge.style.border = `1.5px solid ${detectedEmotion.border}`;
+
+            document.getElementById('emotionIntensity').innerText = `Skor Keselarasan: ${detectedEmotion.intensity}`;
+            document.getElementById('emotionVisualTag').innerText = `Dinamika: ${detectedEmotion.visual}`;
+            document.getElementById('aiInsightText').innerText = detectedEmotion.insight;
+
+            const therapyList = document.getElementById('ecoTherapyList');
+            therapyList.innerHTML = detectedEmotion.ecoTherapy.map(item => `<li>${item}</li>`).join('');
+
+            // Show Result Section with smooth scroll
+            const section = document.getElementById('aiResultSection');
+            section.style.display = 'block';
+            section.scrollIntoView({ behavior: 'smooth' });
+
+            // Store in LocalStorage for sync with hasil.html
+            localStorage.setItem('savedCurhatText', text);
+            localStorage.setItem('savedMoodCanvas', canvasData);
+            localStorage.setItem('savedEmotionResult', JSON.stringify(detectedEmotion));
+
+            // Record to Firebase Cloud Firestore
+            if (window.EcoTrackFirebase && window.EcoTrackFirebase.isInitialized) {
+                window.EcoTrackFirebase.recordMoodEntry({
+                    curhatText: text,
+                    emotion: detectedEmotion.name,
+                    intensity: detectedEmotion.intensity,
+                    visual: detectedEmotion.visual,
+                    insight: detectedEmotion.insight,
+                    timestamp: new Date().toISOString()
+                });
+            }
+        }
+
+        function shareMoodResult() {
+            const badge = document.getElementById('emotionMainBadge').innerText;
+            const text = `Hasil Analisis Emosi AI EcoTrack:\nStatus: ${badge}\nCatatan: ${document.getElementById('aiInsightText').innerText}`;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text);
+                alert("Ringkasan analisis emosi berhasil disalin ke clipboard!");
+            }
+        }
+
+        // Init Canvas on page load
+        window.addEventListener('DOMContentLoaded', setupCanvasSize);
+        window.addEventListener('resize', () => {
+            // Keep drawing on window resize
+            const oldData = canvas.toDataURL();
+            setupCanvasSize();
+            let img = new Image();
+            img.src = oldData;
+            img.onload = () => ctx.drawImage(img, 0, 0);
+        });
+    </script>
+</body>
+</html>

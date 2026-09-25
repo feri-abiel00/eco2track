@@ -3,9 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ECO₂Track</title>
+    <title>ECO2Track (ECO₂Track) - Smart Mobility & Carbon Emission Tracker | TerraStep</title>
+    <meta name="description" content="Aplikasi resmi ECO2Track (ECO₂Track) by TerraStep (terrastep.web.app). Pelacak jejak karbon emisi perjalanan real-time, kalkulator CO₂, rute GPS, dan mobilitas hijau ramah lingkungan.">
+    <meta name="keywords" content="ECO2Track, ECO₂Track, TerraStep, terrastep, terrastep.web.app, pelacak emisi karbon, carbon footprint tracker, smart mobility">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://terrastep.web.app/ECO2Track.html">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="TerraStep & ECO2Track">
+    <meta property="og:url" content="https://terrastep.web.app/ECO2Track.html">
+    <meta property="og:title" content="ECO2Track (ECO₂Track) - Smart Mobility & Carbon Tracker | TerraStep">
+    <meta property="og:description" content="Official ECO2Track application on TerraStep ecosystem. Real-time carbon emission tracking, GPS route analysis, and eco-points.">
+    <meta property="og:image" content="https://terrastep.web.app/hero-mockup.jpg">
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1356,6 +1367,286 @@
             border-color: #fecaca;
         }
 
+        .btn-card-action.primary {
+            background: var(--dark);
+            color: white;
+            border-color: var(--dark);
+            font-weight: 700;
+        }
+
+        .btn-card-action.primary:hover {
+            background: #334155;
+            color: white;
+        }
+
+        /* Card Route Strip & Preview */
+        .card-route-preview-block {
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            border-radius: 10px;
+            padding: 8px 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .card-route-preview-block:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-route-thumb-box {
+            width: 84px;
+            height: 54px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            flex-shrink: 0;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.03);
+        }
+
+        .route-preview-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .card-route-info-col {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .card-route-tag {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #059669;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-route-loc-summary {
+            font-size: 0.7rem;
+            color: var(--text-dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 500;
+        }
+
+        .card-route-arrow {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            padding: 2px 4px;
+            flex-shrink: 0;
+        }
+
+        .card-mini-map-container {
+            width: 100%;
+            height: 180px;
+            border-radius: 10px;
+            border: 1.5px solid var(--gray-border);
+            overflow: hidden;
+            margin-top: 6px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-mini-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Route Detail Modal */
+        .modal-card-large {
+            max-width: 860px !important;
+            width: 95% !important;
+        }
+
+        .route-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+            gap: 12px;
+        }
+
+        .route-modal-title-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-modal-close {
+            background: #f1f5f9;
+            border: 1px solid var(--gray-border);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #64748b;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-modal-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+            border-color: #fca5a5;
+        }
+
+        .route-modal-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .route-metric-pill {
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+            padding: 8px 10px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .route-metric-label {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .route-metric-val {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .route-modal-map-wrap {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 14px;
+            border: 1.5px solid var(--gray-border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .route-map-toolbar {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            background: rgba(255, 255, 255, 0.94);
+            padding: 5px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        .route-layer-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .btn-map-control {
+            background: white;
+            border: 1px solid var(--gray-border);
+            padding: 5px 9px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--dark);
+            white-space: nowrap;
+        }
+
+        .btn-map-control:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-map-control.active {
+            background: var(--dark);
+            color: white;
+            border-color: var(--dark);
+        }
+
+        .route-endpoints-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 640px) {
+            .route-endpoints-row {
+                grid-template-columns: 1fr;
+            }
+            .route-map-toolbar {
+                position: static;
+                margin-top: 8px;
+                border-radius: 8px;
+            }
+        }
+
+        .endpoint-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            background: #f8fafc;
+            border: 1px solid var(--gray-border);
+        }
+
+        .endpoint-card.start {
+            border-left: 4px solid #10b981;
+        }
+
+        .endpoint-card.finish {
+            border-left: 4px solid #ef4444;
+        }
+
+        .endpoint-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .endpoint-label {
+            font-size: 0.68rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .endpoint-text {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: var(--dark);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
         /* Modals & Popups */
         .modal-overlay {
             position: fixed;
@@ -1973,6 +2264,9 @@
                     <button class="btn-history-tool" onclick="exportData('csv')" title="Download data in CSV format">
                         📥 Export CSV
                     </button>
+                    <button class="btn-history-tool" onclick="exportData('gpx')" title="Unduh semua rute perjalanan dalam format GPX untuk Strava/Garmin">
+                        🗺️ Export GPX
+                    </button>
                     <button class="btn-history-tool" onclick="exportData('json')" title="Download backup in JSON format">
                         💾 Export JSON
                     </button>
@@ -2140,6 +2434,17 @@
                 <!-- Injected via JS -->
             </div>
 
+            <!-- Route Traversed Preview Map in Summary Modal -->
+            <div id="summaryMapWrapper" style="margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <div style="font-size: 0.78rem; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px;">
+                        <span>🗺️</span> <span>Peta Rute Yang Dilalui</span>
+                    </div>
+                    <span style="font-size: 0.72rem; font-weight: 700; color: #059669; background: #ecfdf5; padding: 2px 8px; border-radius: 12px; border: 1px solid #a7f3d0;" id="summaryRoutePointsBadge">0 Titik Tersimpan</span>
+                </div>
+                <div id="summaryRouteMap" style="width: 100%; height: 165px; border-radius: 12px; border: 1.5px solid var(--gray-border); overflow: hidden; background: #f1f5f9;"></div>
+            </div>
+
             <!-- Summary Table Grid -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
                 <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
@@ -2171,6 +2476,97 @@
             <div class="modal-actions-row">
                 <button type="button" class="btn-modal-secondary" onclick="viewInHistoryFromModal()">View in History</button>
                 <button type="button" class="btn-modal-primary" onclick="resetWorkout()">Finish & Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         MODAL: FULL ROUTE DETAIL MAP & NAVIGATION VIEWER
+         =================================================== -->
+    <div class="modal-overlay" id="routeDetailModal" onclick="if(event.target===this)closeRouteMapModal()">
+        <div class="modal-card modal-card-large">
+            <div class="route-modal-header">
+                <div class="route-modal-title-group">
+                    <span id="modalRouteIcon" style="font-size: 2rem;">🏃</span>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                            <h3 class="modal-title" style="margin-bottom: 0;" id="modalRouteTitle">Activity Route</h3>
+                            <span class="card-type-chip eco" id="modalRouteTypeChip">Eco</span>
+                        </div>
+                        <p class="modal-subtitle" style="margin-bottom: 0;" id="modalRouteDate">Date & Time</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-modal-close" onclick="closeRouteMapModal()" aria-label="Tutup Peta">✕</button>
+            </div>
+
+            <!-- Route Summary Statistics Strip -->
+            <div class="route-modal-metrics-grid">
+                <div class="route-metric-pill">
+                    <span class="route-metric-label">Jarak Perjalanan</span>
+                    <span class="route-metric-val" id="modalRouteDist">0.00 km</span>
+                </div>
+                <div class="route-metric-pill">
+                    <span class="route-metric-label">Durasi Waktu</span>
+                    <span class="route-metric-val" id="modalRouteDuration">00:00:00</span>
+                </div>
+                <div class="route-metric-pill">
+                    <span class="route-metric-label">Kecepatan Rerata</span>
+                    <span class="route-metric-val" id="modalRouteSpeed">0.0 km/h</span>
+                </div>
+                <div class="route-metric-pill">
+                    <span class="route-metric-label">Dampak Karbon</span>
+                    <span class="route-metric-val" id="modalRouteCarbon">0.000 kg</span>
+                </div>
+                <div class="route-metric-pill">
+                    <span class="route-metric-label">Koordinat GPS</span>
+                    <span class="route-metric-val" id="modalRoutePoints">0 Titik</span>
+                </div>
+            </div>
+
+            <!-- Interactive Map Container with Map Toolbar -->
+            <div class="route-modal-map-wrap">
+                <div id="routeDetailMap" style="width: 100%; height: 380px; background: #e2e8f0;"></div>
+                
+                <!-- Floating Map Controls -->
+                <div class="route-map-toolbar">
+                    <div class="route-layer-buttons">
+                        <button type="button" class="btn-map-control active" id="btnMapStyleStreets" onclick="changeDetailMapLayer('streets')">🗺️ Jalan</button>
+                        <button type="button" class="btn-map-control" id="btnMapStyleSatellite" onclick="changeDetailMapLayer('satellite')">🛰️ Satelit</button>
+                        <button type="button" class="btn-map-control" id="btnMapStyleOSM" onclick="changeDetailMapLayer('osm')">🌍 OSM</button>
+                    </div>
+                    <button type="button" class="btn-map-control" onclick="fitDetailMapRoute()" title="Pusatkan peta ke seluruh rute perjalanan">🎯 Pusatkan Rute</button>
+                </div>
+            </div>
+
+            <!-- Start and End Location Cards -->
+            <div class="route-endpoints-row">
+                <div class="endpoint-card start">
+                    <span class="endpoint-icon">🏁</span>
+                    <div style="min-width: 0;">
+                        <div class="endpoint-label">Titik Mulai (Start Location)</div>
+                        <div class="endpoint-text" id="modalRouteStartLoc">N/A</div>
+                    </div>
+                </div>
+                <div class="endpoint-card finish">
+                    <span class="endpoint-icon">📍</span>
+                    <div style="min-width: 0;">
+                        <div class="endpoint-label">Titik Selesai (Finish Location)</div>
+                        <div class="endpoint-text" id="modalRouteEndLoc">N/A</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Action Buttons -->
+            <div class="modal-actions-row" style="margin-top: 18px; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button type="button" class="btn-history-tool" onclick="downloadCurrentModalGPX()" title="Unduh berkas GPX untuk Strava, Garmin, dll">
+                        📥 Unduh GPX
+                    </button>
+                    <button type="button" class="btn-history-tool" onclick="downloadCurrentModalGeoJSON()" title="Unduh format GeoJSON standar GIS">
+                        📄 Unduh GeoJSON
+                    </button>
+                </div>
+                <button type="button" class="btn-modal-primary" style="width: auto; padding: 10px 24px;" onclick="closeRouteMapModal()">Tutup Peta</button>
             </div>
         </div>
     </div>
@@ -2356,6 +2752,13 @@
                         }
                         if (firebase.firestore) {
                             this.db = firebase.firestore();
+                            try {
+                                this.db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+                                    if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+                                        console.warn("Firestore persistence note:", err.code);
+                                    }
+                                });
+                            } catch(pe){}
                         }
                         this.isInitialized = true;
                         console.log("🔥 [EcoTrack] Firebase Connected successfully to project: " + firebaseConfig.projectId);
@@ -2436,17 +2839,40 @@
                 } catch(e) { return false; }
             },
 
+            async saveAccount(account) {
+                if (!this.db || !account) return false;
+                try {
+                    const uid = account.id || ('usr_' + Date.now().toString(36));
+                    await this.db.collection('users').doc(uid).set({
+                        ...account,
+                        lastUpdated: new Date().toISOString()
+                    }, { merge: true });
+                    if (account.email) {
+                        const emailKey = account.email.trim().toLowerCase().replace(/[^a-zA-Z0-9]/g, '_');
+                        await this.db.collection('accounts').doc(emailKey).set({
+                            id: uid,
+                            email: account.email,
+                            name: account.name || '',
+                            lastUpdated: new Date().toISOString()
+                        }, { merge: true });
+                    }
+                    return true;
+                } catch(e) { return false; }
+            },
+
             async saveRecord(userId, record) {
                 if (!this.db) return false;
                 try {
+                    const uid = userId || (record && record.userId) || 'guest_user';
                     const recordPayload = {
                         ...record,
+                        userId: uid,
                         syncedAt: new Date().toISOString()
                     };
 
-                    if (userId && !userId.startsWith('guest_')) {
-                        await this.db.collection('users').doc(userId).collection('records').doc(record.id).set(recordPayload);
-                    }
+                    try {
+                        await this.db.collection('users').doc(uid).collection('records').doc(record.id).set(recordPayload);
+                    } catch(e){}
                     
                     try {
                         await this.db.collection('activity_records').doc(record.id).set(recordPayload);
@@ -2477,9 +2903,10 @@
             async deleteRecord(userId, recordId) {
                 if (!this.db) return false;
                 try {
-                    if (userId && !userId.startsWith('guest_')) {
-                        await this.db.collection('users').doc(userId).collection('records').doc(recordId).delete();
-                    }
+                    const uid = userId || 'guest_user';
+                    try {
+                        await this.db.collection('users').doc(uid).collection('records').doc(recordId).delete();
+                    } catch(e){}
                     try {
                         await this.db.collection('activity_records').doc(recordId).delete();
                     } catch(e){}
@@ -2727,20 +3154,39 @@
             ACTIVE_USER_SESSION_KEY: 'ecotrack_active_session_v2',
 
             getGuestDefault() {
+                let guestUid = '';
+                try {
+                    guestUid = localStorage.getItem('ecotrack_guest_uid');
+                    if (!guestUid) {
+                        guestUid = 'guest_' + Math.random().toString(36).substring(2, 9) + Date.now().toString(36);
+                        localStorage.setItem('ecotrack_guest_uid', guestUid);
+                    }
+                } catch(e) {
+                    guestUid = 'guest_user';
+                }
+
+                let guestProfile = {
+                    name: 'Guest User',
+                    age: 22,
+                    city: 'jakarta',
+                    height: 170,
+                    weight: 65,
+                    vision: 'normal',
+                    completed: false
+                };
+                try {
+                    const savedGuestProf = localStorage.getItem('ecotrack_guest_profile');
+                    if (savedGuestProf) {
+                        guestProfile = { ...guestProfile, ...JSON.parse(savedGuestProf) };
+                    }
+                } catch(e){}
+
                 return {
-                    id: 'guest_user',
-                    name: 'Guest',
+                    id: guestUid,
+                    name: guestProfile.name || 'Guest User',
                     email: '',
                     type: 'guest',
-                    profile: {
-                        name: 'Guest',
-                        age: 22,
-                        city: 'jakarta',
-                        height: 170,
-                        weight: 65,
-                        vision: 'normal',
-                        completed: false
-                    }
+                    profile: guestProfile
                 };
             },
 
@@ -2769,6 +3215,11 @@
                         accounts.push(account);
                     }
                     localStorage.setItem(this.ACCOUNTS_DB_KEY, JSON.stringify(accounts));
+
+                    // Dual sync account to Cloud Firestore
+                    if (EcoTrackFirebase.isInitialized && EcoTrackFirebase.saveAccount) {
+                        try { EcoTrackFirebase.saveAccount(account); } catch(e){}
+                    }
                     return true;
                 } catch(e) { return false; }
             },
@@ -2858,11 +3309,17 @@
                     } else {
                         this.saveAccount(user);
                     }
+                } else {
+                    try {
+                        localStorage.setItem('ecotrack_guest_profile', JSON.stringify(user.profile));
+                    } catch(e){}
+                }
 
-                    // Sync to Firestore if initialized
-                    if (EcoTrackFirebase.isInitialized && user.id) {
+                // Sync to Firestore unconditionally for BOTH registered and guest!
+                if (EcoTrackFirebase.isInitialized && user.id) {
+                    try {
                         EcoTrackFirebase.saveUserProfile(user.id, user.profile);
-                    }
+                    } catch(e){}
                 }
 
                 renderUserProfile();
@@ -2877,14 +3334,20 @@
         // ===================================================
         const RecordManager = {
             getKey(userId) {
-                return 'ecotrack_records_v2_' + userId;
+                const id = userId || 'guest_user';
+                return 'ecotrack_records_v2_' + id;
             },
 
             getRecords(userId) {
-                if (!userId || userId.startsWith('guest_')) return [];
                 try {
-                    const raw = localStorage.getItem(this.getKey(userId));
+                    const id = userId || (UserManager.getCurrentUser() && UserManager.getCurrentUser().id) || 'guest_user';
+                    const raw = localStorage.getItem(this.getKey(id));
                     if (raw) return JSON.parse(raw);
+                    // Legacy guest fallback
+                    if (id.startsWith('guest')) {
+                        const legacy = localStorage.getItem('ecotrack_records_v2_guest_user');
+                        if (legacy) return JSON.parse(legacy);
+                    }
                 } catch(e){}
                 return [];
             },
@@ -2892,15 +3355,17 @@
             saveRecord(record) {
                 if (!record) return false;
                 try {
-                    if (record.userId && !record.userId.startsWith('guest_')) {
-                        const list = this.getRecords(record.userId);
-                        const idx = list.findIndex(r => r.id === record.id);
-                        if (idx >= 0) list[idx] = record;
-                        else list.unshift(record);
-                        localStorage.setItem(this.getKey(record.userId), JSON.stringify(list));
-                    }
+                    const activeUser = UserManager.getCurrentUser();
+                    const userId = record.userId || (activeUser && activeUser.id) || 'guest_user';
+                    record.userId = userId;
+                    const list = this.getRecords(userId);
+                    const idx = list.findIndex(r => r.id === record.id);
+                    if (idx >= 0) list[idx] = record;
+                    else list.unshift(record);
+                    localStorage.setItem(this.getKey(userId), JSON.stringify(list));
+
                     if (EcoTrackFirebase.isInitialized) {
-                        EcoTrackFirebase.saveRecord(record.userId, record);
+                        EcoTrackFirebase.saveRecord(userId, record);
                     }
                     return true;
                 } catch(e) { return false; }
@@ -2908,10 +3373,12 @@
 
             deleteRecord(recordId, userId) {
                 try {
-                    const list = this.getRecords(userId).filter(r => r.id !== recordId);
-                    localStorage.setItem(this.getKey(userId), JSON.stringify(list));
-                    if (EcoTrackFirebase.isInitialized && userId) {
-                        EcoTrackFirebase.deleteRecord(userId, recordId);
+                    const activeUser = UserManager.getCurrentUser();
+                    const keyUser = userId || (activeUser && activeUser.id) || 'guest_user';
+                    const list = this.getRecords(keyUser).filter(r => r.id !== recordId);
+                    localStorage.setItem(this.getKey(keyUser), JSON.stringify(list));
+                    if (EcoTrackFirebase.isInitialized && keyUser) {
+                        EcoTrackFirebase.deleteRecord(keyUser, recordId);
                     }
                     return true;
                 } catch(e) { return false; }
@@ -2919,9 +3386,11 @@
 
             clearAll(userId) {
                 try {
-                    localStorage.removeItem(this.getKey(userId));
-                    if (EcoTrackFirebase.isInitialized && userId) {
-                        EcoTrackFirebase.clearAllRecords(userId);
+                    const activeUser = UserManager.getCurrentUser();
+                    const keyUser = userId || (activeUser && activeUser.id) || 'guest_user';
+                    localStorage.removeItem(this.getKey(keyUser));
+                    if (EcoTrackFirebase.isInitialized && keyUser) {
+                        EcoTrackFirebase.clearAllRecords(keyUser);
                     }
                     return true;
                 } catch(e) { return false; }
@@ -3655,9 +4124,9 @@
             const savePill = document.getElementById('modalSavePill');
 
             if (user.type === 'registered') {
-                savePill.innerHTML = `✅ Record automatically synced to account <strong>${user.name}</strong> (Firebase Cloud Sync 🔥)`;
+                savePill.innerHTML = `✅ Record & route automatically synced to account <strong>${user.name}</strong> (Firebase Cloud Sync 🔥)`;
             } else {
-                savePill.innerHTML = `🌐 Activity recorded in local session & Cloud Live Tracker (Guest Mode)`;
+                savePill.innerHTML = `🌐 Aktivitas & peta rute tersimpan di browser lokal & Cloud Live Tracker (Mode Tamu)`;
             }
 
             if (isMotor) {
@@ -3688,13 +4157,24 @@
                 item6Val.innerText = "-" + calc.carbonAmountKg + " kg CO₂e";
             }
 
+            const tripTitleInput = document.getElementById('modalTripTitleInput');
+            const tripTitle = (tripTitleInput && tripTitleInput.value.trim()) ? tripTitleInput.value.trim() : '';
+
+            // Clone positions into an array of coordinate numbers
+            let routeCoords = [];
+            if (positions && Array.isArray(positions) && positions.length > 0) {
+                routeCoords = positions.map(pt => [Number(Number(pt[0]).toFixed(6)), Number(Number(pt[1]).toFixed(6))]);
+            } else if (lastKnownGPS) {
+                routeCoords = [[Number(Number(lastKnownGPS.lat).toFixed(6)), Number(Number(lastKnownGPS.lng).toFixed(6))]];
+            }
+
             const now = new Date();
             const record = {
                 id: 'rec_' + Date.now(),
-                userId: user.id || ('guest_' + Date.now()),
+                userId: user.id || 'guest_user',
                 userName: user.name || 'Guest',
                 userType: user.type,
-                title: '',
+                title: tripTitle,
                 timestamp: now.toISOString(),
                 dateFormatted: `${now.getDate()} ${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][now.getMonth()]} ${now.getFullYear()}, ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`,
                 activityId: currentActivity,
@@ -3710,17 +4190,82 @@
                 carbonAmountKg: calc.carbonAmountKg,
                 perCapitaCarbonKg: calc.perCapitaCarbonKg,
                 calories: calc.calories,
-                fuelLiter: calc.fuelLiter
+                fuelLiter: calc.fuelLiter,
+                // Saved Route and Locations
+                route: routeCoords,
+                startLocation: startAddress || (routeCoords.length > 0 ? `Lat ${routeCoords[0][0].toFixed(4)}, Lon ${routeCoords[0][1].toFixed(4)}` : 'N/A'),
+                endLocation: currentAddress || (routeCoords.length > 0 ? `Lat ${routeCoords[routeCoords.length - 1][0].toFixed(4)}, Lon ${routeCoords[routeCoords.length - 1][1].toFixed(4)}` : 'N/A'),
+                pointCount: routeCoords.length
             };
             RecordManager.saveRecord(record);
             renderHistorySection();
-            showToast("🔥 Activity record saved and synced to Firebase!", "success");
+            showToast("🔥 Aktivitas & peta rute berhasil disimpan!", "success");
 
             modal.style.display = 'flex';
+
+            // Render route preview in summary modal
+            renderSummaryRouteMap(routeCoords, config.type);
+        }
+
+        let summaryMapInstance = null;
+        function renderSummaryRouteMap(coords, actType) {
+            const badge = document.getElementById('summaryRoutePointsBadge');
+            if (badge) badge.innerText = `${coords.length} Titik Peta Tersimpan`;
+
+            setTimeout(() => {
+                const mapEl = document.getElementById('summaryRouteMap');
+                if (!mapEl || typeof L === 'undefined') return;
+
+                if (!summaryMapInstance) {
+                    summaryMapInstance = L.map('summaryRouteMap', {
+                        zoomControl: false,
+                        attributionControl: false,
+                        dragging: true,
+                        touchZoom: true,
+                        scrollWheelZoom: false
+                    });
+                    L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                        maxZoom: 20,
+                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                    }).addTo(summaryMapInstance);
+                } else {
+                    summaryMapInstance.eachLayer(layer => {
+                        if (layer instanceof L.Polyline || layer instanceof L.Marker) {
+                            summaryMapInstance.removeLayer(layer);
+                        }
+                    });
+                }
+
+                summaryMapInstance.invalidateSize();
+
+                if (coords && coords.length > 0) {
+                    const color = actType === 'eco' ? '#10b981' : '#ef4444';
+                    const poly = L.polyline(coords, { color, weight: 4, opacity: 0.9 }).addTo(summaryMapInstance);
+                    
+                    const startIcon = L.divIcon({ html: '🏁', iconSize: [18, 18], iconAnchor: [9, 9] });
+                    L.marker(coords[0], { icon: startIcon }).addTo(summaryMapInstance);
+
+                    if (coords.length > 1) {
+                        const endIcon = L.divIcon({ html: '📍', iconSize: [18, 18], iconAnchor: [9, 9] });
+                        L.marker(coords[coords.length - 1], { icon: endIcon }).addTo(summaryMapInstance);
+                        summaryMapInstance.fitBounds(poly.getBounds(), { padding: [20, 20] });
+                    } else {
+                        summaryMapInstance.setView(coords[0], 15);
+                    }
+                } else {
+                    summaryMapInstance.setView([-6.175392, 106.827153], 13);
+                }
+            }, 200);
         }
 
         function closeModal() {
             document.getElementById('summaryModal').style.display = 'none';
+            if (summaryMapInstance) {
+                try {
+                    summaryMapInstance.remove();
+                    summaryMapInstance = null;
+                } catch(e){}
+            }
         }
 
         function viewInHistoryFromModal() {
@@ -3991,6 +4536,19 @@
             UserManager.saveAccount(newAcc);
             UserManager.setCurrentUser(newAcc);
 
+            // Merge guest records if any exist
+            try {
+                const guestRecs = RecordManager.getRecords('guest_user');
+                if (guestRecs && guestRecs.length > 0) {
+                    guestRecs.forEach(r => {
+                        r.userId = newAcc.id;
+                        r.userName = newAcc.name;
+                        RecordManager.saveRecord(r);
+                    });
+                    localStorage.removeItem(RecordManager.getKey('guest_user'));
+                }
+            } catch(e){}
+
             renderUserProfile();
             updateProfileSpecsBar();
             closeAuthModal();
@@ -4037,6 +4595,19 @@
             // Save / sync merged account locally
             UserManager.saveAccount(loggedInUser);
             UserManager.setCurrentUser(loggedInUser);
+
+            // Merge guest records if any exist
+            try {
+                const guestRecs = RecordManager.getRecords('guest_user');
+                if (guestRecs && guestRecs.length > 0) {
+                    guestRecs.forEach(r => {
+                        r.userId = loggedInUser.id;
+                        r.userName = loggedInUser.name;
+                        RecordManager.saveRecord(r);
+                    });
+                    localStorage.removeItem(RecordManager.getKey('guest_user'));
+                }
+            } catch(e){}
 
             // Sync records from Cloud Firestore
             if (EcoTrackFirebase.isInitialized && loggedInUser.id) {
@@ -4137,20 +4708,20 @@
             const ecoRecs = records.filter(r => r.activityType === 'eco');
             const motorRecs = records.filter(r => r.activityType === 'motorized');
 
-            if (countAll) countAll.innerText = isGuest ? 0 : records.length;
-            if (countEco) countEco.innerText = isGuest ? 0 : ecoRecs.length;
-            if (countMotor) countMotor.innerText = isGuest ? 0 : motorRecs.length;
+            if (countAll) countAll.innerText = records.length;
+            if (countEco) countEco.innerText = ecoRecs.length;
+            if (countMotor) countMotor.innerText = motorRecs.length;
 
             const container = document.getElementById('historyCardsList');
             if (!container) return;
 
-            if (isGuest) {
+            if (records.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-history-state">
-                        <div class="empty-icon">👤</div>
-                        <h4 class="empty-title">Guest Mode Active</h4>
-                        <p class="empty-desc">Log in or register an account to save your travel history and sync to the Cloud.</p>
-                        <button type="button" class="btn-modal-primary" style="width: auto; margin-top: 14px; padding: 8px 20px;" onclick="openAuthModal()">🔑 Log In / Register Account</button>
+                    <div class="empty-history-state" style="grid-column: 1 / -1; text-align: center; padding: 40px 20px;">
+                        <div class="empty-icon" style="font-size: 2.5rem; margin-bottom: 8px;">🌱</div>
+                        <h4 class="empty-title" style="font-size: 1.15rem; font-weight: 800; color: var(--dark);">Belum Ada Riwayat & Peta Tersimpan</h4>
+                        <p class="empty-desc" style="font-size: 0.82rem; color: var(--text-muted); max-width: 440px; margin: 0 auto;">Pilih jenis aktivitas mobilitas Anda di atas dan tekan <strong>Start Activity</strong> untuk merekam perjalanan beserta rute peta GPS!</p>
+                        ${isGuest ? `<button type="button" class="btn-modal-primary" style="width: auto; margin-top: 14px; padding: 8px 20px;" onclick="openAuthModal()">🔑 Masuk / Cadangkan ke Cloud</button>` : ''}
                     </div>
                 `;
                 return;
@@ -4163,62 +4734,454 @@
 
             if (displayList.length === 0) {
                 container.innerHTML = `
-                    <div class="empty-history-state">
-                        <div class="empty-icon">🌱</div>
-                        <h4 class="empty-title">No Saved History Yet</h4>
-                        <p class="empty-desc">Select a travel mode and press Start Activity to record your journey!</p>
+                    <div class="empty-history-state" style="grid-column: 1 / -1; text-align: center; padding: 30px 20px;">
+                        <div class="empty-icon" style="font-size: 2rem; margin-bottom: 8px;">🔍</div>
+                        <h4 class="empty-title" style="font-size: 1.05rem; font-weight: 800; color: var(--dark);">Tidak Ada Aktivitas Sesuai Filter</h4>
+                        <p class="empty-desc" style="font-size: 0.8rem; color: var(--text-muted);">Coba pilih filter lain atau tampilkan 'All' untuk melihat semua data.</p>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = displayList.map(r => {
+            const guestNoticeHtml = isGuest ? `
+                <div style="grid-column: 1 / -1; background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 12px; padding: 12px 16px; margin-bottom: 6px; font-size: 0.8rem; color: #1e40af; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <span>👤 <strong>Mode Tamu Aktif:</strong> Riwayat aktivitas & rute peta GPS tersimpan di penyimpanan browser lokal.</span>
+                    </div>
+                    <button type="button" class="btn-history-tool" style="background: #2563eb; color: white; border: none; padding: 5px 12px;" onclick="openAuthModal()">🔑 Masuk / Cadangkan ke Cloud</button>
+                </div>
+            ` : '';
+
+            container.innerHTML = guestNoticeHtml + displayList.map(r => {
                 const isEco = r.activityType === 'eco';
                 const weatherInfo = WEATHER_FACTORS[r.weather] || WEATHER_FACTORS.clear;
+                const hasRoute = Boolean(r.route && Array.isArray(r.route) && r.route.length > 0);
+                const routeCount = hasRoute ? r.route.length : 0;
+                const strokeColor = isEco ? '#10b981' : '#ef4444';
+                const svgThumbnail = hasRoute ? generateRouteSvg(r.route, strokeColor, 100, 60) : '';
+
                 return `
-                    <div class="history-card ${r.activityType}-type">
+                    <div class="history-card ${r.activityType}-type" id="card_${r.id}">
                         <div class="card-top-row">
                             <div class="card-activity-info">
                                 <div class="card-act-icon">${r.activityIcon || '🏃‍♂️'}</div>
                                 <div class="card-title-block">
-                                    <div class="card-act-name">${r.activityName}</div>
+                                    <div class="card-act-name">${r.title ? r.title : r.activityName}</div>
                                     <div class="card-date-time">${r.dateFormatted}</div>
                                 </div>
                             </div>
-                            <span class="card-type-chip ${r.activityType}">${isEco ? '🌱 Eco-Friendly' : '⛽ Motorized'}</span>
+                            <span class="card-type-chip ${r.activityType}">${isEco ? '🌱 Ramah Lingkungan' : '⛽ Bermotor'}</span>
                         </div>
 
                         <div class="card-metrics-grid">
                             <div class="card-metric-col">
-                                <span class="card-metric-label">Distance</span>
-                                <span class="card-metric-val">${r.distanceKm.toFixed(2)} <span class="sub">km</span></span>
+                                <span class="card-metric-label">Jarak</span>
+                                <span class="card-metric-val">${(r.distanceKm !== undefined ? r.distanceKm.toFixed(2) : '0.00')} <span class="sub">km</span></span>
                             </div>
                             <div class="card-metric-col">
-                                <span class="card-metric-label">Time</span>
+                                <span class="card-metric-label">Durasi</span>
                                 <span class="card-metric-val">${r.durationFormatted}</span>
                             </div>
                             <div class="card-metric-col">
-                                <span class="card-metric-label">Speed</span>
-                                <span class="card-metric-val">${r.avgSpeedKmh.toFixed(1)} <span class="sub">km/h</span></span>
+                                <span class="card-metric-label">Kecepatan</span>
+                                <span class="card-metric-val">${(r.avgSpeedKmh !== undefined ? r.avgSpeedKmh.toFixed(1) : '0.0')} <span class="sub">km/h</span></span>
                             </div>
                         </div>
 
+                        <!-- Route Traversed Preview Strip -->
+                        ${hasRoute ? `
+                            <div class="card-route-preview-block" onclick="openRouteMapModal('${r.id}')" title="Klik untuk membuka peta interaktif rute ini">
+                                <div class="card-route-thumb-box">
+                                    ${svgThumbnail}
+                                </div>
+                                <div class="card-route-info-col">
+                                    <div class="card-route-tag">
+                                        <span>🗺️</span> <span>${routeCount} Titik GPS Tersimpan</span>
+                                    </div>
+                                    <div class="card-route-loc-summary" title="${r.startLocation || ''}">
+                                        🏁 ${r.startLocation || 'Titik Awal'}
+                                    </div>
+                                    <div class="card-route-loc-summary" title="${r.endLocation || ''}">
+                                        📍 ${r.endLocation || 'Titik Akhir'}
+                                    </div>
+                                </div>
+                                <div class="card-route-arrow" title="Buka Detail Peta">➔</div>
+                            </div>
+                        ` : `
+                            <div style="font-size: 0.72rem; color: var(--text-muted); background: #f8fafc; padding: 6px 10px; border-radius: 6px; border: 1px dashed var(--gray-border);">
+                                📍 Tidak ada koordinat GPS rute (manual/sebelum update).
+                            </div>
+                        `}
+
                         <div class="card-env-strip">
-                            <span>🌦️ Weather: <strong>${weatherInfo.icon} ${weatherInfo.name}</strong></span>
-                            ${!isEco ? `<span>👥 Passengers: <strong>${r.passengers || 1}</strong></span>` : `<span>⚡ <strong>${r.calories || 0} kcal</strong></span>`}
+                            <span>🌦️ Cuaca: <strong>${weatherInfo.icon} ${weatherInfo.name}</strong></span>
+                            ${!isEco ? `<span>👥 Penumpang: <strong>${r.passengers || 1}</strong></span>` : `<span>⚡ <strong>${r.calories || 0} kcal</strong></span>`}
                         </div>
 
                         <div class="card-carbon-badge ${isEco ? 'eco' : 'motor'}">
-                            <span>${isEco ? '🌱 Carbon Saved' : '🔥 Carbon Emitted'}</span>
-                            <span><strong>${isEco ? '-' : '+'}${r.carbonAmountKg.toFixed(3)} kg CO₂e</strong></span>
+                            <span>${isEco ? '🌱 Karbon Dihemat' : '🔥 Emisi Dihasilkan'}</span>
+                            <span><strong>${isEco ? '-' : '+'}${(r.carbonAmountKg !== undefined ? r.carbonAmountKg.toFixed(3) : '0.000')} kg CO₂e</strong></span>
+                        </div>
+
+                        <!-- Mini map container embedded directly in card -->
+                        <div id="cardMiniMapWrap_${r.id}" class="card-mini-map-container" style="display: none;">
+                            <div id="cardMiniMap_${r.id}" class="card-mini-map"></div>
                         </div>
 
                         <div class="card-footer-actions">
-                            <button class="btn-card-action danger" onclick="deleteHistoryRecord('${r.id}')">🗑️ Delete</button>
+                            ${hasRoute ? `
+                                <button class="btn-card-action primary" onclick="openRouteMapModal('${r.id}')" title="Buka peta interaktif rute lengkap">🗺️ Lihat Peta</button>
+                                <button class="btn-card-action" onclick="toggleCardMiniMap('${r.id}')" title="Tampilkan/sembunyikan peta mini di dalam kartu">👁️ Peta Mini</button>
+                                <button class="btn-card-action" onclick="downloadSingleGPX('${r.id}')" title="Unduh berkas GPX untuk Strava/Garmin">📥 GPX</button>
+                            ` : ''}
+                            <button class="btn-card-action danger" onclick="deleteHistoryRecord('${r.id}')" title="Hapus riwayat aktivitas ini">🗑️ Hapus</button>
                         </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // ===================================================
+        // ROUTE TRAVERSED MAP HANDLERS & EXPORTERS
+        // ===================================================
+        function generateRouteSvg(route, strokeColor = '#10b981', width = 100, height = 60) {
+            if (!route || !Array.isArray(route) || route.length === 0) {
+                return `<div style="font-size:0.65rem; color:#94a3b8; text-align:center;">No GPS</div>`;
+            }
+            if (route.length === 1) {
+                return `
+                    <svg viewBox="0 0 ${width} ${height}" class="route-preview-svg">
+                        <circle cx="${width / 2}" cy="${height / 2}" r="5" fill="${strokeColor}" />
+                    </svg>
+                `;
+            }
+
+            let minLat = Infinity, maxLat = -Infinity, minLng = Infinity, maxLng = -Infinity;
+            route.forEach(([lat, lng]) => {
+                if (lat < minLat) minLat = lat;
+                if (lat > maxLat) maxLat = lat;
+                if (lng < minLng) minLng = lng;
+                if (lng > maxLng) maxLng = lng;
+            });
+
+            const latRange = Math.max(maxLat - minLat, 0.00008);
+            const lngRange = Math.max(maxLng - minLng, 0.00008);
+            const pad = 8;
+            const w = width - pad * 2;
+            const h = height - pad * 2;
+
+            const points = route.map(([lat, lng]) => {
+                const x = pad + ((lng - minLng) / lngRange) * w;
+                const y = pad + (1 - (lat - minLat) / latRange) * h;
+                return `${x.toFixed(1)},${y.toFixed(1)}`;
+            });
+
+            const pathData = "M " + points.join(" L ");
+            const startPt = points[0].split(',');
+            const endPt = points[points.length - 1].split(',');
+
+            return `
+                <svg viewBox="0 0 ${width} ${height}" class="route-preview-svg" preserveAspectRatio="xMidYMid meet">
+                    <path d="${pathData}" fill="none" stroke="${strokeColor}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="${startPt[0]}" cy="${startPt[1]}" r="3.5" fill="#22c55e" stroke="#ffffff" stroke-width="1.2" />
+                    <circle cx="${endPt[0]}" cy="${endPt[1]}" r="3.5" fill="#ef4444" stroke="#ffffff" stroke-width="1.2" />
+                </svg>
+            `;
+        }
+
+        let currentSelectedRecordForModal = null;
+        let routeDetailMapInstance = null;
+        let currentDetailTileLayer = null;
+        let activeMiniMaps = {};
+
+        function openRouteMapModal(recordId) {
+            const user = UserManager.getCurrentUser();
+            const records = RecordManager.getRecords(user.id);
+            const rec = records.find(r => r.id === recordId);
+            if (!rec) return;
+
+            currentSelectedRecordForModal = rec;
+            const modal = document.getElementById('routeDetailModal');
+            if (!modal) return;
+
+            const isEco = rec.activityType === 'eco';
+            const iconEl = document.getElementById('modalRouteIcon');
+            if (iconEl) iconEl.innerText = rec.activityIcon || '🏃';
+
+            const titleEl = document.getElementById('modalRouteTitle');
+            if (titleEl) titleEl.innerText = (rec.title ? rec.title + ' — ' : '') + rec.activityName;
+
+            const chipEl = document.getElementById('modalRouteTypeChip');
+            if (chipEl) {
+                chipEl.className = 'card-type-chip ' + rec.activityType;
+                chipEl.innerText = isEco ? '🌱 Ramah Lingkungan' : '⛽ Bermotor';
+            }
+
+            const dateEl = document.getElementById('modalRouteDate');
+            if (dateEl) dateEl.innerText = rec.dateFormatted;
+
+            const distEl = document.getElementById('modalRouteDist');
+            if (distEl) distEl.innerText = (rec.distanceKm !== undefined ? rec.distanceKm.toFixed(2) : '0.00') + ' km';
+
+            const durEl = document.getElementById('modalRouteDuration');
+            if (durEl) durEl.innerText = rec.durationFormatted || '00:00:00';
+
+            const spdEl = document.getElementById('modalRouteSpeed');
+            if (spdEl) spdEl.innerText = (rec.avgSpeedKmh !== undefined ? rec.avgSpeedKmh.toFixed(1) : '0.0') + ' km/h';
+
+            const carbEl = document.getElementById('modalRouteCarbon');
+            if (carbEl) carbEl.innerText = (isEco ? '-' : '+') + (rec.carbonAmountKg !== undefined ? rec.carbonAmountKg.toFixed(3) : '0.000') + ' kg CO₂e';
+
+            const ptsEl = document.getElementById('modalRoutePoints');
+            const ptCount = (rec.route && Array.isArray(rec.route)) ? rec.route.length : 0;
+            if (ptsEl) ptsEl.innerText = ptCount + ' Titik GPS';
+
+            const startLocEl = document.getElementById('modalRouteStartLoc');
+            if (startLocEl) startLocEl.innerText = rec.startLocation || (rec.route && rec.route[0] ? `Lat ${rec.route[0][0]}, Lon ${rec.route[0][1]}` : 'N/A');
+
+            const endLocEl = document.getElementById('modalRouteEndLoc');
+            if (endLocEl) endLocEl.innerText = rec.endLocation || (rec.route && rec.route[rec.route.length - 1] ? `Lat ${rec.route[rec.route.length - 1][0]}, Lon ${rec.route[rec.route.length - 1][1]}` : 'N/A');
+
+            modal.style.display = 'flex';
+
+            // Initialize or render Leaflet map
+            setTimeout(() => {
+                const mapWrap = document.getElementById('routeDetailMap');
+                if (!mapWrap || typeof L === 'undefined') return;
+
+                if (!routeDetailMapInstance) {
+                    routeDetailMapInstance = L.map('routeDetailMap', {
+                        zoomControl: true,
+                        attributionControl: false
+                    });
+                    currentDetailTileLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                        maxZoom: 20,
+                        subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                    }).addTo(routeDetailMapInstance);
+                } else {
+                    routeDetailMapInstance.eachLayer(layer => {
+                        if (layer instanceof L.Polyline || layer instanceof L.Marker) {
+                            routeDetailMapInstance.removeLayer(layer);
+                        }
+                    });
+                }
+
+                routeDetailMapInstance.invalidateSize();
+
+                if (rec.route && Array.isArray(rec.route) && rec.route.length > 0) {
+                    const color = isEco ? '#10b981' : '#ef4444';
+                    const poly = L.polyline(rec.route, {
+                        color: color,
+                        weight: 5,
+                        opacity: 0.9,
+                        lineJoin: 'round'
+                    }).addTo(routeDetailMapInstance);
+
+                    const startIcon = L.divIcon({ html: '🏁', iconSize: [26, 26], iconAnchor: [13, 13] });
+                    const mStart = L.marker(rec.route[0], { icon: startIcon }).addTo(routeDetailMapInstance);
+                    mStart.bindPopup(`<b>🏁 Titik Mulai</b><br>Lat: ${rec.route[0][0]}<br>Lon: ${rec.route[0][1]}<br>${rec.startLocation || ''}`).openPopup();
+
+                    if (rec.route.length > 1) {
+                        const finishIcon = L.divIcon({ html: '📍', iconSize: [26, 26], iconAnchor: [13, 13] });
+                        const mEnd = L.marker(rec.route[rec.route.length - 1], { icon: finishIcon }).addTo(routeDetailMapInstance);
+                        mEnd.bindPopup(`<b>📍 Titik Selesai</b><br>Lat: ${rec.route[rec.route.length - 1][0]}<br>Lon: ${rec.route[rec.route.length - 1][1]}<br>Jarak: ${rec.distanceKm} km`);
+
+                        routeDetailMapInstance.fitBounds(poly.getBounds(), { padding: [35, 35] });
+                    } else {
+                        routeDetailMapInstance.setView(rec.route[0], 16);
+                    }
+                } else {
+                    routeDetailMapInstance.setView([-6.175392, 106.827153], 13);
+                }
+            }, 180);
+        }
+
+        function closeRouteMapModal() {
+            const modal = document.getElementById('routeDetailModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function changeDetailMapLayer(type) {
+            if (!routeDetailMapInstance || typeof L === 'undefined') return;
+
+            document.querySelectorAll('#btnMapStyleStreets, #btnMapStyleSatellite, #btnMapStyleOSM').forEach(b => {
+                b.classList.remove('active');
+            });
+
+            if (currentDetailTileLayer && routeDetailMapInstance.hasLayer(currentDetailTileLayer)) {
+                routeDetailMapInstance.removeLayer(currentDetailTileLayer);
+            }
+
+            if (type === 'satellite') {
+                const btn = document.getElementById('btnMapStyleSatellite');
+                if (btn) btn.classList.add('active');
+                currentDetailTileLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                });
+            } else if (type === 'osm') {
+                const btn = document.getElementById('btnMapStyleOSM');
+                if (btn) btn.classList.add('active');
+                currentDetailTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19
+                });
+            } else {
+                const btn = document.getElementById('btnMapStyleStreets');
+                if (btn) btn.classList.add('active');
+                currentDetailTileLayer = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                });
+            }
+
+            currentDetailTileLayer.addTo(routeDetailMapInstance);
+        }
+
+        function fitDetailMapRoute() {
+            if (!routeDetailMapInstance || !currentSelectedRecordForModal || !currentSelectedRecordForModal.route || currentSelectedRecordForModal.route.length === 0) return;
+            if (currentSelectedRecordForModal.route.length > 1) {
+                const poly = L.polyline(currentSelectedRecordForModal.route);
+                routeDetailMapInstance.fitBounds(poly.getBounds(), { padding: [35, 35] });
+            } else {
+                routeDetailMapInstance.setView(currentSelectedRecordForModal.route[0], 16);
+            }
+        }
+
+        function toggleCardMiniMap(recordId) {
+            const wrap = document.getElementById(`cardMiniMapWrap_${recordId}`);
+            if (!wrap) return;
+
+            const isShown = wrap.style.display !== 'none';
+            if (isShown) {
+                wrap.style.display = 'none';
+                return;
+            }
+
+            wrap.style.display = 'block';
+
+            if (activeMiniMaps[recordId]) {
+                setTimeout(() => activeMiniMaps[recordId].invalidateSize(), 100);
+                return;
+            }
+
+            const user = UserManager.getCurrentUser();
+            const records = RecordManager.getRecords(user.id);
+            const rec = records.find(r => r.id === recordId);
+            if (!rec || !rec.route || rec.route.length === 0 || typeof L === 'undefined') return;
+
+            setTimeout(() => {
+                const miniMap = L.map(`cardMiniMap_${recordId}`, {
+                    zoomControl: false,
+                    attributionControl: false,
+                    dragging: true,
+                    scrollWheelZoom: false
+                });
+
+                L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+                }).addTo(miniMap);
+
+                const color = rec.activityType === 'eco' ? '#10b981' : '#ef4444';
+                const poly = L.polyline(rec.route, { color, weight: 4, opacity: 0.9 }).addTo(miniMap);
+
+                const startIcon = L.divIcon({ html: '🏁', iconSize: [16, 16], iconAnchor: [8, 8] });
+                L.marker(rec.route[0], { icon: startIcon }).addTo(miniMap);
+
+                if (rec.route.length > 1) {
+                    const finishIcon = L.divIcon({ html: '📍', iconSize: [16, 16], iconAnchor: [8, 8] });
+                    L.marker(rec.route[rec.route.length - 1], { icon: finishIcon }).addTo(miniMap);
+                    miniMap.fitBounds(poly.getBounds(), { padding: [15, 15] });
+                } else {
+                    miniMap.setView(rec.route[0], 15);
+                }
+
+                activeMiniMaps[recordId] = miniMap;
+            }, 100);
+        }
+
+        function downloadSingleGPX(recordId) {
+            const user = UserManager.getCurrentUser();
+            const records = RecordManager.getRecords(user.id);
+            const rec = records.find(r => r.id === recordId);
+            if (!rec) return;
+            downloadRouteGPX(rec);
+        }
+
+        function downloadCurrentModalGPX() {
+            if (currentSelectedRecordForModal) {
+                downloadRouteGPX(currentSelectedRecordForModal);
+            }
+        }
+
+        function downloadCurrentModalGeoJSON() {
+            if (currentSelectedRecordForModal) {
+                downloadRouteGeoJSON(currentSelectedRecordForModal);
+            }
+        }
+
+        function downloadRouteGPX(rec) {
+            if (!rec || !rec.route || rec.route.length === 0) {
+                showToast("Tidak ada koordinat GPS rute untuk diunduh.", "info");
+                return;
+            }
+            const name = (rec.title || rec.activityName || 'Activity').replace(/[^a-zA-Z0-9_-]/g, '_');
+            const time = rec.timestamp || new Date().toISOString();
+            let gpx = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+            gpx += `<gpx version="1.1" creator="ECO2Track - TerraStep" xmlns="http://www.topografix.com/GPX/1/1">\n`;
+            gpx += `  <metadata>\n    <name>${rec.activityName} - ECO2Track</name>\n    <time>${time}</time>\n  </metadata>\n`;
+            gpx += `  <trk>\n    <name>${rec.title || rec.activityName} (${rec.dateFormatted})</name>\n    <type>${rec.activityId || 'Other'}</type>\n    <trkseg>\n`;
+            rec.route.forEach(([lat, lng]) => {
+                gpx += `      <trkpt lat="${lat}" lon="${lng}"></trkpt>\n`;
+            });
+            gpx += `    </trkseg>\n  </trk>\n</gpx>`;
+
+            const blob = new Blob([gpx], { type: 'application/gpx+xml;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `ECO2Track_Route_${name}_${rec.id}.gpx`;
+            link.click();
+            showToast("Berkas GPX rute perjalanan berhasil diunduh!", "success");
+        }
+
+        function downloadRouteGeoJSON(rec) {
+            if (!rec || !rec.route || rec.route.length === 0) {
+                showToast("Tidak ada koordinat GPS rute untuk diunduh.", "info");
+                return;
+            }
+            const geojson = {
+                type: "FeatureCollection",
+                features: [
+                    {
+                        type: "Feature",
+                        geometry: {
+                            type: "LineString",
+                            coordinates: rec.route.map(([lat, lng]) => [lng, lat])
+                        },
+                        properties: {
+                            id: rec.id,
+                            activity: rec.activityName,
+                            title: rec.title || '',
+                            activityType: rec.activityType,
+                            distanceKm: rec.distanceKm,
+                            duration: rec.durationFormatted,
+                            avgSpeedKmh: rec.avgSpeedKmh,
+                            carbonAmountKg: rec.carbonAmountKg,
+                            date: rec.dateFormatted,
+                            startLocation: rec.startLocation,
+                            endLocation: rec.endLocation,
+                            pointCount: rec.route.length
+                        }
+                    }
+                ]
+            };
+
+            const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/geo+json;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `ECO2Track_Route_${rec.id}.geojson`;
+            link.click();
+            showToast("Berkas GeoJSON rute berhasil diunduh!", "success");
         }
 
         function deleteHistoryRecord(id) {
@@ -4252,9 +5215,9 @@
                 return;
             }
             if (format === 'csv') {
-                const headers = ["ID", "Date", "Activity", "Type", "Distance (km)", "Duration", "Speed (km/h)", "Weather", "Passengers", "Carbon Impact (kg CO2e)"];
+                const headers = ["ID", "Date", "Activity", "Type", "Distance (km)", "Duration", "Speed (km/h)", "Weather", "Passengers", "Carbon Impact (kg CO2e)", "GPS Waypoints", "Start Location", "End Location"];
                 const rows = records.map(r => [
-                    r.id, `"${r.dateFormatted}"`, `"${r.activityName}"`, r.activityType, r.distanceKm, `"${r.durationFormatted}"`, r.avgSpeedKmh, `"${r.weather}"`, r.passengers || 1, r.carbonAmountKg
+                    r.id, `"${r.dateFormatted}"`, `"${r.activityName}"`, r.activityType, (r.distanceKm !== undefined ? r.distanceKm : 0), `"${r.durationFormatted}"`, (r.avgSpeedKmh !== undefined ? r.avgSpeedKmh : 0), `"${r.weather}"`, r.passengers || 1, (r.carbonAmountKg !== undefined ? r.carbonAmountKg : 0), (r.route ? r.route.length : 0), `"${r.startLocation || ''}"`, `"${r.endLocation || ''}"`
                 ]);
                 const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
                 const link = document.createElement("a");
@@ -4262,6 +5225,27 @@
                 link.download = `EcoTrack_Precision_${user.name}_${Date.now()}.csv`;
                 link.click();
                 showToast("CSV file downloaded successfully!", "success");
+            } else if (format === 'gpx') {
+                const validRoutes = records.filter(r => r.route && Array.isArray(r.route) && r.route.length > 0);
+                if (validRoutes.length === 0) {
+                    showToast("Tidak ada riwayat dengan koordinat rute GPS untuk diekspor ke GPX.", "info");
+                    return;
+                }
+                let gpx = `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="ECO2Track" xmlns="http://www.topografix.com/GPX/1/1">\n`;
+                validRoutes.forEach(rec => {
+                    gpx += `  <trk>\n    <name>${rec.title || rec.activityName} - ${rec.dateFormatted}</name>\n    <trkseg>\n`;
+                    rec.route.forEach(([lat, lng]) => {
+                        gpx += `      <trkpt lat="${lat}" lon="${lng}"></trkpt>\n`;
+                    });
+                    gpx += `    </trkseg>\n  </trk>\n`;
+                });
+                gpx += `</gpx>`;
+                const blob = new Blob([gpx], { type: 'application/gpx+xml;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `EcoTrack_All_Routes_${Date.now()}.gpx`;
+                link.click();
+                showToast("Semua rute GPX berhasil diekspor!", "success");
             } else {
                 const json = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ user, records }, null, 2));
                 const link = document.createElement("a");
@@ -4291,20 +5275,32 @@
         window.addEventListener('DOMContentLoaded', async () => {
             EcoTrackFirebase.init();
 
-            // Restore active registered session if available
-            const active = UserManager.restoreSession();
+            // Restore active registered session or get current persistent user
+            const active = UserManager.restoreSession() || UserManager.getCurrentUser();
             if (active && active.id && EcoTrackFirebase.isInitialized) {
                 try {
-                    const cloudRecs = await EcoTrackFirebase.getRecords(active.id);
-                    if (cloudRecs && cloudRecs.length > 0) {
-                        const localRecs = RecordManager.getRecords(active.id);
-                        const recMap = new Map();
-                        cloudRecs.forEach(r => recMap.set(r.id, r));
-                        localRecs.forEach(r => recMap.set(r.id, r));
-                        const merged = Array.from(recMap.values()).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-                        localStorage.setItem(RecordManager.getKey(active.id), JSON.stringify(merged));
+                    // Sync active profile & specs to Cloud Firestore
+                    if (active.profile) {
+                        EcoTrackFirebase.saveUserProfile(active.id, active.profile);
                     }
-                } catch(e){}
+
+                    // Bi-directional record sync with Cloud Firestore
+                    const cloudRecs = await EcoTrackFirebase.getRecords(active.id);
+                    const localRecs = RecordManager.getRecords(active.id);
+                    const recMap = new Map();
+                    (cloudRecs || []).forEach(r => recMap.set(r.id, r));
+                    (localRecs || []).forEach(r => {
+                        recMap.set(r.id, r);
+                        // Backfill to cloud if not yet uploaded
+                        if (!cloudRecs || !cloudRecs.some(cr => cr.id === r.id)) {
+                            EcoTrackFirebase.saveRecord(active.id, r);
+                        }
+                    });
+                    const merged = Array.from(recMap.values()).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    localStorage.setItem(RecordManager.getKey(active.id), JSON.stringify(merged));
+                } catch(e){
+                    console.warn("Cloud Firestore initial sync notice:", e);
+                }
             }
 
             initMap();

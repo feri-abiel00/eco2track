@@ -5,9 +5,11 @@
 
 $ErrorActionPreference = "Continue"
 
-$projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Definition
-if (-not $projectRoot) {
-    $projectRoot = (Get-Location).Path
+$projectRoot = (Get-Location).Path
+if (-not (Test-Path (Join-Path $projectRoot "src\android"))) {
+    if ($PSScriptRoot) {
+        $projectRoot = Split-Path -Parent $PSScriptRoot
+    }
 }
 
 $androidDir   = Join-Path $projectRoot "src\android"

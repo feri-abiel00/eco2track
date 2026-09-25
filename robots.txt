@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap Index for Googlebot and Search Engines
+Sitemap: https://terrastep.web.app/sitemap.xml

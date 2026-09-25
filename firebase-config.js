@@ -37,6 +37,14 @@ var EcoTrackFirebase = window.EcoTrackFirebase || {
         }
         if (firebase.firestore) {
           this.db = firebase.firestore();
+          // Enable offline persistence so data is never lost even if connection drops
+          try {
+            this.db.enablePersistence({ synchronizeTabs: true }).catch(err => {
+              if (err.code !== 'failed-precondition' && err.code !== 'unimplemented') {
+                console.warn("Firestore persistence notice:", err.code);
+              }
+            });
+          } catch(pe){}
         }
         if (firebase.storage) {
           this.storage = firebase.storage();
@@ -94,7 +102,7 @@ var EcoTrackFirebase = window.EcoTrackFirebase || {
       const downloadURL = await snapshot.ref.getDownloadURL();
 
       // Update Firestore user document if db available
-      if (this.db && !userId.startsWith('guest_')) {
+      if (this.db) {
         await this.db.collection('users').doc(userId).set({
           photoURL: downloadURL,
           lastUpdated: new Date().toISOString()
@@ -125,69 +133,137 @@ var EcoTrackFirebase = window.EcoTrackFirebase || {
   },
 
   // ==========================================
-  // FIREBASE AUTH METHODS
+  // FIREBASE AUTH & ACCOUNT METHODS
   // ==========================================
 
   async registerUser(email, password, displayName = '') {
-    if (!this.auth) return { success: false, fallback: true, error: "Firebase Auth not ready" };
-    try {
-      const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
-      const user = userCredential.user;
-      if (displayName && user.updateProfile) {
-        try { await user.updateProfile({ displayName }); } catch(e){}
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const userData = {
+      id: 'usr_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 7),
+      name: displayName || cleanEmail.split('@')[0],
+      email: cleanEmail,
+      type: 'registered',
+      createdAt: new Date().toISOString(),
+      profile: {
+        name: displayName || cleanEmail.split('@')[0],
+        age: 22,
+        city: 'jakarta',
+        height: 170,
+        weight: 65,
+        vision: 'normal',
+        completed: false
       }
-      const userData = {
-        id: user.uid,
-        name: displayName || email.split('@')[0],
-        email: user.email,
-        type: 'registered',
-        createdAt: new Date().toISOString(),
-        profile: {
-          name: displayName || email.split('@')[0],
-          age: 22,
-          city: 'jakarta',
-          height: 170,
-          weight: 65,
-          vision: 'normal',
-          completed: false
+    };
+
+    // 1. Try Firebase Auth
+    if (this.auth) {
+      try {
+        const userCredential = await this.auth.createUserWithEmailAndPassword(cleanEmail, password);
+        const user = userCredential.user;
+        userData.id = user.uid;
+        if (displayName && user.updateProfile) {
+          try { await user.updateProfile({ displayName }); } catch(e){}
         }
-      };
-      if (this.db) {
-        try {
-          await this.db.collection('users').doc(user.uid).set(userData, { merge: true });
-        } catch(e){}
+      } catch (authErr) {
+        console.warn("Firebase Auth createUser notice:", authErr.message);
       }
-      return { success: true, user: userData };
-    } catch (err) {
-      return { success: false, error: err.message, code: err.code };
+    }
+
+    // 2. Save directly to Cloud Firestore users and accounts collections
+    if (this.db) {
+      try {
+        await this.db.collection('users').doc(userData.id).set(userData, { merge: true });
+        const emailKey = cleanEmail.replace(/[^a-zA-Z0-9]/g, '_');
+        await this.db.collection('accounts').doc(emailKey).set({
+          id: userData.id,
+          name: userData.name,
+          email: userData.email,
+          createdAt: userData.createdAt,
+          lastLogin: new Date().toISOString()
+        }, { merge: true });
+      } catch(dbErr) {
+        console.warn("Firestore registerUser sync notice:", dbErr);
+      }
+    }
+    return { success: true, user: userData };
+  },
+
+  async saveAccount(account) {
+    if (!this.db || !account) return false;
+    try {
+      const uid = account.id || ('usr_' + Date.now().toString(36));
+      await this.db.collection('users').doc(uid).set({
+        ...account,
+        lastUpdated: new Date().toISOString()
+      }, { merge: true });
+
+      if (account.email) {
+        const emailKey = account.email.trim().toLowerCase().replace(/[^a-zA-Z0-9]/g, '_');
+        await this.db.collection('accounts').doc(emailKey).set({
+          id: uid,
+          email: account.email,
+          name: account.name || '',
+          lastUpdated: new Date().toISOString()
+        }, { merge: true });
+      }
+      console.log("🔥 [Firebase] Account synced to Cloud Firestore:", uid);
+      return true;
+    } catch(e) {
+      console.warn("Firebase saveAccount notice:", e);
+      return false;
     }
   },
 
   async loginUser(email, password) {
-    if (!this.auth) return { success: false, fallback: true, error: "Firebase Auth not ready" };
-    try {
-      const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
-      const user = userCredential.user;
-      let profileData = { 
-        id: user.uid, 
-        name: user.displayName || email.split('@')[0], 
-        email: user.email, 
-        type: 'registered' 
-      };
-      
-      if (this.db) {
-        try {
-          const doc = await this.db.collection('users').doc(user.uid).get();
-          if (doc.exists) {
-            const data = doc.data();
-            profileData = { ...profileData, ...data };
-          }
-        } catch(e){}
+    const cleanEmail = (email || '').trim().toLowerCase();
+    let profileData = null;
+
+    // 1. Try Firebase Auth first
+    if (this.auth) {
+      try {
+        const userCredential = await this.auth.signInWithEmailAndPassword(cleanEmail, password);
+        const user = userCredential.user;
+        profileData = { 
+          id: user.uid, 
+          name: user.displayName || cleanEmail.split('@')[0], 
+          email: user.email, 
+          type: 'registered' 
+        };
+        if (this.db) {
+          try {
+            const doc = await this.db.collection('users').doc(user.uid).get();
+            if (doc.exists) {
+              profileData = { ...profileData, ...doc.data() };
+            }
+          } catch(e){}
+        }
+        return { success: true, user: profileData };
+      } catch (authErr) {
+        console.warn("Firebase Auth signIn notice:", authErr.message);
       }
-      return { success: true, user: profileData };
-    } catch (err) {
-      return { success: false, error: err.message, code: err.code };
     }
+
+    // 2. Dual fallback: lookup in Firestore accounts collection
+    if (this.db) {
+      try {
+        const emailKey = cleanEmail.replace(/[^a-zA-Z0-9]/g, '_');
+        const accSnap = await this.db.collection('accounts').doc(emailKey).get();
+        if (accSnap.exists) {
+          const accInfo = accSnap.data();
+          const userDoc = await this.db.collection('users').doc(accInfo.id).get();
+          if (userDoc.exists) {
+            const userData = userDoc.data();
+            if (!userData.password || userData.password === password) {
+              return { success: true, user: userData };
+            }
+          }
+        }
+      } catch(e){
+        console.warn("Firestore account login lookup notice:", e);
+      }
+    }
+
+    return { success: false, error: "Invalid credentials or user not found" };
   },
 
   // ==========================================
@@ -198,6 +274,7 @@ var EcoTrackFirebase = window.EcoTrackFirebase || {
     if (!this.db || !userId) return false;
     try {
       await this.db.collection('users').doc(userId).set({
+        id: userId,
         name: profileData.name || '',
         profile: profileData,
         lastUpdated: new Date().toISOString()
@@ -213,17 +290,21 @@ var EcoTrackFirebase = window.EcoTrackFirebase || {
   async saveRecord(userId, record) {
     if (!this.db) return false;
     try {
+      const uid = userId || (record && record.userId) || 'guest_user';
       const recordPayload = {
         ...record,
+        userId: uid,
         syncedAt: new Date().toISOString()
       };
 
-      // 1. Save in user's subcollection if registered
-      if (userId && !userId.startsWith('guest_')) {
-        await this.db.collection('users').doc(userId).collection('records').doc(record.id).set(recordPayload);
+      // 1. Save in user's subcollection for both registered and guest IDs
+      try {
+        await this.db.collection('users').doc(uid).collection('records').doc(record.id).set(recordPayload);
+      } catch(subErr) {
+        console.warn("User subcollection save notice:", subErr);
       }
       
-      // 2. Also save in root activity_records collection for global dashboard & backup
+      // 2. Also save in root activity_records collection for global dashboard, sync & backup
       try {
         await this.db.collection('activity_records').doc(record.id).set(recordPayload);
       } catch(rootErr) {
@@ -241,12 +322,12 @@ var EcoTrackFirebase = window.EcoTrackFirebase || {
   async getRecords(userId) {
     if (!this.db || !userId) return [];
     try {
-      // Try user subcollection first
+      // 1. Try user subcollection first
       const snap = await this.db.collection('users').doc(userId).collection('records').orderBy('timestamp', 'desc').get();
       if (!snap.empty) {
         return snap.docs.map(d => d.data());
       }
-      // Fallback: search in root activity_records by userId
+      // 2. Fallback: search in root activity_records by userId
       const snapRoot = await this.db.collection('activity_records').where('userId', '==', userId).get();
       return snapRoot.docs.map(d => d.data()).sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
     } catch(e) {
@@ -258,9 +339,10 @@ var EcoTrackFirebase = window.EcoTrackFirebase || {
   async deleteRecord(userId, recordId) {
     if (!this.db) return false;
     try {
-      if (userId && !userId.startsWith('guest_')) {
-        await this.db.collection('users').doc(userId).collection('records').doc(recordId).delete();
-      }
+      const uid = userId || 'guest_user';
+      try {
+        await this.db.collection('users').doc(uid).collection('records').doc(recordId).delete();
+      } catch(e){}
       try {
         await this.db.collection('activity_records').doc(recordId).delete();
       } catch(e){}

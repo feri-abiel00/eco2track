@@ -1,5 +1,13 @@
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+if (-not $scriptDir) { $scriptDir = (Get-Location).Path }
+if (Test-Path (Join-Path $scriptDir "downloads")) {
+    $projectRoot = $scriptDir
+} else {
+    $projectRoot = Split-Path -Parent $scriptDir
+}
+
 # 1. Build genuine iOS .ipa package
 $ipaTemp = "scratch_ipa"
 if (Test-Path $ipaTemp) { Remove-Item -Recurse -Force $ipaTemp }
